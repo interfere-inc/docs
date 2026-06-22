@@ -1,149 +1,109 @@
-/* :root {
-  --default-border-color: var(--gray-200);
+/* ============================================================
+   Interfere docs theme overrides
+   Mirrors the Interfere design system (@interfere/design-system,
+   @interfere/fonts) so the docs match the app, website, and emails.
+   ============================================================ */
+
+/* --- Berkeley Mono (code) -------------------------------------------------
+   Sans (InterVariable) is loaded via docs.json `fonts`. The monospace face
+   is applied here to match @interfere/fonts/css/berkeley-mono.css. */
+@font-face {
+  font-family: "BerkeleyMono";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/BerkeleyMono/Berkeley%20Mono%20Variable%20Interfere.woff2")
+    format("woff2");
 }
 
-.dark {
-  --default-border-color: var(--gray-800);
+@font-face {
+  font-family: "BerkeleyMono";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/BerkeleyMono/Berkeley%20Mono%20Variable%20Interfere.woff2")
+    format("woff2");
 }
 
-#sidebar .nav-dropdown-trigger {
+/* --- Base typography ------------------------------------------------------
+   Matches @interfere/design-system base layer: ss03 stylistic set, no
+   synthetic faux-bold/italic, antialiased rendering. */
+body {
+  font-feature-settings: "ss03";
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Apply Berkeley Mono everywhere code is rendered. */
+code,
+kbd,
+samp,
+pre,
+code-block,
+code-block *,
+code-group,
+[class*="language-"],
+.token {
+  font-family:
+    "BerkeleyMono", ui-monospace, "SFMono-Regular", "Menlo", "Monaco",
+    "Consolas", "Liberation Mono", "Courier New", monospace;
+  font-variant-ligatures: none;
+}
+
+/* --- Selection ------------------------------------------------------------
+   Inverted/standout treatment from the design system (kept monochrome to
+   match the docs palette). */
+::selection {
+  background: #202020;
+  color: #ffffff;
+}
+
+.dark ::selection {
+  background: #eeeeee;
+  color: #111111;
+}
+
+/* --- Primary CTA button ---------------------------------------------------
+   The site's default button (int-btn-primary) is the inverted/standout
+   color: black-on-white in light mode, white-on-black in dark mode. Mintlify
+   can only express a single accent hex, so the topbar CTA is matched here. */
+#topbar-cta-button,
+#topbar-cta-button:is(a, button) {
+  background: #0a0a0a !important;
+  color: #ffffff !important;
   border: none !important;
-  background: transparent !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
   box-shadow: none !important;
-  padding-left: 0.375rem;
+  transition:
+    background-color 150ms ease-out,
+    color 150ms ease-out !important;
 }
 
-#sidebar .nav-dropdown-trigger:hover {
-  background-color: rgb(0 0 0 / 0.04) !important;
+#topbar-cta-button:hover {
+  background: #2a2a2a !important;
 }
 
-.dark #sidebar .nav-dropdown-trigger:hover {
-  background-color: rgb(255 255 255 / 0.06) !important;
+.dark #topbar-cta-button,
+.dark #topbar-cta-button:is(a, button) {
+  background: #f5f5f5 !important;
+  color: #0a0a0a !important;
 }
 
-#sidebar .nav-dropdown-trigger .nav-dropdown-item-icon {
-  border: none !important;
-  background: transparent !important;
-  height: auto !important;
-  width: auto !important;
-  padding: 0 !important;
+.dark #topbar-cta-button:hover {
+  background: #e4e4e4 !important;
 }
 
-.nav-dropdown-content {
+/* --- Surfaces -------------------------------------------------------------
+   Soften borders and round surfaces to match the design system's hairline
+   borders (gray-a3) and rounded containers (radius-2xl = 12px). */
+code-block,
+pre {
+  border-radius: 12px !important;
 }
 
-.nav-dropdown-content .nav-dropdown-item {
+:not(pre) > code {
+  border-radius: 6px !important;
 }
-
-.nav-dropdown-content .nav-dropdown-item-icon {
-  border: none !important;
-  background: transparent !important;
-  height: auto !important;
-  width: auto !important;
-  padding: 0 !important;
-}
-
-.nav-dropdown-content .nav-dropdown-item-description {
-  display: none !important;
-}
-
-#sidebar .nav-anchor span {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-}
-
-body:has([data-product-guide-index]) #sidebar a.nav-anchor[href='/'] {
-  color: rgb(var(--primary)) !important;
-  font-weight: 600 !important;
-}
-
-body:has([data-product-guide-index]) #sidebar a.nav-anchor[href='/'] span {
-  color: inherit !important;
-}
-
-body:has([data-product-guide-index]) #sidebar a.nav-anchor[href='/'] svg {
-  background-color: rgb(var(--primary)) !important;
-}
-
-.dark body:has([data-product-guide-index]) #sidebar a.nav-anchor[href='/'] {
-  color: rgb(var(--primary-light)/var(--tw-text-opacity,1)) !important;
-}
-
-.dark body:has([data-product-guide-index]) #sidebar a.nav-anchor[href='/'] svg {
-  background-color: rgb(var(--primary-light)/var(--tw-text-opacity,1)) !important;
-}
-
-:is(#content-area[data-current-path='/'], [data-current-path='/'] #content-area):has([data-product-guide-index]) {
-  background: transparent !important;
-  padding: 0 !important;
-}
-
-:is(#content-area[data-current-path='/'], [data-current-path='/'] #content-area):has([data-product-guide-index]) > div:first-child {
-  background: transparent !important;
-  padding-right: 0 !important;
-  padding-bottom: 0 !important;
-  padding-left: 0 !important;
-}
-
-[data-product-guide-index] a:not(.product-guide-feature-card) {
-  background-color: #fafafa !important;
-}
-
-.dark [data-product-guide-index] a:not(.product-guide-feature-card) {
-  background-color: #09090b !important;
-}
-
-.product-guide-feature-card {
-  grid-column: 1 / -1;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: space-between !important;
-  min-height: 260px;
-  background: url('/images/sample-feature-light.png') center / cover no-repeat !important;
-  border: none !important;
-  box-shadow: none !important;
-  color: white !important;
-  .dark & {
-    background-image: url('/images/sample-feature-dark.png') !important;
-  }
-}
-
-.product-guide-feature-card > div {
-  display: flex !important;
-  flex: 1;
-  flex-direction: column !important;
-  justify-content: space-between !important;
-}
-
-.product-guide-feature-card :is(h2, h3, p, span, svg) {
-  color: white !important;
-}
-
-.product-guide-feature-card :is(svg, [class*='icon']) {
-  background-color: white !important;
-  width: 2em !important;
-  height: 2em !important;
-  margin-top: 2px;
-}
-
-.product-guide-feature-card-title {
-  font-size: 1.2em;
-  font-weight: 500;
-}
-
-.product-guide-feature-card :is(h2, h3, p, span, svg).product-guide-feature-card-description {
-  font-size: 1.05em;
-  font-weight: 400;
-  color: rgb(var(--gray-50) / 62.5%) !important;
-  .dark & {
-    color: rgb(var(--gray-50) / 50%) !important;
-  }
-}
-
-img.nav-logo {
-  max-width: 220px;
-  height: auto;
-} */

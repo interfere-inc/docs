@@ -1,22 +1,4 @@
 {
-  "global": {
-    "tabs": [
-      {
-        "tab": "Home",
-        "href": "/"
-      },
-      {
-        "tab": "Changelog",
-        "icon": "scroll-text",
-        "href": "https://interfere.com/changelog"
-      },
-      {
-        "tab": "Dashboard",
-        "icon": "layout-dashboard",
-        "href": "https://interfere.com/auth"
-      }
-    ]
-  },
   "directory": "card",
   "groups": [
     {
