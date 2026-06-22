@@ -1,0 +1,121 @@
+---
+title: "Next.js SDK Reference — @interfere/next"
+sidebarTitle: "Next.js SDK"
+description: "Install and configure the @interfere/next package to start detecting, triaging, and resolving issues in your Next.js application."
+---
+
+The `@interfere/next` package is the official Interfere SDK for Next.js. Once installed and wrapped around your app, Interfere begins monitoring your application in real time — automatically detecting errors, tracking user impact, and surfacing root causes before your users file a bug report. Setup takes fewer than five minutes.
+
+## Installation
+
+Install the package using your preferred package manager.
+
+<CodeGroup>
+
+```bash npm
+npm install @interfere/next
+```
+
+```bash yarn
+yarn add @interfere/next
+```
+
+```bash pnpm
+pnpm add @interfere/next
+```
+
+</CodeGroup>
+
+## Wrap your app with InterfereProvider
+
+`InterfereProvider` is the root component that bootstraps the Interfere SDK. You add it once in your root `layout.tsx` file, and it automatically instruments every route in your application.
+
+Import it from the `/provider` subpath export:
+
+```tsx layout.tsx
+import { InterfereProvider } from "@interfere/next/provider";
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <InterfereProvider>
+      {children}
+    </InterfereProvider>
+  );
+}
+```
+
+<Note>
+  `InterfereProvider` must wrap the entire component tree. Placing it in the root `layout.tsx` at the top of your `app/` directory ensures all routes and nested layouts are covered.
+</Note>
+
+## Props
+
+`InterfereProvider` accepts the following props to control which SDK features are active and what data is collected.
+
+### The `consent` prop
+
+The `consent` prop gives you granular control over non-essential data collection in line with GDPR and SOC 2 Type II requirements. It accepts an object with two independent boolean flags:
+
+| Flag | What it controls |
+|------|-----------------|
+| `consent.analytics` | Page view events, rage click detection, and browser fingerprinting |
+| `consent.replay` | Session replay recording |
+
+<Warning>
+  **Error tracking is always on.** Capturing unhandled exceptions and runtime errors is classified as a necessary function of the SDK and is never gated by consent flags. This is consistent with GDPR's legitimate-interest basis for essential service operation.
+</Warning>
+
+Pass the `consent` prop directly to enable or disable each category:
+
+```tsx layout.tsx
+import { InterfereProvider } from "@interfere/next/provider";
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <InterfereProvider consent={{ analytics: true, replay: false }}>
+      {children}
+    </InterfereProvider>
+  );
+}
+```
+
+Consent state is also **reactive**. If you integrate with a consent management platform (CMP) such as c15t, CookieYes, or OneTrust, you can derive the `consent` prop from live CMP state. When the value changes — for example when a user updates their cookie preferences — the SDK loads or tears down the relevant plugins in real time without requiring a page reload.
+
+```tsx layout.tsx
+import { InterfereProvider } from "@interfere/next/provider";
+
+export default function Layout({ children }: LayoutProps<"/">) {
+  const { has } = useConsentManager(); // from your CMP
+
+  return (
+    <InterfereProvider
+      consent={{ analytics: has("measurement"), replay: has("experience") }}
+    >
+      {children}
+    </InterfereProvider>
+  );
+}
+```
+
+<Tip>
+  For a full walkthrough of static and dynamic consent patterns, and a list of supported CMPs, see the [Consent Management](/sdk/consent-management) guide.
+</Tip>
+
+## Identifying users
+
+Once a visitor authenticates, you can call `identify` via the SDK to associate their anonymous session with a persistent user identity. Identified users appear in the **Impacted Users** panel on any issue that affected them, and Interfere stitches together sessions across different surfaces — your Next.js app, your iOS app, and more — into a single user profile.
+
+<Tip>
+  Only identify users who have consented to data collection. See the [Identify](/sdk/identify) guide and the privacy considerations section for details.
+</Tip>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Consent Management" icon="shield-check" href="/sdk/consent-management">
+    Gate analytics and replay features based on your users' consent preferences — with native support for c15t, CookieYes, OneTrust, and custom CMPs.
+  </Card>
+  <Card title="Identify" icon="user-check" href="/sdk/identify">
+    Associate anonymous visitors with persistent user identities across every surface of your product.
+  </Card>
+</CardGroup>

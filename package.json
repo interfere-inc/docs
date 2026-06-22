@@ -1,0 +1,13 @@
+{
+  "name": "@interfere/docs",
+  "private": false,
+  "scripts": {
+    "dev": "mint dev",
+    "fmt": "oxfmt"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@interfere/typescript-config": "latest",
+    "mintlify": "latest"
+  }
+}

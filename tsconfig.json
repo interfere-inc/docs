@@ -1,0 +1,3 @@
+{
+  "extends": "@interfere/typescript-config/base.json"
+}

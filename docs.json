@@ -1,0 +1,48 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "almond",
+  "name": "Interfere",
+  "description": "Interfere empowers engineers, product managers and designers with real-time understanding of previously unseen bugs and issues.",
+  "colors": {
+    "primary": "#202020",
+    "light": "#202020",
+    "dark": "#EEEEEE"
+  },
+  "favicon": {
+    "light": "/icons/favicon/light.png",
+    "dark": "/icons/favicon/dark.png"
+  },
+  "logo": {
+    "href": "https://interfere.com",
+    "light": "/icons/logo/light.svg",
+    "dark": "/icons/logo/dark.svg"
+  },
+  "fonts": {
+    "$ref": "./config/fonts.json"
+  },
+  "icons": {
+    "library": "lucide"
+  },
+  "styling": {
+    "eyebrows": "breadcrumbs"
+  },
+  "contextual": {
+    "options": ["copy", "view", "assistant", "mcp", "add-mcp"]
+  },
+  "navigation": {
+    "$ref": "./config/navigation.json"
+  },
+  "navbar": {
+    "links": [],
+    "primary": {
+      "type": "button",
+      "label": "Get Started",
+      "href": "https://interfere.com/auth/waitlist"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/lukeshiels"
+    }
+  }
+}

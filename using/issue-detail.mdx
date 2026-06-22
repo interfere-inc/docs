@@ -1,0 +1,151 @@
+---
+title: "The Interfere Issue Detail View: Timeline and Fixes"
+sidebarTitle: "Issue Detail"
+description: "The Issue Detail view brings together everything Interfere knows about a problem — from root cause findings to session replays and suggested fixes."
+---
+
+When you open an issue from the Inbox, you arrive at the Issue Detail view. This is the single place where Interfere's automated findings, your team's human actions, and signals from your development toolchain converge. Everything you need to understand what broke, why it broke, who it affects, and how to fix it is here — no tab-switching or context-gathering required.
+
+## Issue header
+
+The header appears at the top of every issue and gives you a persistent summary regardless of which tab you're viewing.
+
+| Field | Description |
+|---|---|
+| **Title** | Human-readable summary of the problem (e.g., *Broken password reset link*) |
+| **Status** | Current lifecycle state: *Under Investigation*, *Active*, *In Recovery*, or *Resolved* |
+| **Priority** | `High`, `Medium`, or `Low` — set automatically, adjustable by your team |
+| **Assignee** | The team member responsible for this issue |
+| **Surface(s)** | Which parts of your product are affected (e.g., *Website Frontend*, *iOS App*) |
+| **Regression** | Whether Interfere identified this as a regression introduced by a recent change |
+| **First detection** | When Interfere first observed the problem (e.g., *36 minutes ago*) |
+| **Latest detection** | When the most recent affected event occurred (e.g., *Just now*) |
+| **Duration** | How long the issue has been active (e.g., *36 min 47 s*) |
+| **Impacted users** | Number of unique users affected since first detection (e.g., *12,881*) |
+
+Take issue `#120` as an example. Its header tells you immediately: this is a `High` priority regression affecting *Website Frontend* and *iOS App*, it was first detected 36 minutes ago, it is still active right now, and 12,881 users have been impacted. Luke Shiels is assigned. You have everything you need to understand scope before reading a single timeline entry.
+
+## Tabs: Activity, Sessions, Evidence
+
+Below the header, the issue detail is divided into three tabs.
+
+<CardGroup cols={3}>
+  <Card title="Activity" icon="timeline">
+    A chronological timeline of everything that has happened around this issue — agent findings, human actions, and external development events.
+  </Card>
+  <Card title="Sessions" icon="play">
+    Session replays collected from users who experienced the issue, with metadata including event count, error count, duration, and pages visited.
+  </Card>
+  <Card title="Evidence" icon="file-magnifying-glass">
+    The full collection of signals Interfere gathered — error logs, network traces, deployment diffs, and more.
+  </Card>
+</CardGroup>
+
+## Activity timeline
+
+The Activity tab is where the story of an issue unfolds. Interfere's redesigned timeline distinguishes clearly between three types of entries so you can always tell who or what drove each step.
+
+### Agent findings
+
+Findings are generated automatically by Interfere's agent as it investigates. They appear as structured cards inline in the timeline and may include:
+
+- **Code diffs** linking the issue to a specific change in your codebase
+- **Error rate charts** showing when a metric crossed a threshold
+- **Root cause explanations** in plain language
+
+For `#120 Broken password reset link`, the agent surfaced this finding three minutes after detection:
+
+> *A recent change in `auth/reset.ts` may cause invalid token validation.*
+
+The finding included a code diff showing that `baseUrl` was accidentally left pointing to `https://staging.example.com` instead of the production URL:
+
+```typescript
+// auth/reset.ts
+
+export function buildResetLink(userId: string) {
+  const token = sign<ResetTokenPayload>({ uid: userId });
+
+- const baseUrl = "https://staging.example.com";
++ const baseUrl = "https://example.com/reset-password";
+
+  const path = "/reset-password";
+  const url = new URL(path, baseUrl);
+  url.searchParams.set("token", token);
+  return url.toString();
+}
+```
+
+A follow-up **Fact** entry then noted: *Error rate increased from 0.2% to 12% within 6 minutes after deployment.*
+
+### Human actions
+
+Any action a team member takes is recorded in the timeline with their avatar, name, and a timestamp. Human action entries include:
+
+- Comments and replies
+- Status changes (e.g., *Status updated to Active*)
+- Priority updates (e.g., *Priority set to High*)
+- Assignment changes (e.g., *Assigned to Luke Shiels*)
+
+For `#120`, Jakub Krehel commented: *"Looks related to yesterday's auth refactor. Investigating token validation."* — that comment is threaded into the timeline alongside the agent's findings, making it easy to follow the conversation without losing the automated context.
+
+### External events
+
+Interfere connects to your development toolchain and surfaces relevant events directly in the timeline:
+
+- **Pull requests** — when a PR is opened or merged that references the issue
+- **CI runs** — build and test results for deployments linked to the issue
+- **Deployments** — new releases that land while the issue is open
+
+<Note>
+  Threading is supported on comments. Hover over any comment to reply inline. Threaded replies collapse by default so the top-level timeline remains scannable.
+</Note>
+
+## Changing status, assignee, or priority
+
+You can update any of the core issue properties directly from the header without leaving the detail view.
+
+<Steps>
+  <Step title="Click the field you want to change">
+    Click **Status**, **Assignee**, or **Priority** in the issue header. A dropdown appears with the available options.
+  </Step>
+  <Step title="Select the new value">
+    Choose the new status, team member, or priority level. The change is applied immediately.
+  </Step>
+  <Step title="Confirm the timeline entry">
+    The Activity tab records the change automatically — for example, *Priority set to High · 3 min ago* — so there is always an audit trail.
+  </Step>
+</Steps>
+
+<Warning>
+  Moving an issue to **Resolved** closes it and stops Interfere from collecting new evidence for it. If the problem recurs, Interfere will open a new issue. Use **In Recovery** if you've deployed a fix but want Interfere to keep monitoring for a full resolution.
+</Warning>
+
+## Suggested fixes
+
+When Interfere has enough context to recommend a course of action, a **Suggested fix** card appears in the Activity timeline. Suggested fixes are written in plain language and explain both what to change and why.
+
+For `#120`, the suggested fix read:
+
+> *The reset link points to a route that no longer exists after the latest deployment. Users are redirected to a generic error page instead of the password reset form.*
+
+Suggested fixes are starting points, not automatic deployments — your team stays in control of every change. From the suggested fix card you can:
+
+- **Copy** the recommendation text to paste into a PR description or Jira ticket
+- **Open the linked file** in your code viewer to inspect the relevant lines directly
+- **Dismiss** the suggestion if your team has a different resolution in mind
+
+## Linking to a code file or PR
+
+You can manually link an issue to a specific file in your codebase or to an open pull request. This is useful when you've identified the cause independently or when a PR was opened before Interfere made the connection automatically.
+
+<Steps>
+  <Step title="Open the link panel">
+    In the issue header, click **Link** or navigate to the **Evidence** tab and select **Add link**.
+  </Step>
+  <Step title="Choose the link type">
+    Select **Code file** to point to a specific file path and line range, or **Pull request** to reference an open PR by URL or PR number.
+  </Step>
+  <Step title="Save the link">
+    Once saved, the link appears in the issue header and as an entry in the Activity timeline, visible to everyone on the team.
+  </Step>
+</Steps>

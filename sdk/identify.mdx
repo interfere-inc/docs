@@ -1,0 +1,62 @@
+---
+title: "Identify Users Across Surfaces — Interfere SDK"
+sidebarTitle: "Identify"
+description: "Associate anonymous visitors with persistent user identities across every surface of your product, so impacted users are always a real person in Interfere."
+---
+
+By default, Interfere tracks every visitor as an anonymous session. That's enough to detect issues and measure blast radius, but it means the **Impacted Users** count on an issue is a number without names attached. The `identify` feature changes that: once you call `identify` via the SDK after a user authenticates, Interfere associates their anonymous session with a persistent user identity and carries that association forward — across page navigations, future sessions, and every surface of your product.
+
+Interfere recently rolled out the identify feature, allowing you to associate visitors with persistent users in your app across surfaces.
+
+## What identify does
+
+When you call `identify`, the SDK links the current anonymous visitor ID to the user identity you supply. From that point on:
+
+- Every session that visitor starts — before and after authentication — is attributed to the same user.
+- Events, errors, and session replays all carry the user's identity.
+- When an issue affects that user, their name and details appear in the **Impacted Users** panel on the issue detail view.
+- Sessions from different surfaces (your Next.js web app, your iOS app, your API) are stitched into a single unified profile for that user, even if they authenticated through different auth providers on each surface.
+
+## Cross-surface identity
+
+This is the most powerful aspect of identify. Consider a user who:
+
+1. Signs up on your marketing site (Next.js)
+2. Activates their account in your iOS app
+3. Returns to the web app two weeks later
+
+Without identify, Interfere sees three separate anonymous sessions. With identify, they are all the same user. When Interfere detects an issue that affected this user across any surface, you see their complete session history in one place — not three disconnected fragments.
+
+> A user of your iOS app and a user of your Next.js app are just one user — even across different authentication providers — giving you total visibility into your user's sessions across your entire product surface area.
+
+## How to call identify
+
+Call `identify` via the SDK as soon as your app has resolved the current user's identity — typically right after a successful sign-in or when you rehydrate an existing session from a cookie or token. Import the SDK from `@interfere/next` and call the identify method with the user's details.
+
+A common pattern is to call `identify` inside a component that has access to your auth session, then trigger it when the session resolves — for example, in a `useEffect` that runs when your auth context populates. Place that component inside `InterfereProvider` so it has access to the SDK instance.
+
+<Note>
+  The exact method signature and supported identity fields are documented in the SDK README on npm. Refer to the `@interfere/next` package page for the most up-to-date API details.
+</Note>
+
+## Identified users in the Impacted Users panel
+
+After you call `identify`, the user's details appear in the **Impacted Users** panel on any issue that affected them. You can click through to see all sessions associated with that user across every surface where they were active while the issue was present.
+
+<Tip>
+  The impacted user count on an issue reflects all sessions linked to the same user identity, regardless of which surface or auth provider originated those sessions. This gives you an accurate picture of how broadly an issue affected your user base.
+</Tip>
+
+## Privacy considerations
+
+`identify` processes personal data. Before calling it, make sure you have a lawful basis under GDPR for associating this visitor with their real identity. In practice that means:
+
+- **Only call `identify` for authenticated users.** Anonymous visitors who have not consented to tracking should remain anonymous.
+- **Check consent state before identifying.** If your user has not consented to analytics, do not pass their identity to the SDK.
+- **Respect deletion requests.** If a user requests erasure under GDPR, remove their identity from your Interfere data via the dashboard or API.
+
+<Warning>
+  Do not call `identify` before confirming the user has consented to data collection. Linking an anonymous session to a real identity without consent may violate GDPR's rules on personal data processing.
+</Warning>
+
+For a full explanation of how consent flags work and how to integrate with your CMP, see the [Consent Management](/sdk/consent-management) guide.

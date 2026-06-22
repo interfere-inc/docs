@@ -1,0 +1,111 @@
+---
+title: "Code Connection: Link Issues to Code Changes in Interfere"
+sidebarTitle: "Code Connection"
+description: "Connect Interfere to your GitHub or GitLab repository so it can link detected issues to specific files, commits, and deployments in your codebase."
+---
+
+Code Connection lets Interfere safely link the issues it detects to the actual code changes that caused them. When Interfere understands your repository, it can pinpoint the specific file and line that introduced a regression, show you the diff in the issue timeline, and tell you which deployment first triggered the problem — all without you having to correlate logs and pull requests by hand. It's what powers Interfere's "Connect problems to code" capability and is one of the most important tools in Interfere's root cause analysis engine.
+
+## What Code Connection enables
+
+Once your repository is connected, Interfere gains the context it needs to do more than surface symptoms. It starts connecting the dots between what's breaking in production and what changed in your code.
+
+<CardGroup cols={2}>
+  <Card title="File-level issue linking" icon="file-code">
+    Interfere links detected findings to the specific files most likely responsible — for example, `auth/reset.ts` — so you can open the right file immediately instead of searching.
+  </Card>
+  <Card title="Code diffs in the timeline" icon="code-compare">
+    When a regression is detected, the relevant diff appears directly in the issue's Activity timeline, showing exactly what changed and when.
+  </Card>
+  <Card title="Deployment regression detection" icon="rocket">
+    Interfere monitors error rates across deployments and flags when a specific release introduced the problem, correlating the timing of the deploy with the onset of the issue.
+  </Card>
+  <Card title="Root cause analysis" icon="magnifying-glass">
+    By combining session data, evidence, and code context, Interfere can explain not just *what* is broken but *why* — tracing the issue back to the change that caused it.
+  </Card>
+</CardGroup>
+
+## How it works: an example
+
+Here's a real example of Code Connection in action. Interfere detected a surge in failed password reset attempts and — using the connected repository — identified the likely cause in `auth/reset.ts`:
+
+```diff
+// auth/reset.ts
+
+export function buildResetLink(userId: string) {
+  const token = sign<ResetTokenPayload>({ uid: userId });
+
+- const baseUrl = "https://staging.example.com";
++ const baseUrl = "https://example.com/reset-password";
+
+  const path = "/reset-password";
+  const url = new URL(path, baseUrl);
+  url.searchParams.set("token", token);
+```
+
+In this case, the `baseUrl` had been left pointing to `staging.example.com` instead of the production URL. Interfere surfaced this diff in the issue timeline alongside a finding — *"A recent change in auth/reset.ts may cause invalid token validation"* — within minutes of the deployment going live, before any user had filed a support ticket.
+
+## Connecting your repository
+
+Interfere supports GitHub and GitLab. The connection requires read-only access — Interfere never writes to your repository.
+
+<Steps>
+  <Step title="Open Integrations settings">
+    In the Interfere dashboard, navigate to **Settings → Integrations** and select **Code Connection**.
+  </Step>
+  <Step title="Choose your provider">
+    Select **GitHub** or **GitLab** depending on where your repository is hosted. You'll be redirected to your provider's authorization screen.
+
+    <Note>
+      For GitHub, you can choose to install the Interfere GitHub App on your entire organization or on specific repositories. We recommend limiting access to only the repositories you want Interfere to analyze.
+    </Note>
+  </Step>
+  <Step title="Authorize access">
+    Complete the OAuth authorization flow on your provider's site. Interfere requests read-only access to repository metadata and diffs — it does not request write permissions.
+  </Step>
+  <Step title="Select repositories">
+    Back in the Interfere dashboard, choose which repositories to connect. You can connect multiple repositories if your product spans more than one codebase.
+  </Step>
+  <Step title="Configure branch tracking">
+    Select the branch (or branches) Interfere should track for deployment correlation — typically your `main` or `production` branch. Interfere will monitor commits and releases on this branch to detect regressions.
+  </Step>
+  <Step title="Confirm the connection">
+    Click **Save**. Interfere will verify the connection and begin indexing recent commits and release metadata. The integration will be active within a few minutes.
+  </Step>
+</Steps>
+
+## Security and data access
+
+Code Connection is designed to give Interfere the context it needs while touching as little of your source code as possible.
+
+<CardGroup cols={2}>
+  <Card title="Read-only access" icon="lock">
+    Interfere requests only read permissions. It cannot create branches, open pull requests, push commits, or modify your repository in any way.
+  </Card>
+  <Card title="Diffs and metadata only" icon="shield-check">
+    Interfere analyzes **diffs** (what changed between commits) and **metadata** (file paths, commit messages, timestamps). It does not ingest or store your complete source files.
+  </Card>
+</CardGroup>
+
+<Warning>
+  Interfere never stores your raw source code. If you have questions about data handling for your specific compliance requirements, contact the Interfere team — additional documentation is available on request.
+</Warning>
+
+This approach means Interfere can identify *where* a change was made and *what* changed without needing a full copy of your codebase. The diff is enough to surface the root cause and display the relevant context in the issue timeline.
+
+## How Code Connection powers root cause analysis
+
+When Interfere detects a problem, it doesn't just report what's failing — it actively searches for an explanation. Code Connection is a key input to that process.
+
+Interfere correlates:
+
+- **The onset of the issue** — the exact time errors or behavioral changes started appearing.
+- **Recent deployments** — which release went out closest to that onset time.
+- **The diff from that release** — what files changed and how.
+- **Session and evidence data** — which user paths and error traces are most affected.
+
+When all of these signals point toward the same file or function, Interfere surfaces a **Finding** in the issue timeline that names the suspect code change and shows the diff. Engineers can immediately validate the finding and move to a fix — rather than spending hours correlating logs, deployment history, and error traces across separate tools.
+
+<Tip>
+  Code Connection works best when you use Interfere's release tracking alongside it. Tagging deployments in Interfere (via the SDK or CI integration) gives the engine precise timing data, which significantly improves the accuracy of regression detection.
+</Tip>

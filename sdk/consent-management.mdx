@@ -1,0 +1,124 @@
+---
+title: "Consent Management in the Interfere SDK"
+sidebarTitle: "Consent Management"
+description: "Gate analytics and session replay features based on your users' consent preferences, with native support for c15t, CookieYes, OneTrust, and custom CMPs."
+---
+
+Modern privacy regulations and security frameworks require you to collect only the data your users have explicitly agreed to share. Interfere's consent management system lets you pass a single `consent` prop to `InterfereProvider` and the SDK will automatically activate or deactivate the relevant features — no custom conditional logic required on your end. This keeps you aligned with GDPR's requirements on lawful basis for data processing and in scope for SOC 2 Type II audits.
+
+## Why consent matters
+
+Two frameworks directly govern how you may collect behavioral and session data from users:
+
+- **GDPR** — Requires a lawful basis for each category of personal data you process. Analytics and session replay typically require explicit consent; error monitoring can be justified under legitimate interest as a necessary function.
+- **SOC 2 Type II** — Requires documented controls around data collection and evidence that those controls are enforced in your production systems. Consent gating at the SDK level creates a clear, auditable boundary.
+
+Interfere is currently in its SOC 2 Type II observation period (estimated completion Q2 2026) and is actively working toward GDPR and ISO 27001 compliance.
+
+## How the `consent` prop works
+
+Pass a `consent` object to `InterfereProvider`. Only the features whose flags are `true` will run. The two independently toggleable categories are:
+
+| Flag | What it controls |
+|------|-----------------|
+| `consent.analytics` | Page view events, rage click detection, and browser fingerprinting |
+| `consent.replay` | Session replay recording |
+
+<Warning>
+  **Error tracking is always on.** Capturing unhandled exceptions and runtime errors is treated as a necessary function of the SDK and is never gated by consent. This mirrors how GDPR treats strictly necessary processing — you do not need user consent to operate a service safely.
+</Warning>
+
+## Static consent
+
+If your consent policy is fixed — for example, you have a simple cookie banner that users accept once at sign-up — you can pass a static object directly:
+
+```tsx layout.tsx
+import { InterfereProvider } from "@interfere/next/provider";
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <InterfereProvider consent={{ analytics: true, replay: false }}>
+      {children}
+    </InterfereProvider>
+  );
+}
+```
+
+In this example, page events, rage clicks, and fingerprinting are active, but session replay is disabled.
+
+## Dynamic / reactive consent
+
+If you use a consent management platform (CMP), you can derive the `consent` prop directly from live CMP state. Because the prop is reactive, the SDK will **load or tear down plugins in real time** whenever the user updates their preferences — no page reload needed.
+
+```tsx layout.tsx
+import { InterfereProvider } from "@interfere/next/provider";
+
+export default function Layout({ children }: LayoutProps<"/">) {
+  const { has } = useConsentManager(); // from your CMP
+
+  return (
+    <InterfereProvider
+      consent={{ analytics: has("measurement"), replay: has("experience") }}
+    >
+      {children}
+    </InterfereProvider>
+  );
+}
+```
+
+When `has("measurement")` flips from `false` to `true` — for example, when the user clicks "Accept all" on your cookie banner — the analytics plugin starts collecting data immediately. When it flips back, the plugin tears down and stops collecting without requiring a full page navigation.
+
+## Updating consent imperatively with `consent.set()`
+
+If you need to update consent state outside of the React prop system — for example, in response to a callback from a legacy CMP that lives outside your component tree — you can call `consent.set()` directly on the SDK instance:
+
+```tsx
+import { interfere } from "@interfere/next";
+
+// Call this wherever your CMP fires its callback
+interfere.consent.set({
+  analytics: true,
+  replay: true,
+});
+```
+
+The SDK responds to this call the same way it responds to a prop update: plugins are loaded or torn down in real time.
+
+## Supported CMPs
+
+Interfere works with any CMP that can expose the user's consent state as a boolean value. The following platforms are natively supported and have been tested with the SDK:
+
+<CardGroup cols={2}>
+  <Card title="c15t" icon="shield" href="https://c15t.com">
+    Open-source consent infrastructure with a React-first API.
+  </Card>
+  <Card title="CookieYes" icon="cookie" href="https://www.cookieyes.com">
+    Popular cookie consent banner with a JavaScript event API.
+  </Card>
+  <Card title="OneTrust" icon="lock" href="https://www.onetrust.com">
+    Enterprise consent and preference management platform.
+  </Card>
+  <Card title="Custom" icon="code" href="#">
+    Any CMP that exposes consent state as a boolean — pass it directly to the `consent` prop.
+  </Card>
+</CardGroup>
+
+<Note>
+  If you're using a CMP not listed here, you can still integrate it by mapping its consent categories to the `analytics` and `replay` booleans and passing the result to `InterfereProvider`. Reach out on Slack if you need help with a specific platform.
+</Note>
+
+## What happens when consent changes
+
+The following table summarises what the SDK does when each flag transitions:
+
+| Transition | SDK behaviour |
+|------------|--------------|
+| `analytics: false → true` | Starts collecting page events, rage clicks, and fingerprint data |
+| `analytics: true → false` | Stops collecting; flushes any buffered events |
+| `replay: false → true` | Starts recording session replay |
+| `replay: true → false` | Stops recording; discards the current in-progress replay |
+| Error tracking | Always active — not affected by consent flags |
+
+## Privacy considerations for identify
+
+Even with consent gating in place, you should only call `interfere.identify()` for users who have agreed to being tracked. Associating a session with a real user identity is a form of personal data processing that requires a lawful basis under GDPR. See the [Identify](/sdk/identify) guide for details.

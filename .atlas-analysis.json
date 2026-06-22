@@ -1,0 +1,90 @@
+{
+  "projectType": "saas",
+  "projectName": "Interfere",
+  "projectDescription": "Interfere is a real-time issue intelligence platform that automatically detects, triages, and helps resolve software bugs before users report them.",
+  "theme": "luma",
+  "primaryColor": "#7c7c7c",
+  "lightColor": "#050505",
+  "darkColor": "#e0e0df",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "install-sdk"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/issues",
+              "concepts/evidence",
+              "concepts/surfaces",
+              "concepts/releases"
+            ]
+          },
+          {
+            "group": "Using Interfere",
+            "pages": [
+              "using/inbox",
+              "using/issue-detail",
+              "using/session-replays",
+              "using/collaboration",
+              "using/user-tracking"
+            ]
+          },
+          {
+            "group": "SDK Configuration",
+            "pages": [
+              "sdk/next-js",
+              "sdk/consent-management",
+              "sdk/identify"
+            ]
+          },
+          {
+            "group": "Integrations & API",
+            "pages": [
+              "integrations/oauth-api-keys",
+              "integrations/slack-teams",
+              "integrations/code-connection"
+            ]
+          },
+          {
+            "group": "Security & Compliance",
+            "pages": [
+              "security/overview",
+              "security/sso-scim",
+              "security/roles-permissions"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Automatic issue detection before users report problems",
+    "Full-stack root cause analysis linking bugs to code changes",
+    "Session replays attached to every detected issue",
+    "User impact tracking showing exactly who is affected",
+    "Consent management with CMP integrations (c15t, CookieYes, OneTrust)",
+    "OAuth applications and scoped API keys for developer integrations",
+    "Multiplayer collaboration via Slack, Teams, and in-app comments",
+    "Release tracking that connects deployments to regressions",
+    "SAML/OIDC SSO and SCIM provisioning",
+    "SOC 2 Type II compliance (in observation period)"
+  ],
+  "publicApiSurface": [
+    "InterfereProvider (Next.js SDK component)",
+    "consent prop on InterfereProvider ({ analytics: boolean, replay: boolean })",
+    "consent.set() — update consent state reactively",
+    "identify() — associate visitors with persistent users",
+    "OAuth applications with granular scopes",
+    "API keys with granular scopes",
+    "@interfere/next npm package"
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "global": {
+    "anchors": [
+      {
+        "anchor": "Home",
+        "icon": "house",
+        "href": "/"
+      },
+      {
+        "anchor": "Changelog",
+        "icon": "scroll-text",
+        "href": "https://interfere.com/changelog"
+      },
+      {
+        "anchor": "Dashboard",
+        "icon": "layout-dashboard",
+        "href": "https://interfere.com/auth"
+      }
+    ]
+  },
+  "directory": "card",
+  "groups": [
+    {
+      "group": "Get Started",
+      "icon": "rocket",
+      "expanded": true,
+      "pages": ["introduction", "quickstart", "install-sdk"]
+    },
+    {
+      "group": "Core Concepts",
+      "icon": "book-open",
+      "pages": [
+        "concepts/issues",
+        "concepts/evidence",
+        "concepts/surfaces",
+        "concepts/releases"
+      ]
+    },
+    {
+      "group": "Using Interfere",
+      "icon": "layout-dashboard",
+      "pages": [
+        "using/inbox",
+        "using/issue-detail",
+        "using/session-replays",
+        "using/collaboration",
+        "using/user-tracking"
+      ]
+    },
+    {
+      "group": "SDK",
+      "icon": "code",
+      "pages": ["sdk/next-js", "sdk/consent-management", "sdk/identify"]
+    },
+    {
+      "group": "Integrations & API",
+      "icon": "plug",
+      "pages": [
+        "integrations/oauth-api-keys",
+        "integrations/slack-teams",
+        "integrations/code-connection"
+      ]
+    },
+    {
+      "group": "Security",
+      "icon": "shield",
+      "pages": [
+        "security/overview",
+        "security/sso-scim",
+        "security/roles-permissions"
+      ]
+    }
+  ]
+}

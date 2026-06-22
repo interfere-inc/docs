@@ -1,0 +1,65 @@
+---
+title: "Surfaces: Organize and Filter Issues by Product Area"
+sidebarTitle: "Surfaces"
+description: "Learn how surfaces map issues to distinct areas of your product, help teams filter their inbox, and enable automatic routing of issues to the right owners."
+---
+
+A surface is a distinct area of your product — such as **Website Frontend**, **iOS App**, or **API** — that Interfere uses to categorize where an issue is observed. Surfaces give your team a shared vocabulary for talking about where a problem lives, and they make it practical for engineers, product managers, and designers to filter their inbox down to the issues that are relevant to their work without wading through everything happening across the entire system.
+
+## What a Surface Represents
+
+Surfaces map to the parts of your product that real users interact with or that your infrastructure exposes. Common examples include:
+
+<CardGroup cols={3}>
+  <Card title="Website Frontend" icon="browser">
+    Your web application — the browser-based experience your users see. Issues here typically involve UI errors, broken flows, or client-side exceptions.
+  </Card>
+  <Card title="iOS App" icon="mobile">
+    Your native iOS application. Issues on this surface often manifest as crashes, failed API calls, or broken in-app flows specific to the Apple platform.
+  </Card>
+  <Card title="API" icon="code">
+    Your backend API layer. Issues here may affect many surfaces at once — if the API returns stale data or errors, both the web and mobile surfaces may be impacted downstream.
+  </Card>
+</CardGroup>
+
+You define which surfaces exist in your Interfere workspace during setup. Surfaces are flexible — you can name them to match your team's own terminology, whether that is "Dashboard", "Checkout", "Admin Panel", or anything else that reflects a meaningful boundary in your product.
+
+## How Surfaces Are Assigned to Issues
+
+When Interfere detects an anomaly and opens an issue, it automatically assigns one or more surfaces based on where the signals originated. It examines the SDK context, the session data, the error source, and the affected endpoints to determine which surface — or surfaces — the problem is occurring on.
+
+<Note>
+  You do not need to manually tag issues with surfaces. Interfere reads the signal origin from your instrumentation and assigns surfaces automatically at detection time.
+</Note>
+
+For example, when Issue **#120** (Broken password reset link) was created, Interfere detected failed password reset attempts coming from both browser sessions and iOS app sessions. It automatically assigned both **Website Frontend** and **iOS App** to the issue, reflecting that the underlying problem — an invalid reset link URL — was affecting users regardless of which surface they were using.
+
+## Multi-Surface Issues
+
+Some issues affect more than one area of your product simultaneously. This happens when the root cause lives in a shared layer — like the API, an authentication service, or a third-party integration — that multiple surfaces depend on.
+
+<Warning>
+  Multi-surface issues tend to have higher user impact than single-surface issues because the same broken behavior is replicated across multiple client environments. Interfere accounts for this in its priority calculation.
+</Warning>
+
+When an issue is assigned to multiple surfaces, all of those surface tags are displayed on the inbox row and in the issue detail panel. Team members subscribed to any one of the affected surfaces will see the issue in their filtered inbox view.
+
+## Surface Filtering in the Inbox
+
+The inbox supports filtering by surface so that each team member can focus on the issues that are relevant to their area of ownership.
+
+For example, a mobile engineer can filter the inbox to show only **iOS App** issues, while a backend engineer filters for **API** issues. This is especially useful in larger teams where dozens of issues may be open at once across a complex product.
+
+<Tip>
+  If you are responsible for multiple surfaces, you can select more than one surface filter at the same time. The inbox will show issues that match any of your selected surfaces.
+</Tip>
+
+## Surfaces and Team Routing
+
+Surfaces are also used as a routing signal for automatic assignment. When Interfere opens a new issue, it can route it to the team member or team that owns the affected surface. You configure ownership rules per surface in your workspace settings.
+
+This means that the right engineer is notified the moment an issue appears on their surface — no manual triage handoff required.
+
+<Accordion title="Can I change the surfaces assigned to an issue?">
+  Yes. While Interfere assigns surfaces automatically, you can add or remove surfaces from the issue detail panel at any time. This is useful if the initial detection only captured one surface but your investigation reveals the problem is broader — or narrower — than originally detected.
+</Accordion>
