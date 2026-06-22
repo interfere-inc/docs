@@ -66,16 +66,17 @@ code-group,
 }
 
 /* --- Primary CTA button ---------------------------------------------------
-   The site's default button (int-btn-primary) is the inverted/standout
-   color: black-on-white in light mode, white-on-black in dark mode. Mintlify
-   can only express a single accent hex, so the topbar CTA is matched here. */
+   Matches the design system's default button (int-btn-primary), which uses
+   the inverted-solid token: black-a12 on white in light mode, white-a12 on
+   black in dark mode, with -a10 hover / -a9 active. Mintlify only supports a
+   single accent hex, so the topbar CTA is matched here directly. */
 #topbar-cta-button,
 #topbar-cta-button:is(a, button) {
-  background: #0a0a0a !important;
-  color: #ffffff !important;
+  background: rgba(0, 0, 0, 0.95) !important; /* inverted-solid (black-a12) */
+  color: #ffffff !important; /* on-inverted-foreground */
   border: none !important;
-  border-radius: 8px !important;
-  font-weight: 500 !important;
+  border-radius: 8px !important; /* int-btn-rounded (rounded-lg) */
+  font-weight: 500 !important; /* font-medium */
   box-shadow: none !important;
   transition:
     background-color 150ms ease-out,
@@ -83,17 +84,25 @@ code-group,
 }
 
 #topbar-cta-button:hover {
-  background: #2a2a2a !important;
+  background: rgba(0, 0, 0, 0.8) !important; /* inverted-solid-hover (black-a10) */
+}
+
+#topbar-cta-button:active {
+  background: rgba(0, 0, 0, 0.7) !important; /* inverted-solid-active (black-a9) */
 }
 
 .dark #topbar-cta-button,
 .dark #topbar-cta-button:is(a, button) {
-  background: #f5f5f5 !important;
-  color: #0a0a0a !important;
+  background: rgba(255, 255, 255, 0.95) !important; /* inverted-solid (white-a12) */
+  color: #000000 !important; /* on-inverted-foreground */
 }
 
 .dark #topbar-cta-button:hover {
-  background: #e4e4e4 !important;
+  background: rgba(255, 255, 255, 0.8) !important; /* white-a10 */
+}
+
+.dark #topbar-cta-button:active {
+  background: rgba(255, 255, 255, 0.7) !important; /* white-a9 */
 }
 
 /* --- Surfaces -------------------------------------------------------------
