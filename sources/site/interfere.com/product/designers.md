@@ -8,7 +8,7 @@ Interfere delivers real-time context the instant your users get stuck, frustrate
 
 [Join waitlist](https://interfere.com/auth/waitlist) [Request a demo](https://interfere.com/contact-sales)
 
-4 COLUMNS 
+4 COLUMNS
 4 ROWS
 
 Ready for development
@@ -38,13 +38,12 @@ Trusted and funded by
 Interfere connects user behavior, sessions, releases, and engineering context into a single explanation.
 
 - Follow ongoing problems
- 
- When a problem is detected, Interfere analyses users’ behavior and reports on what’s wrong.
- 
+
+When a problem is detected, Interfere analyses users’ behavior and reports on what’s wrong.
+
 - Understand what’s going on
- 
+
 - Follow the problem’s resolution
- 
 
 Inbox
 

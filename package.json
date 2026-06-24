@@ -6,8 +6,8 @@
     "fmt": "oxfmt"
   },
   "devDependencies": {
-    "@types/bun": "latest",
     "@interfere/typescript-config": "latest",
+    "@types/bun": "latest",
     "mintlify": "latest"
   }
 }

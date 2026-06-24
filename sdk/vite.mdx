@@ -4,6 +4,8 @@ description: "Install the Interfere SDK in your Vite app. One-time setup, then I
 sidebarTitle: "Vite"
 ---
 
+import { TechIcon } from "../components/TechIcon";
+
 `@interfere/vite` wires Interfere into your Vite build and your running app together. You set it up once: drop in the plugin and start the SDK before render. After that, Interfere records everything the app produces (errors, sessions, traces, and logs) with no sampling and no knobs to turn. It then collapses related symptoms into one problem, weighs how much it matters, and works out the cause for you.
 
 It works for a plain single-page app and for server-rendered setups like TanStack Start. This page covers the install plus the handful of settings most teams actually touch.
@@ -42,6 +44,7 @@ These four steps cover a single-page app. If you server-render (TanStack Start, 
     ```
 
     </CodeGroup>
+
   </Step>
   <Step title="Add the plugin to your Vite config">
     The plugin stamps your public key into the build and, with `build.sourcemap` on, uploads source maps so a production stack trace points back to your original code instead of minified output.
@@ -50,12 +53,13 @@ These four steps cover a single-page app. If you server-render (TanStack Start, 
     import { interfere } from "@interfere/vite/plugin";
     import react from "@vitejs/plugin-react";
     import { defineConfig } from "vite";
-    
+
     export default defineConfig({
       build: { sourcemap: true },
       plugins: [react(), interfere()],
     });
     ```
+
   </Step>
   <Step title="Start the SDK before render">
     Call `init()` before you mount React, so the SDK is capturing the moment your app loads.
@@ -64,44 +68,49 @@ These four steps cover a single-page app. If you server-render (TanStack Start, 
     import { init } from "@interfere/vite/init";
     import { StrictMode } from "react";
     import { createRoot } from "react-dom/client";
-    
+
     import { App } from "./app";
-    
+
     init();
-    
+
     createRoot(document.getElementById("root")!).render(
       <StrictMode>
         <App />
       </StrictMode>
     );
     ```
+
   </Step>
   <Step title="Add the provider">
     Wrap your app once so components can reach the SDK through hooks.
 
     ```tsx src/app.tsx
     import { InterfereProvider } from "@interfere/vite/provider";
-    
+
     export function App() {
       return <InterfereProvider>{/* your routes */}</InterfereProvider>;
     }
     ```
+
   </Step>
 </Steps>
 
 <Check>
-  That's the whole install for a single-page app. Run it, trigger an error, and it shows up in your dashboard within seconds, already grouped and triaged. (To control whether the SDK runs in development, see [the FAQ](#faq).)
+  That's the whole install for a single-page app. Run it, trigger an error, and it shows up in your
+  dashboard within seconds, already grouped and triaged. (To control whether the SDK runs in
+  development, see [the FAQ](#faq).)
 </Check>
 
 ## Environment variables
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `VITE_INTERFERE_PUBLIC_KEY` | Yes | Your surface public key (`interfere_pub_<region>_…`, where `<region>` is `us` or `eu`). Safe to expose; the plugin stamps it into your build. |
-| `INTERFERE_API_KEY` | For releases | Interfere API key (`interfere_secret_<region>_…`). A **build-time credential** for source-map upload and release metadata. |
+| Variable                    | Required     | Description                                                                                                                                   |
+| --------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_INTERFERE_PUBLIC_KEY` | Yes          | Your surface public key (`interfere_pub_<region>_…`, where `<region>` is `us` or `eu`). Safe to expose; the plugin stamps it into your build. |
+| `INTERFERE_API_KEY`         | For releases | Interfere API key (`interfere_secret_<region>_…`). A **build-time credential** for source-map upload and release metadata.                    |
 
 <Warning>
-  Only `VITE_`-prefixed variables reach the browser. Keep `INTERFERE_API_KEY` out of any `VITE_` name so your secret never ships in the client bundle.
+  Only `VITE_`-prefixed variables reach the browser. Keep `INTERFERE_API_KEY` out of any `VITE_`
+  name so your secret never ships in the client bundle.
 </Warning>
 
 ## Configuration
@@ -117,7 +126,8 @@ init({ serviceName: "@acme/storefront" });
 ```
 
 <ParamField path="serviceName" default="interfere-sdk" type="string">
-  A stable name for this app. Interfere uses it to keep each surface's data separate, and to correlate the same issue across surfaces into one problem.
+  A stable name for this app. Interfere uses it to keep each surface's data separate, and to
+  correlate the same issue across surfaces into one problem.
 </ParamField>
 
 ### Choose what's captured
@@ -131,13 +141,13 @@ init({ plugins: { replay: false } });
 <ParamField path="plugins" type="object">
   Each signal can be toggled on or off. All default to on.
 
-  - `errors`: uncaught exceptions
-  - `logs`: console output
-  - `device`: device and browser info
-  - `pageEvents`: pageviews and clicks
-  - `rageClick`: rage-click detection
-  - `replay`: session replay
-</ParamField>
+- `errors`: uncaught exceptions
+- `logs`: console output
+- `device`: device and browser info
+- `pageEvents`: pageviews and clicks
+- `rageClick`: rage-click detection
+- `replay`: session replay
+  </ParamField>
 
 ## Identity
 
@@ -171,9 +181,9 @@ function SyncIdentity() {
 <ParamField path="source" type="object" required>
   Where the identity came from.
 
-  - `type`: one of `clerk`, `auth0`, or `custom`
-  - `name`: the provider's display name, for example `"Clerk"`
-</ParamField>
+- `type`: one of `clerk`, `auth0`, or `custom`
+- `name`: the provider's display name, for example `"Clerk"`
+  </ParamField>
 
 <ParamField path="name" type="string">
   Display name.
@@ -192,7 +202,8 @@ function SyncIdentity() {
 </ParamField>
 
 <Note>
-  `identity.set()` is deduplicated per session, so calling it on every render is fine. Identity clears automatically when the session rotates.
+  `identity.set()` is deduplicated per session, so calling it on every render is fine. Identity
+  clears automatically when the session rotates.
 </Note>
 
 ## Consent
@@ -205,11 +216,11 @@ Everything captures out of the box. To tie that to a cookie banner or a privacy 
 </InterfereProvider>
 ```
 
-| Category | What it covers | Gateable |
-| --- | --- | --- |
-| `necessary` | Error tracking, logs | Always on |
-| `analytics` | Page events, rage clicks, device info | Yes |
-| `replay` | Session replay | Yes |
+| Category    | What it covers                        | Gateable  |
+| ----------- | ------------------------------------- | --------- |
+| `necessary` | Error tracking, logs                  | Always on |
+| `analytics` | Page events, rage clicks, device info | Yes       |
+| `replay`    | Session replay                        | Yes       |
 
 Update consent at runtime through the same hook:
 
@@ -223,7 +234,9 @@ consent.set(); // grant everything
 Interfere works with any consent platform (c15t, CookieYes, OneTrust). Map its booleans to the categories above.
 
 <Tip>
-  To apply consent before the first render, and avoid any flash where a non-consented feature loads, pass it to `init({ consent })` instead. The provider prop then keeps it in sync as the user changes their mind.
+  To apply consent before the first render, and avoid any flash where a non-consented feature loads,
+  pass it to `init({consent})` instead. The provider prop then keeps it in sync as the user changes
+  their mind.
 </Tip>
 
 ## Report a handled error
@@ -252,11 +265,11 @@ If you server-render with TanStack Start (or another Nitro-based setup), do the 
     import { handle } from "@interfere/vite/handler";
     import { register } from "@interfere/vite/server";
     import { createFileRoute } from "@tanstack/react-router";
-    
+
     if (typeof window === "undefined") {
       register();
     }
-    
+
     export const Route = createFileRoute("/api/interfere/$")({
       server: {
         handlers: {
@@ -267,16 +280,18 @@ If you server-render with TanStack Start (or another Nitro-based setup), do the 
       },
     });
     ```
+
   </Step>
   <Step title="Start the SDK in your client entry">
     Call `init()` before hydration, in your client entry rather than `main.tsx`.
 
     ```tsx src/client.tsx
     import { init } from "@interfere/vite/init";
-    
+
     init();
     // ...hydrateRoot(...)
     ```
+
   </Step>
   <Step title="Wrap the root route with the provider">
     ```tsx src/routes/__root.tsx
@@ -309,11 +324,11 @@ try {
 ## Other frameworks
 
 <CardGroup cols={2}>
-  <Card title="Next.js" icon="/images/logos/nextjs/original.svg" href="/sdk/next-js">
+  <Card title="Next.js" icon={<TechIcon name="nextjs" label="Next.js" />} href="/sdk/next-js">
     `@interfere/next`: a build plugin, the ingest route, and a provider for the App Router.
   </Card>
 
-  <Card title="NestJS" icon="/images/logos/nestjs/original.svg">
+  <Card title="NestJS" icon={<TechIcon name="nestjs" label="NestJS" />}>
     `@interfere/nest`: a backend module plus `instrument.ts` for server error capture.
   </Card>
 </CardGroup>
@@ -325,13 +340,16 @@ try {
     The Vite SDK runs whenever it's loaded, including locally. To capture only in production builds, gate it: `init({ enabled: import.meta.env.PROD })`.
   </Accordion>
 
-  <Accordion title="Some telemetry is blocked by ad-blockers on my SPA.">
-    A pure single-page app sends telemetry straight to Interfere, which some ad-blockers filter. If that's a concern, run it behind a small server and add the proxy route from [Server-side rendering](#server-side-rendering); requests then go through your own domain.
-  </Accordion>
+<Accordion title="Some telemetry is blocked by ad-blockers on my SPA.">
+  A pure single-page app sends telemetry straight to Interfere, which some ad-blockers filter. If
+  that's a concern, run it behind a small server and add the proxy route from [Server-side
+  rendering](#server-side-rendering); requests then go through your own domain.
+</Accordion>
 
-  <Accordion title="Do you handle the same issue across multiple apps?">
-    Yes. Give each app its own `serviceName`. When the same issue hits more than one surface, Interfere correlates it into a single problem instead of a separate alert per app.
-  </Accordion>
+<Accordion title="Do you handle the same issue across multiple apps?">
+  Yes. Give each app its own `serviceName`. When the same issue hits more than one surface,
+  Interfere correlates it into a single problem instead of a separate alert per app.
+</Accordion>
 
   <Accordion title="Can I ship errors only, without analytics or replay?">
     Yes. Disable the signals you don't want with `plugins`, for example `init({ plugins: { replay: false, pageEvents: false } })`. To drop browser tracing from the bundle entirely, pass `init({ tracing: false })`.
