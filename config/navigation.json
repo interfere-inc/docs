@@ -11,13 +11,26 @@
     },
     {
       "group": "Product",
-      "pages": []
+      "pages": [
+        "product/security",
+        "product/compliance"
+      ]
     },
     {
       "group": "SDKs",
       "pages": [
         "sdk/next-js",
         "sdk/vite"
+      ]
+    },
+    {
+      "group": "Integrations",
+      "pages": [
+        "integrations/overview",
+        "integrations/github",
+        "integrations/vercel",
+        "integrations/cloudflare-workers",
+        "integrations/slack"
       ]
     }
   ]

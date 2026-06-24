@@ -1,0 +1,48 @@
+---
+title: "GitHub"
+description: "Connect your repositories so Interfere can tie problems to the code that caused them."
+icon: "/icons/tech/github/transparent.svg"
+---
+
+Connecting GitHub lets Interfere read your repositories, so it can map a problem back to the commit that introduced it and ground a proposed fix in your real source. It works with GitHub.com, GitHub Enterprise Cloud, and GitHub Enterprise Server.
+
+## What we use it for
+
+- Detect the frameworks and apps in a repository.
+- Tie a problem to the commit, branch, and release behind it.
+- Reference your actual files and lines when proposing a fix.
+- Receive webhook events for repository and deployment activity.
+
+## Permissions
+
+Interfere connects as a GitHub App, so access is limited to the repositories you choose and is **read-only**. The app requests two permissions:
+
+| Permission | Access | Why |
+| --- | --- | --- |
+| `contents` | Read | Read repository files to detect frameworks and ground fixes in your source. |
+| `metadata` | Read | Read basic repository information such as names, branches, and the default branch. |
+
+Interfere never requests write access. It can't push code, open pull requests, or change your settings.
+
+## Connecting
+
+Connect GitHub from **Settings → Integrations** and install the Interfere app on the repositories you choose. Then pick the host type that matches your setup:
+
+<Tabs>
+  <Tab title="GitHub.com">
+    The default. Install the Interfere app from GitHub and choose the repositories to grant. Nothing else to configure.
+  </Tab>
+  <Tab title="Enterprise Cloud">
+    For organizations on GitHub Enterprise Cloud with a `*.ghe.com` host. Enter your enterprise host, for example `acme.ghe.com`. Interfere registers an app for your enterprise, then you install it and pick repositories.
+  </Tab>
+  <Tab title="Enterprise Server">
+    For self-hosted GitHub. Enter your server URL, for example `github.acme.com`. Interfere calls your server's API at `https://your-host/api/v3`, so the server must be reachable from Interfere. Each server gets its own app registration.
+  </Tab>
+</Tabs>
+
+## Gotchas
+
+- **Enterprise Server needs its own app per server.** A single app can't span multiple self-hosted instances, so connect each one separately.
+- **Self-hosted must be reachable.** Interfere calls `https://your-host/api/v3`, so the server has to accept inbound requests from Interfere. Allowlist us if it's network-restricted.
+- **Coverage follows what you grant.** Interfere only sees the repositories you grant the app. To add or remove repositories later, change the app's access in GitHub.
+- **Tokens refresh automatically.** GitHub App installation tokens are short-lived, and Interfere renews them for you, so there's nothing to rotate.

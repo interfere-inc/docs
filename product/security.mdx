@@ -1,0 +1,50 @@
+---
+title: "Security"
+description: "How you sign in to Interfere, how team access is controlled, and where we stand on compliance."
+---
+
+How your team signs in, and who can reach what. For certifications and reports, see [Compliance](/product/compliance).
+
+## Signing in
+
+Email and passkeys work for everyone. Organizations can add single sign-on through their own identity provider.
+
+<CardGroup cols={2}>
+  <Card title="Email one-time passcode (OTP)" icon="mail">
+    Enter your work email and we send a single-use code. No password to manage, reuse, or leak. This is the default for new accounts.
+  </Card>
+
+  <Card title="Passkeys" icon="fingerprint">
+    Sign in with your device's biometrics or a hardware security key: Face ID, Touch ID, Windows Hello, or a YubiKey. Phishing-resistant, and you add one from account settings after your first sign-in.
+  </Card>
+</CardGroup>
+
+## Single sign-on (SSO)
+
+Organizations can have members sign in through their own identity provider (IdP) with SAML 2.0, so access follows the accounts and groups you already manage. Interfere works with any SAML 2.0 provider, including Okta, Microsoft Entra ID, Google Workspace, OneLogin, and JumpCloud.
+
+Our team sets up SSO with you; it isn't self-serve. To turn it on for your organization, reach out at [support@interfere.com](mailto:support@interfere.com) and tell us which identity provider you use. We'll exchange the SAML details and enable it together.
+
+### How SSO behaves
+
+<AccordionGroup>
+  <Accordion title="Linking existing accounts" icon="link">
+    After SSO is on, current members link their existing Interfere account to your IdP the next time they sign in. It's a one-time step for each person and keeps their history and settings intact.
+  </Accordion>
+
+  <Accordion title="New members" icon="user-plus">
+    Someone signing in through SSO for the first time joins with standard member access. An administrator can change their role afterward.
+  </Accordion>
+
+  <Accordion title="Requiring SSO" icon="lock">
+    You can require everyone in your organization to sign in through SSO. While it's required, email and passkey sign-in are turned off, so your identity provider is the only way in.
+  </Accordion>
+
+  <Accordion title="Directory sync (SCIM)" icon="folder-sync">
+    With SCIM, your identity provider provisions and deprovisions accounts for you. When someone joins or leaves the relevant group in your IdP, their Interfere access follows, so off-boarding isn't a manual step.
+  </Accordion>
+</AccordionGroup>
+
+## Roles and permissions
+
+Interfere uses role-based access control. Every member has a role that sets what they can see and change, from full administration down to read-only access. Manage roles from your workspace's member settings.

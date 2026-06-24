@@ -1,0 +1,25 @@
+---
+title: "Vercel"
+description: "Watch your Vercel deployments so each release lines up with the deploy that shipped it."
+icon: "/icons/tech/vercel/transparent.svg"
+---
+
+Connecting Vercel lets Interfere follow your deployments, so a new problem points at the release that introduced it. Connect it from **Settings → Integrations**.
+
+## What we use it for
+
+- Track each deployment through its build: building, ready, errored, or canceled.
+- Match a release to the commit that shipped it, using the commit Vercel records on the deployment.
+- Map your Vercel projects to the surfaces Interfere watches.
+
+## Permissions
+
+You authorize Interfere through Vercel's integration flow and choose which account and projects to include. Interfere reads your projects and receives deployment events. It does not deploy, change project settings, or read your environment variables.
+
+## Gotchas
+
+<Warning>
+  A redeploy of the same commit is not a new release. Interfere identifies a release by its commit, so re-running an identical build counts as the same release. Only deploys that include code changes register as new.
+</Warning>
+
+- **One account per connection.** A connection is tied to a single Vercel account or team. Connect again to cover another.
