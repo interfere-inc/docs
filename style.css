@@ -107,28 +107,19 @@ code-group,
    Use brand icons in light mode and monochrome variants in dark mode. */
 .tech-icon {
   display: inline-grid;
-  width: 1.25em;
-  height: 1.25em;
+  width: 24px;
+  height: 24px;
   place-items: center;
+  line-height: 0;
 }
 
 .tech-icon__image {
-  grid-area: 1 / 1;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.tech-icon__image--dark {
-  display: none;
-}
-
-.dark .tech-icon__image--light {
-  display: none;
-}
-
-.dark .tech-icon__image--dark {
   display: block;
+  width: 24px !important;
+  height: 24px !important;
+  max-width: 24px !important;
+  max-height: 24px !important;
+  object-fit: contain;
 }
 
 /* --- Surfaces -------------------------------------------------------------
