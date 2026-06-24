@@ -39,13 +39,12 @@ Trusted and funded by
 Get visibility into customer-facing issues, understand who is affected, and stay informed as problems are investigated and resolved.
 
 - Identify impacted customers
- 
- See exactly which users, organizations, and sessions are affected by a problem. Understand scope immediately without waiting for engineering investigations.
- 
+
+See exactly which users, organizations, and sessions are affected by a problem. Understand scope immediately without waiting for engineering investigations.
+
 - Answer questions faster
- 
+
 - Get ahead of support tickets
- 
 
 Users
 

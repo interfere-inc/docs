@@ -74,10 +74,10 @@ Engineer
 
 Open Roles
 
-| [Account Executive](https://interfere.com/careers/account-executive-41ba8d0f-9df0-4a5f-a571-3ea36b4b7bb8)New York City • $110,000 – $150,000 | New York City | $110,000 – $150,000 | Learn more |
-| --- | --- | --- | --- |
+| [Account Executive](https://interfere.com/careers/account-executive-41ba8d0f-9df0-4a5f-a571-3ea36b4b7bb8)New York City • $110,000 – $150,000                 | New York City | $110,000 – $150,000 | Learn more |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- | ------------------- | ---------- |
 | [Founding Product Engineer](https://interfere.com/careers/founding-product-engineer-43d5f5aa-1887-4c7d-a8b2-2017169911fd)New York City • $150,000 – $250,000 | New York City | $150,000 – $250,000 | Learn more |
-| [Software Engineer, AI/ML](https://interfere.com/careers/software-engineer-ai-ml-003772a3-6bcf-4f57-8c3c-5d840117b5e9)New York City • $160,000 – $250,000 | New York City | $160,000 – $250,000 | Learn more |
-| [Software Engineer, Data](https://interfere.com/careers/software-engineer-data-c386a934-1307-4614-bcc8-55429c10d936)New York City • $160,000 – $250,000 | New York City | $160,000 – $250,000 | Learn more |
-| [Strategy & Ops](https://interfere.com/careers/strategy-and-ops-3c285dd9-a5dc-4c7a-9c20-e9f55c88fef5)New York City • $110,000 – $150,000 | New York City | $110,000 – $150,000 | Learn more |
-| [Opportunistic](https://interfere.com/careers/opportunistic-fe98b1e1-8508-4b35-9206-224678e3d7f3)New York City | New York City | | Learn more |
+| [Software Engineer, AI/ML](https://interfere.com/careers/software-engineer-ai-ml-003772a3-6bcf-4f57-8c3c-5d840117b5e9)New York City • $160,000 – $250,000    | New York City | $160,000 – $250,000 | Learn more |
+| [Software Engineer, Data](https://interfere.com/careers/software-engineer-data-c386a934-1307-4614-bcc8-55429c10d936)New York City • $160,000 – $250,000      | New York City | $160,000 – $250,000 | Learn more |
+| [Strategy & Ops](https://interfere.com/careers/strategy-and-ops-3c285dd9-a5dc-4c7a-9c20-e9f55c88fef5)New York City • $110,000 – $150,000                     | New York City | $110,000 – $150,000 | Learn more |
+| [Opportunistic](https://interfere.com/careers/opportunistic-fe98b1e1-8508-4b35-9206-224678e3d7f3)New York City                                               | New York City |                     | Learn more |

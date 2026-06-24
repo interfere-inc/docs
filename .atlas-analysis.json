@@ -13,11 +13,7 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": [
-              "introduction",
-              "quickstart",
-              "install-sdk"
-            ]
+            "pages": ["introduction", "quickstart", "install-sdk"]
           },
           {
             "group": "Core Concepts",
@@ -40,11 +36,7 @@
           },
           {
             "group": "SDK Configuration",
-            "pages": [
-              "sdk/next-js",
-              "sdk/consent-management",
-              "sdk/identify"
-            ]
+            "pages": ["sdk/next-js", "sdk/consent-management", "sdk/identify"]
           },
           {
             "group": "Integrations & API",
@@ -56,11 +48,7 @@
           },
           {
             "group": "Security & Compliance",
-            "pages": [
-              "security/overview",
-              "security/sso-scim",
-              "security/roles-permissions"
-            ]
+            "pages": ["security/overview", "security/sso-scim", "security/roles-permissions"]
           }
         ]
       }

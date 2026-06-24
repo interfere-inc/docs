@@ -646,7 +646,8 @@ The reset link points to a route that no longer exists after the latest deployme
 
 Security
 
-### Secure by design. 
+### Secure by design.
+
 Safe by default.
 
 SOC 2 Type II

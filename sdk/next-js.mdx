@@ -43,6 +43,7 @@ Five steps, each wired once. After this you don't touch it again.
     ```
 
     </CodeGroup>
+
   </Step>
   <Step title="Wrap your Next.js config">
     This lets Interfere upload source maps at build time, so a production stack trace points back to your original code instead of minified output. It also tags each build as a release.
@@ -50,11 +51,12 @@ Five steps, each wired once. After this you don't touch it again.
     ```ts next.config.ts
     import { withInterfere } from "@interfere/next/config";
     import type { NextConfig } from "next";
-    
+
     const config: NextConfig = {};
-    
+
     export default withInterfere(config);
     ```
+
   </Step>
   <Step title="Wire server instrumentation">
     So server-side errors get captured too, not just client-side ones. That covers Server Components, route handlers, and server actions.
@@ -62,6 +64,7 @@ Five steps, each wired once. After this you don't touch it again.
     ```ts instrumentation.ts
     export { onRequestError } from "@interfere/next/server";
     ```
+
   </Step>
   <Step title="Mount the ingest route">
     Telemetry is sent through your own domain, so ad-blockers and CORS don't drop it. The path must match your route prefix (default `/api/interfere`).
@@ -69,13 +72,14 @@ Five steps, each wired once. After this you don't touch it again.
     ```ts app/api/interfere/[[...path]]/route.ts
     export * from "@interfere/next/route-handler";
     ```
+
   </Step>
   <Step title="Add the provider">
     Starts the SDK in the browser and begins capturing. Wrap your app once, at the root layout.
 
     ```tsx app/layout.tsx
     import { InterfereProvider } from "@interfere/next/provider";
-    
+
     export default function RootLayout({
       children,
     }: {
@@ -90,23 +94,27 @@ Five steps, each wired once. After this you don't touch it again.
       );
     }
     ```
+
   </Step>
 </Steps>
 
 <Check>
-  That's the whole install. Run your app, trigger an error, and it shows up in your dashboard within seconds, already grouped and triaged. There's nothing else to configure. (The SDK stays quiet outside production; see [the FAQ](#faq) to capture in development.)
+  That's the whole install. Run your app, trigger an error, and it shows up in your dashboard within
+  seconds, already grouped and triaged. There's nothing else to configure. (The SDK stays quiet
+  outside production; see [the FAQ](#faq) to capture in development.)
 </Check>
 
 ## Environment variables
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `INTERFERE_PUBLIC_KEY` | Yes | Your surface public key (`interfere_pub_<region>_…`, where `<region>` is `us` or `eu`). Safe to expose; it only authorizes ingestion. |
-| `INTERFERE_API_KEY` | For releases | Interfere API key (`interfere_secret_<region>_…`). A **server-side build credential** for source-map upload and release metadata. Never expose it in browser code. |
-| `NEXT_PUBLIC_INTERFERE_ROUTE_PREFIX` | No | Override the proxy route prefix. Defaults to `/api/interfere`. See [Custom route prefix](#custom-route-prefix). |
+| Variable                             | Required     | Description                                                                                                                                                        |
+| ------------------------------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `INTERFERE_PUBLIC_KEY`               | Yes          | Your surface public key (`interfere_pub_<region>_…`, where `<region>` is `us` or `eu`). Safe to expose; it only authorizes ingestion.                              |
+| `INTERFERE_API_KEY`                  | For releases | Interfere API key (`interfere_secret_<region>_…`). A **server-side build credential** for source-map upload and release metadata. Never expose it in browser code. |
+| `NEXT_PUBLIC_INTERFERE_ROUTE_PREFIX` | No           | Override the proxy route prefix. Defaults to `/api/interfere`. See [Custom route prefix](#custom-route-prefix).                                                    |
 
 <Warning>
-  `INTERFERE_API_KEY` is a secret. Keep it in server and CI environments only. The public key (`INTERFERE_PUBLIC_KEY`) is the only key that reaches the browser.
+  `INTERFERE_API_KEY` is a secret. Keep it in server and CI environments only. The public key
+  (`INTERFERE_PUBLIC_KEY`) is the only key that reaches the browser.
 </Warning>
 
 ## Configuration
@@ -124,7 +132,8 @@ init({ serviceName: "@acme/storefront" });
 ```
 
 <ParamField path="serviceName" default="interfere-sdk" type="string">
-  A stable name for this app. Interfere uses it to keep each surface's data separate, and to correlate the same issue across surfaces into one problem.
+  A stable name for this app. Interfere uses it to keep each surface's data separate, and to
+  correlate the same issue across surfaces into one problem.
 </ParamField>
 
 ### Choose what's captured
@@ -138,12 +147,14 @@ init({ plugins: { replay: false } });
 <ParamField path="plugins" type="object">
   Each signal can be toggled on or off. All default to on.
 
-  - `errors`: uncaught exceptions
-  - `logs`: console output
-  - `device`: device and browser info
-  - `pageEvents`: pageviews and clicks
-  - `rageClick`: rage-click detection
-  - `replay`: session replay
+  <ul>
+    <li><code>errors</code>: uncaught exceptions</li>
+    <li><code>logs</code>: console output</li>
+    <li><code>device</code>: device and browser info</li>
+    <li><code>pageEvents</code>: pageviews and clicks</li>
+    <li><code>rageClick</code>: rage-click detection</li>
+    <li><code>replay</code>: session replay</li>
+  </ul>
 </ParamField>
 
 ## Identity
@@ -178,8 +189,10 @@ function SyncIdentity() {
 <ParamField path="source" type="object" required>
   Where the identity came from.
 
-  - `type`: one of `clerk`, `auth0`, or `custom`
-  - `name`: the provider's display name, for example `"Clerk"`
+  <ul>
+    <li><code>type</code>: one of <code>clerk</code>, <code>auth0</code>, or <code>custom</code></li>
+    <li><code>name</code>: the provider's display name, for example <code>"Clerk"</code></li>
+  </ul>
 </ParamField>
 
 <ParamField path="name" type="string">
@@ -199,7 +212,8 @@ function SyncIdentity() {
 </ParamField>
 
 <Note>
-  `identity.set()` is deduplicated per session, so calling it on every render is fine. Identity clears automatically when the session rotates.
+  `identity.set()` is deduplicated per session, so calling it on every render is fine. Identity
+  clears automatically when the session rotates.
 </Note>
 
 ## Consent
@@ -207,16 +221,14 @@ function SyncIdentity() {
 By default all features are active. To respect a cookie banner or privacy preference, pass `consent` to the provider. Once you do, only essential capture (error tracking and logs) plus the categories you opt into will run:
 
 ```tsx app/layout.tsx
-<InterfereProvider consent={{ analytics: true, replay: false }}>
-  {children}
-</InterfereProvider>
+<InterfereProvider consent={{ analytics: true, replay: false }}>{children}</InterfereProvider>
 ```
 
-| Category | What it covers | Gateable |
-| --- | --- | --- |
-| `necessary` | Error tracking, logs | Always on |
-| `analytics` | Page events, rage clicks, device info | Yes |
-| `replay` | Session replay | Yes |
+| Category    | What it covers                        | Gateable  |
+| ----------- | ------------------------------------- | --------- |
+| `necessary` | Error tracking, logs                  | Always on |
+| `analytics` | Page events, rage clicks, device info | Yes       |
+| `replay`    | Session replay                        | Yes       |
 
 Update consent at runtime through the same hook:
 
@@ -230,7 +242,9 @@ consent.set(); // grant everything
 Interfere works with any consent platform (c15t, CookieYes, OneTrust). Map its booleans to the categories above.
 
 <Tip>
-  To apply consent before the first render, and avoid any flash where a non-consented feature loads, pass it to `init({ consent })` in `instrumentation-client.ts` instead. The provider prop then keeps it in sync as the user changes their mind.
+  To apply consent before the first render, and avoid any flash where a non-consented feature loads,
+  pass it to `init({consent})` in `instrumentation-client.ts` instead. The provider prop then keeps
+  it in sync as the user changes their mind.
 </Tip>
 
 ## Report a handled error
@@ -265,30 +279,24 @@ export async function placeOrder() {
 The SDK proxies telemetry through `/api/interfere` by default. Move it to any path to get past ad-blocker deny-lists that target well-known SDK routes, or to fit your own API conventions.
 
 <Steps>
-  <Step title="Set the prefix">
-    ```env
-    NEXT_PUBLIC_INTERFERE_ROUTE_PREFIX=/__telemetry
-    ```
-  </Step>
+  <Step title="Set the prefix">```env NEXT_PUBLIC_INTERFERE_ROUTE_PREFIX=/__telemetry ```</Step>
   <Step title="Mount the handler at the matching path">
-    ```ts app/__telemetry/[[...path]]/route.ts
-    export * from "@interfere/next/route-handler";
-    ```
+    ```ts app/__telemetry/[[...path]]/route.ts export * from "@interfere/next/route-handler"; ```
   </Step>
 </Steps>
 
 ## Other frameworks
 
 <CardGroup cols={3}>
-  <Card title="Vite + React" color="#ffffff" icon="/images/tech/vite.png">
+  <Card title="Vite + React" icon="/icons/tech/vite/transparent.svg">
     `@interfere/vite`: a Vite plugin plus `init()` before render. Works for SPA and SSR.
   </Card>
 
-  <Card title="TanStack Start" icon="/images/tech/tanstack.png">
-    `@interfere/vite`: the same plugin, with a server route for proxying.
-  </Card>
+<Card title="TanStack Start" icon="/icons/tech/tanstack/transparent.svg">
+  `@interfere/vite`: the same plugin, with a server route for proxying.
+</Card>
 
-  <Card title="NestJS" icon="/images/tech/nest.jpg">
+  <Card title="NestJS" icon="/icons/tech/nestjs/transparent.svg">
     `@interfere/nest`: a backend module plus `instrument.ts` for server error capture.
   </Card>
 </CardGroup>
@@ -300,13 +308,15 @@ The SDK proxies telemetry through `/api/interfere` by default. Move it to any pa
     The SDK stays quiet when `NODE_ENV !== "production"`, so local noise doesn't reach your dashboard. To capture while testing, call `init({ enabled: true })` in `instrumentation-client.ts`.
   </Accordion>
 
-  <Accordion title="Do you handle the same issue across multiple apps?">
-    Yes. Give each app its own `serviceName`. When the same issue hits more than one surface, Interfere correlates it into a single problem instead of a separate alert per app.
-  </Accordion>
+<Accordion title="Do you handle the same issue across multiple apps?">
+  Yes. Give each app its own `serviceName`. When the same issue hits more than one surface,
+  Interfere correlates it into a single problem instead of a separate alert per app.
+</Accordion>
 
-  <Accordion title="Do I have to use the proxy route?">
-    It's the recommended path. Proxying telemetry through your own origin avoids CORS and gets past ad-blockers, and it's part of the standard install above.
-  </Accordion>
+<Accordion title="Do I have to use the proxy route?">
+  It's the recommended path. Proxying telemetry through your own origin avoids CORS and gets past
+  ad-blockers, and it's part of the standard install above.
+</Accordion>
 
   <Accordion title="Can I ship errors only, without analytics or replay?">
     Yes. Disable the signals you don't want with `plugins`, for example `init({ plugins: { replay: false, pageEvents: false } })`. To drop browser tracing from the bundle entirely, pass `init({ tracing: false })`.

@@ -12,8 +12,7 @@
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("/fonts/BerkeleyMono/Berkeley%20Mono%20Variable%20Interfere.woff2")
-    format("woff2");
+  src: url("/fonts/BerkeleyMono/Berkeley%20Mono%20Variable%20Interfere.woff2") format("woff2");
 }
 
 @font-face {
@@ -21,8 +20,7 @@
   font-style: italic;
   font-weight: 100 900;
   font-display: swap;
-  src: url("/fonts/BerkeleyMono/Berkeley%20Mono%20Variable%20Interfere.woff2")
-    format("woff2");
+  src: url("/fonts/BerkeleyMono/Berkeley%20Mono%20Variable%20Interfere.woff2") format("woff2");
 }
 
 /* --- Base typography ------------------------------------------------------
@@ -47,8 +45,8 @@ code-group,
 [class*="language-"],
 .token {
   font-family:
-    "BerkeleyMono", ui-monospace, "SFMono-Regular", "Menlo", "Monaco",
-    "Consolas", "Liberation Mono", "Courier New", monospace;
+    "BerkeleyMono", ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas",
+    "Liberation Mono", "Courier New", monospace;
   font-variant-ligatures: none;
 }
 
