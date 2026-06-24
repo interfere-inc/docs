@@ -1,0 +1,121 @@
+---
+title: "CLI"
+description: "Upload source maps and confirm releases from CI with the Interfere CLI."
+icon: "terminal"
+---
+
+`@interfere/cli` uploads your source maps and registers each deploy as a release, so production stack traces point back to your real code instead of minified output. You run it as a step in your build or CI.
+
+You only need it when you're not already using a bundler plugin. The [Next.js](/sdk/next-js) and [Vite](/sdk/vite) plugins do this automatically during the build. Reach for the CLI for a Node or NestJS backend, a bundler we don't have a plugin for, or a custom deploy pipeline.
+
+<Note>
+  The CLI uses your **Interfere API key** (`INTERFERE_API_KEY`, the `interfere_secret_<region>_…` build credential). It's a server-side secret, so keep it in CI and never in client code.
+</Note>
+
+## Install
+
+Add it as a dev dependency:
+
+<CodeGroup>
+
+```bash npm
+npm install -D @interfere/cli
+```
+
+```bash pnpm
+pnpm add -D @interfere/cli
+```
+
+```bash yarn
+yarn add -D @interfere/cli
+```
+
+```bash bun
+bun add -d @interfere/cli
+```
+
+</CodeGroup>
+
+## Usage
+
+Run it after your build, pointing at the directory that holds your compiled output and `.js.map` files:
+
+```bash
+interfere sourcemaps upload ./dist
+```
+
+The simplest setup is a `postbuild` script, so it runs on every build:
+
+```json package.json
+{
+  "scripts": {
+    "build": "tsc",
+    "postbuild": "interfere sourcemaps upload ./dist"
+  }
+}
+```
+
+That single command does three things:
+
+- derives the release from your commit (the same release id the SDK uses, so the two line up),
+- uploads every `.js.map` it finds in the directory, and
+- confirms the release so the collector accepts its telemetry and de-minifies stack traces.
+
+Commit SHA, branch, and run details are detected automatically on GitHub Actions, CircleCI, GitLab CI, and Buildkite. The one thing you must provide is `INTERFERE_API_KEY`.
+
+## Environment variables
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `INTERFERE_API_KEY` | Yes | Your Interfere API key (`interfere_secret_<region>_…`). Authenticates the upload. |
+| `INTERFERE_API_URL` | No | Override the collector URL for a regional or self-hosted instance. Defaults to `https://in.interfere.com`. |
+| `INTERFERE_SOURCE_ID` | No | Override the commit SHA used to identify the release. Auto-detected from CI or `git` otherwise. |
+
+## In CI
+
+On a supported runner, set the API key and the rest is automatic:
+
+```yaml GitHub Actions
+- run: npm run build
+
+- name: Upload source maps to Interfere
+  run: npx interfere sourcemaps upload ./dist
+  env:
+    INTERFERE_API_KEY: ${{ secrets.INTERFERE_API_KEY }}
+```
+
+<Warning>
+  On `pull_request` events GitHub sets `GITHUB_SHA` to a temporary merge commit that exists on no branch, so a release uploaded from a PR build won't match your real commit. Upload from your `push` or deploy workflow, or pass the head commit explicitly with `--commit-sha`.
+</Warning>
+
+CircleCI, GitLab CI, and Buildkite are detected the same way. Outside a supported CI system the CLI falls back to `git rev-parse HEAD`.
+
+## Options
+
+Most runs need none of these. Reach for them when auto-detection can't see what it needs (containers, unusual CI) or you want to label the release.
+
+| Flag | Description |
+| --- | --- |
+| `--source-maps <dir>` | Directory to scan for `.js.map` files. Also accepted as the positional argument shown above. |
+| `--api-key <key>` | API key, instead of `INTERFERE_API_KEY`. |
+| `--commit-sha <sha>` | Set the commit when there's no git checkout, for example a Docker build. |
+| `--build-id <id>` | A build identifier distinct from the commit, if you reuse commits across builds. |
+| `--environment <env>` | Label the release, for example `production` or `preview`. |
+| `--deployment-url <url>` | The URL the build was deployed to. |
+| `--dry-run` | Print what would be sent without uploading. Useful for wiring up CI. |
+| `--json` | Machine-readable output for scripts. |
+
+Run `interfere --help` for the full list.
+
+## Building in Docker
+
+A container build has no git history, so pass the commit in at build time and the CLI will use it for the release:
+
+```dockerfile
+ARG GIT_SHA
+ENV INTERFERE_SOURCE_ID=$GIT_SHA
+```
+
+```bash
+docker build --build-arg GIT_SHA=$(git rev-parse HEAD) .
+```

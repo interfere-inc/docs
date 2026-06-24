@@ -6,7 +6,7 @@
       "expanded": true,
       "pages": [
         "interfere",
-        "untitled-page"
+        "quickstart"
       ]
     },
     {
@@ -20,7 +20,8 @@
       "group": "SDKs",
       "pages": [
         "sdk/next-js",
-        "sdk/vite"
+        "sdk/vite",
+        "sdk/nestjs"
       ]
     },
     {
@@ -30,7 +31,8 @@
         "integrations/github",
         "integrations/vercel",
         "integrations/cloudflare-workers",
-        "integrations/slack"
+        "integrations/slack",
+        "integrations/cli"
       ]
     }
   ]

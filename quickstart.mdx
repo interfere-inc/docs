@@ -1,0 +1,50 @@
+---
+title: "Quickstart"
+description: "Get Interfere running in about five minutes."
+---
+
+Create a surface to get your keys, then install the SDK. After that, Interfere is watching everything you ship.
+
+<Steps>
+  <Step title="Create a surface">
+    A surface is one app you want Interfere to watch: a frontend, a backend, or a marketing site. Create one in your dashboard and copy its keys into your environment:
+
+    - `INTERFERE_PUBLIC_KEY`: used by the SDK to send telemetry. Safe to expose.
+    - `INTERFERE_API_KEY`: used to upload source maps in CI. Keep it server-side.
+  </Step>
+  <Step title="Install the SDK">
+    <Tabs>
+      <Tab title="With an AI agent">
+        Paste this into your coding agent (Cursor, Claude Code, and the like) and let it wire everything up:
+
+        ```text
+        Set up the Interfere SDK in this project. Detect my framework
+        (Next.js, Vite, or NestJS) and follow the matching Interfere
+        install guide step by step. Read INTERFERE_PUBLIC_KEY from my
+        environment and never print my keys.
+        ```
+
+        You can also open **Ask AI** at the top of these docs and ask it to install Interfere in your project.
+      </Tab>
+      <Tab title="Manually">
+        Follow the guide for your stack:
+
+        <CardGroup cols={3}>
+          <Card title="Next.js" icon="/icons/tech/nextjs/monochrome.svg" href="/sdk/next-js">
+            App Router
+          </Card>
+          <Card title="Vite + React" icon="/icons/tech/vite/transparent.svg" href="/sdk/vite">
+            SPA or SSR
+          </Card>
+          <Card title="NestJS" icon="/icons/tech/nestjs/transparent.svg" href="/integrations/nestjs">
+            Backend
+          </Card>
+        </CardGroup>
+      </Tab>
+    </Tabs>
+  </Step>
+</Steps>
+
+<Check>
+  Run or deploy your app, trigger an error, and it shows up in your dashboard within seconds, already grouped and triaged. There's nothing else to configure.
+</Check>
