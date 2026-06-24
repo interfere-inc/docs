@@ -270,20 +270,20 @@ If you are a resident of California, Colorado, Connecticut, Delaware, Florida, I
 
 ### Categories of personal information we collect
 
-| Category | Examples | Collected |
-| --- | --- | --- |
-| A. Identifiers | Contact details, such as real name, alias, postal address, telephone or mobile contact number, unique personal identifier, online identifier, IP address, email address, and account name | YES |
-| B. Personal information as defined in the California Customer Records statute | Name, contact information, education, employment, employment history, and financial information | YES |
-| C. Protected classification characteristics under state or federal law | Gender, age, date of birth, race and ethnicity, national origin, marital status, and other demographic data | YES |
-| D. Commercial information | Transaction information, purchase history, financial details, and payment information | NO |
-| E. Biometric information | Fingerprints and voiceprints | NO |
-| F. Internet or other similar network activity | Browsing history, search history, online behavior, interest data, and interactions with websites/apps/ads | YES |
-| G. Geolocation data | Device location | NO |
-| H. Audio, electronic, sensory, or similar information | Images and audio, video or call recordings created in connection with our business activities | YES |
-| I. Professional or employment-related information | Business contact details, job title, work history, professional qualifications | YES |
-| J. Education information | Student records and directory information | NO |
-| K. Inferences drawn from collected personal information | Profile or summary about an individual’s preferences and characteristics | YES |
-| L. Sensitive personal information | | NO |
+| Category                                                                      | Examples                                                                                                                                                                                  | Collected |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| A. Identifiers                                                                | Contact details, such as real name, alias, postal address, telephone or mobile contact number, unique personal identifier, online identifier, IP address, email address, and account name | YES       |
+| B. Personal information as defined in the California Customer Records statute | Name, contact information, education, employment, employment history, and financial information                                                                                           | YES       |
+| C. Protected classification characteristics under state or federal law        | Gender, age, date of birth, race and ethnicity, national origin, marital status, and other demographic data                                                                               | YES       |
+| D. Commercial information                                                     | Transaction information, purchase history, financial details, and payment information                                                                                                     | NO        |
+| E. Biometric information                                                      | Fingerprints and voiceprints                                                                                                                                                              | NO        |
+| F. Internet or other similar network activity                                 | Browsing history, search history, online behavior, interest data, and interactions with websites/apps/ads                                                                                 | YES       |
+| G. Geolocation data                                                           | Device location                                                                                                                                                                           | NO        |
+| H. Audio, electronic, sensory, or similar information                         | Images and audio, video or call recordings created in connection with our business activities                                                                                             | YES       |
+| I. Professional or employment-related information                             | Business contact details, job title, work history, professional qualifications                                                                                                            | YES       |
+| J. Education information                                                      | Student records and directory information                                                                                                                                                 | NO        |
+| K. Inferences drawn from collected personal information                       | Profile or summary about an individual’s preferences and characteristics                                                                                                                  | YES       |
+| L. Sensitive personal information                                             |                                                                                                                                                                                           | NO        |
 
 We may also collect other personal information when you interact with us in person, online, or by phone or mail, including:
 
@@ -341,8 +341,8 @@ We may update this Privacy Notice from time to time. The updated version will be
 
 If you have questions or comments, email [legal@interfere.com](mailto:legal@interfere.com) or contact us by post at:
 
-> **Interfere, Inc.** 
-> 121 W 27th St. 
+> **Interfere, Inc.**
+> 121 W 27th St.
 > New York, NY 10001
 
 # How can you review, update, or delete the data we collect from you?

@@ -39,13 +39,12 @@ Trusted and funded by
 Interfere automatically connects the signals surrounding a problem—from affected users and sessions to deployments, pull requests, and code changes—so engineers can focus on fixing issues instead of gathering context.
 
 - Understand the root cause
- 
- Interfere analyzes errors, traces, sessions, and deployments to identify the signals most likely to explain a problem. Spend less time searching and more time solving.
- 
+
+Interfere analyzes errors, traces, sessions, and deployments to identify the signals most likely to explain a problem. Spend less time searching and more time solving.
+
 - Connect problems to code
- 
+
 - Resolve with confidence
- 
 
 Inbox
 

@@ -2,16 +2,17 @@
   "directory": "card",
   "groups": [
     {
-      "group": "Get Started",
-      "pages": [
-        "introduction",
-        {
-          "group": "SDKs",
-          "pages": [
-            "sdk/next-js"
-          ]
-        }
-      ]
+      "group": "Getting Started",
+      "expanded": true,
+      "pages": ["interfere", "untitled-page"]
+    },
+    {
+      "group": "Product",
+      "pages": []
+    },
+    {
+      "group": "SDKs",
+      "pages": ["sdk/next-js", "sdk/vite"]
     }
   ]
 }

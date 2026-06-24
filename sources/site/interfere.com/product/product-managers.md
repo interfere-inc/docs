@@ -47,13 +47,12 @@ Trusted and funded by
 Understand impact, connect issues to releases, and stay aligned with engineering as problems are investigated and resolved.
 
 - Prioritize what matters
- 
- Not every issue deserves the same attention. See how many users are affected, which flows are impacted, and whether a problem is growing before deciding what to work on.
- 
+
+Not every issue deserves the same attention. See how many users are affected, which flows are impacted, and whether a problem is growing before deciding what to work on.
+
 - Connect releases to outcomes
- 
+
 - Follow investigations in real time
- 
 
 Inbox
 

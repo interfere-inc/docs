@@ -52,5 +52,8 @@
       "github": "https://github.com/interfere-inc",
       "linkedin": "https://www.linkedin.com/company/interfere-inc/"
     }
+  },
+  "appearance": {
+    "strict": false
   }
 }
