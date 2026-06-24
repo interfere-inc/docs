@@ -16,7 +16,8 @@
     {
       "group": "SDKs",
       "pages": [
-        "sdk/next-js"
+        "sdk/next-js",
+        "sdk/vite"
       ]
     }
   ]
