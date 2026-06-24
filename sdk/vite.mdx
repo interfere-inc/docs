@@ -4,8 +4,6 @@ description: "Install the Interfere SDK in your Vite app. One-time setup, then I
 sidebarTitle: "Vite"
 ---
 
-import { TechIcon } from "/snippets/tech-icon.jsx";
-
 `@interfere/vite` wires Interfere into your Vite build and your running app together. You set it up once: drop in the plugin and start the SDK before render. After that, Interfere records everything the app produces (errors, sessions, traces, and logs) with no sampling and no knobs to turn. It then collapses related symptoms into one problem, weighs how much it matters, and works out the cause for you.
 
 It works for a plain single-page app and for server-rendered setups like TanStack Start. This page covers the install plus the handful of settings most teams actually touch.
@@ -328,11 +326,11 @@ try {
 ## Other frameworks
 
 <CardGroup cols={2}>
-  <Card title="Next.js" icon={<TechIcon name="nextjs" label="Next.js" />} href="/sdk/next-js">
+  <Card title="Next.js" icon="/icons/tech/nextjs/original.svg" href="/sdk/next-js">
     `@interfere/next`: a build plugin, the ingest route, and a provider for the App Router.
   </Card>
 
-  <Card title="NestJS" icon={<TechIcon name="nestjs" label="NestJS" />}>
+  <Card title="NestJS" icon="/icons/tech/nestjs/original.svg">
     `@interfere/nest`: a backend module plus `instrument.ts` for server error capture.
   </Card>
 </CardGroup>

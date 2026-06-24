@@ -4,8 +4,6 @@ mode: "default"
 description: "Add error tracking, session replay, and product analytics to your Next.js app with a single provider."
 ---
 
-import { TechIcon } from "/snippets/tech-icon.jsx";
-
 `@interfere/next` connects your Next.js app to Interfere. It's a one-time install: add a few lines, ship as usual, and Interfere captures everything your app emits (errors, sessions, traces, and logs) with no sampling and nothing to tune. From there, Interfere groups related symptoms into a single problem, decides how much it matters, and investigates the cause for you.
 
 This page covers the install and the handful of settings most teams actually touch: naming your app, identifying your users, and respecting consent.
@@ -290,15 +288,15 @@ The SDK proxies telemetry through `/api/interfere` by default. Move it to any pa
 ## Other frameworks
 
 <CardGroup cols={3}>
-  <Card title="Vite + React" icon={<TechIcon name="vite" label="Vite" />}>
+  <Card title="Vite + React" icon="/icons/tech/vite/original.svg">
     `@interfere/vite`: a Vite plugin plus `init()` before render. Works for SPA and SSR.
   </Card>
 
-<Card title="TanStack Start" icon={<TechIcon name="tanstack" label="TanStack" />}>
+<Card title="TanStack Start" icon="/icons/tech/tanstack/original.svg">
   `@interfere/vite`: the same plugin, with a server route for proxying.
 </Card>
 
-  <Card title="NestJS" icon={<TechIcon name="nestjs" label="NestJS" />}>
+  <Card title="NestJS" icon="/icons/tech/nestjs/original.svg">
     `@interfere/nest`: a backend module plus `instrument.ts` for server error capture.
   </Card>
 </CardGroup>

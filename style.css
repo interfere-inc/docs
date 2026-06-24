@@ -103,25 +103,6 @@ code-group,
   background: rgba(255, 255, 255, 0.7) !important; /* white-a9 */
 }
 
-/* --- Tech icons -----------------------------------------------------------
-   Use brand icons in light mode and monochrome variants in dark mode. */
-.tech-icon {
-  display: inline-grid;
-  width: 24px;
-  height: 24px;
-  place-items: center;
-  line-height: 0;
-}
-
-.tech-icon__image {
-  display: block;
-  width: 24px !important;
-  height: 24px !important;
-  max-width: 24px !important;
-  max-height: 24px !important;
-  object-fit: contain;
-}
-
 /* --- Surfaces -------------------------------------------------------------
    Soften borders and round surfaces to match the design system's hairline
    borders (gray-a3) and rounded containers (radius-2xl = 12px). */
