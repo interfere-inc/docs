@@ -149,13 +149,15 @@ init({ plugins: { replay: false } });
 <ParamField path="plugins" type="object">
   Each signal can be toggled on or off. All default to on.
 
-- `errors`: uncaught exceptions
-- `logs`: console output
-- `device`: device and browser info
-- `pageEvents`: pageviews and clicks
-- `rageClick`: rage-click detection
-- `replay`: session replay
-  </ParamField>
+  <ul>
+    <li><code>errors</code>: uncaught exceptions</li>
+    <li><code>logs</code>: console output</li>
+    <li><code>device</code>: device and browser info</li>
+    <li><code>pageEvents</code>: pageviews and clicks</li>
+    <li><code>rageClick</code>: rage-click detection</li>
+    <li><code>replay</code>: session replay</li>
+  </ul>
+</ParamField>
 
 ## Identity
 
@@ -189,9 +191,11 @@ function SyncIdentity() {
 <ParamField path="source" type="object" required>
   Where the identity came from.
 
-- `type`: one of `clerk`, `auth0`, or `custom`
-- `name`: the provider's display name, for example `"Clerk"`
-  </ParamField>
+  <ul>
+    <li><code>type</code>: one of <code>clerk</code>, <code>auth0</code>, or <code>custom</code></li>
+    <li><code>name</code>: the provider's display name, for example <code>"Clerk"</code></li>
+  </ul>
+</ParamField>
 
 <ParamField path="name" type="string">
   Display name.
