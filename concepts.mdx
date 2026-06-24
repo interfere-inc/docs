@@ -1,0 +1,64 @@
+---
+title: "Concepts"
+description: "The terms you'll see across Interfere, and what they mean."
+---
+
+This page explains the words you'll come across while using Interfere.
+
+## Surface
+
+A surface is one of your apps that Interfere watches: a web frontend, a backend service, or a marketing site. Each surface has its own public key and its own SDK install.
+
+Give each app you deploy separately its own surface. A Next.js frontend and a NestJS API are two surfaces. A customer storefront and an internal admin tool are two more. You connect each surface to its [source and destination](#sources-and-destinations) so its problems link back to your code and your deployments.
+
+## Evidence
+
+Evidence is a single thing that went wrong, captured with the detail needed to investigate it: the error and its stack trace, the release it happened on, and the session around it.
+
+It is not the same as a raw log line, metric, or trace. Those are the underlying signals; a piece of evidence is the record Interfere builds from one event so it can be matched against others like it. A thousand users hitting the same crash produce a thousand pieces of evidence, and they all point to one problem.
+
+## Problem
+
+A problem is one issue in your product, described in plain terms, for example "checkout fails when the cart is empty." Problems are what you spend your time on in Interfere.
+
+You may be used to an "issue" in other tools: a pile of identical stack traces you still have to read and route. A problem is further along. Interfere has already grouped every occurrence across your users and surfaces, worked out the likely cause, and written up what happened, so you start from an explanation instead of a stack trace.
+
+Interfere builds a problem by matching evidence that shares the same root cause. The same issue on five surfaces stays one problem, not five.
+
+### Statuses
+
+Every problem has a status that tells you where it is and whether it needs you.
+
+| Status | What it means | Your move |
+| --- | --- | --- |
+| <span> <img src="/icons/status/investigating.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> Investigating </span> | Interfere is working out what happened and why. If it can't reach a conclusion on its own, it flags the problem for you. | Usually nothing |
+| <img src="/icons/status/active.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> Active | A confirmed problem, explained and waiting on a fix. | Decide on the fix |
+| <img src="/icons/status/in-recovery.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> In recovery | The problem looks like it's clearing on its own. Interfere watches before closing it. | Nothing |
+| <span><img src="/icons/status/needs-attention.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> Needs attention</span> | Likely a regression that Interfere isn't sure about. | Confirm it |
+| <img src="/icons/status/resolved.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> Resolved | Marked fixed. Interfere keeps watching in case it returns. | You set this |
+| <img src="/icons/status/dismissed.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> Dismissed | Not worth acting on. | You set this |
+
+You dismiss a problem when it isn't worth acting on. It leaves your active list, and Interfere still remembers it, so you keep the history if it ever returns. You mark a problem resolved once you've shipped a fix; Interfere then watches later releases and reopens it as a [regression](#regression) if the same issue comes back.
+
+### Fixes
+
+Interfere proposes a fix alongside its explanation. Depending on the cause, that might be a code change, a copy edit, or a configuration change. Nothing is applied for you: you review the suggestion and accept or reject it, so the decision stays with your team.
+
+## Regression
+
+A regression is a problem you had already resolved showing up again in a later release.
+
+Interfere catches it by matching new evidence against the problems you've resolved before. An exact match reopens the problem as a confirmed regression. A close match, where the cause is the same but the stack trace shifted slightly, is marked Needs attention so you can confirm it. Because every problem is linked to the release it appeared on, you can see which deployment brought it back.
+
+## Release
+
+A release is a version of your code, identified by its commit. The SDK and the [CLI](/integrations/cli) tag each build with a release, which is how Interfere links a problem to the deployment that caused it. The Next.js and Vite plugins create releases during the build; on other setups you use the CLI.
+
+## Sources and destinations
+
+These are the [integrations](/integrations/overview) that connect Interfere to the rest of your stack.
+
+- A **source** is where your code lives (GitHub and its enterprise variants). Interfere uses it to link a problem to the commit behind it and to base a proposed fix on your real code.
+- A **destination** is where your code runs (Vercel, Cloudflare). Interfere watches your deployments so a problem lines up with the release that shipped it.
+
+Connect them from **Settings → Integrations**. The [Integrations](/integrations/overview) section covers each provider, the access it needs, and how to set it up.

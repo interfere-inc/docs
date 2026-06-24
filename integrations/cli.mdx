@@ -6,7 +6,7 @@ icon: "terminal"
 
 `@interfere/cli` uploads your source maps and registers each deploy as a release, so production stack traces point back to your real code instead of minified output. You run it as a step in your build or CI.
 
-You only need it when you're not already using a bundler plugin. The [Next.js](/sdk/next-js) and [Vite](/sdk/vite) plugins do this automatically during the build. Reach for the CLI for a Node or NestJS backend, a bundler we don't have a plugin for, or a custom deploy pipeline.
+You only need it when you're not already using a bundler plugin. The [Next.js](/sdk/next-js) and [Vite](/sdk/vite) plugins do this automatically during the build. Reach for the CLI when there is no plugin for your setup: a Node or NestJS backend, a bundler we do not have a plugin for, or any deploy that is not on Vercel or Cloudflare, such as AWS, Fly, Render, or your own servers.
 
 <Note>
   The CLI uses your **Interfere API key** (`INTERFERE_API_KEY`, the `interfere_secret_<region>_…` build credential). It's a server-side secret, so keep it in CI and never in client code.
