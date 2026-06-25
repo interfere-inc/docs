@@ -7,12 +7,20 @@
       "pages": [
         "interfere",
         "quickstart",
-        "concepts"
+        "onboarding",
+        "concepts",
+        "power-user"
       ]
     },
     {
       "group": "Product",
       "pages": [
+        "product/activity",
+        "product/inbox",
+        "product/problems",
+        "product/users",
+        "product/surfaces",
+        "product/settings",
         "product/security",
         "product/compliance"
       ]
