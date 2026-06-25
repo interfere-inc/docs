@@ -1,0 +1,129 @@
+---
+title: "NestJS"
+description: "Instrument your NestJS backend so server errors reach Interfere with full stack traces."
+---
+
+`@interfere/nest` connects your NestJS backend to Interfere. Once it's wired in, unhandled exceptions across your controllers and providers are captured with full server-side stack traces, and you get manual capture and tracing when you want them.
+
+<Note>
+  Set your **surface public key** (`INTERFERE_PUBLIC_KEY`, `interfere_pub_<region>_…`) so telemetry routes to your project. For readable stack traces you'll also upload source maps with the [CLI](/integrations/cli), which needs your **Interfere API key** (`INTERFERE_API_KEY`).
+</Note>
+
+## Prerequisites
+
+- A NestJS app
+- Node.js `>= 20`
+
+## Install
+
+```bash
+npm install @interfere/nest
+```
+
+## Setup
+
+<Steps>
+  <Step title="Start the SDK before Nest loads">
+    Create `instrument.ts` and call `init()`. This file must run before any `@nestjs/*` import so the SDK can instrument the runtime.
+
+    ```ts src/instrument.ts
+    import { init } from "@interfere/nest/instrument";
+
+    init({ serviceName: "my-api" });
+    ```
+  </Step>
+  <Step title="Import it first in your entry file">
+    Make `instrument` the very first import in `main.ts`, ahead of everything else.
+
+    ```ts src/main.ts
+    import "./instrument";
+
+    import { NestFactory } from "@nestjs/core";
+    import { AppModule } from "./app.module";
+
+    async function bootstrap() {
+      const app = await NestFactory.create(AppModule);
+      await app.listen(3000);
+    }
+    bootstrap();
+    ```
+  </Step>
+  <Step title="Register the module">
+    `InterfereModule.forRoot()` installs a global exception filter, so unhandled exceptions are captured automatically.
+
+    ```ts src/app.module.ts
+    import { Module } from "@nestjs/common";
+    import { InterfereModule } from "@interfere/nest";
+
+    @Module({ imports: [InterfereModule.forRoot()] })
+    export class AppModule {}
+    ```
+  </Step>
+</Steps>
+
+<Check>
+  Throw an error from a route and it shows up in your dashboard within seconds, already grouped and triaged.
+</Check>
+
+## Source maps and releases
+
+A backend has no bundler plugin, so use the [CLI](/integrations/cli) to upload source maps and register each deploy as a release. Add a `postbuild` step:
+
+```json package.json
+{
+  "scripts": {
+    "build": "nest build",
+    "postbuild": "interfere sourcemaps upload ./dist"
+  }
+}
+```
+
+Without an uploaded release, the collector has nothing to attach your telemetry to. See the [CLI page](/integrations/cli) for CI setup and the `INTERFERE_API_KEY`.
+
+## Configuration
+
+Pass options to `init()`. Most apps only set `serviceName`.
+
+<ParamField path="serviceName" default="node-app" type="string">
+  The name your telemetry is grouped under. Give each process a distinct value (an API, a worker, a cron) when they share one public key.
+</ParamField>
+
+<ParamField path="serviceNamespace" type="string">
+  Group related services under one product surface, for example `checkout` across an API and its workers.
+</ParamField>
+
+<ParamField path="environment" type="string">
+  Environment label such as `production` or `staging`. Falls back to `INTERFERE_ENVIRONMENT`, then `VERCEL_ENV`, then `NODE_ENV`.
+</ParamField>
+
+<ParamField path="debug" default="false" type="boolean">
+  Log lifecycle events to stdout. Also enabled by `INTERFERE_DEBUG=1`.
+</ParamField>
+
+The SDK also installs handlers for uncaught exceptions and unhandled rejections by default. Pass `captureUncaughtException: false` or `captureUnhandledRejection: false` to use your own.
+
+## Report a handled error
+
+Unhandled exceptions are captured by the module's filter. To report an error you catch yourself, or to trace a specific operation, import from `@interfere/nest`:
+
+```ts
+import { captureError, withSpan } from "@interfere/nest";
+
+try {
+  await chargeCard();
+} catch (error) {
+  captureError(error);
+  throw error;
+}
+
+const order = await withSpan("checkout.submit", () => submitOrder(cart));
+```
+
+## Environment variables
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `INTERFERE_PUBLIC_KEY` | Yes | Your surface public key (`interfere_pub_<region>_…`). Routes telemetry to your project. |
+| `INTERFERE_API_KEY` | For releases | Used by the [CLI](/integrations/cli) to upload source maps (`interfere_secret_<region>_…`). A build-time secret; keep it in CI. |
+| `INTERFERE_ENVIRONMENT` | No | Environment label for releases. Falls back to `VERCEL_ENV`, then `NODE_ENV`. |
+| `INTERFERE_DEBUG` | No | Set to `1` for lifecycle logs while setting up. |
