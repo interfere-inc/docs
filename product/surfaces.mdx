@@ -1,0 +1,25 @@
+---
+title: "Surfaces"
+description: "Manage the apps Interfere watches, their keys, environments, and releases."
+---
+
+A [surface](/concepts#surface) is one of your apps. This is where you set one up and check it's healthy.
+
+## Events flowing
+
+Once your SDK is installed and sending data, the surface shows events flowing and the chart fills in with the volume of events over time. Before the first event arrives, the surface waits. If you've deployed but still see nothing, check that the SDK is installed and your keys are set.
+
+## Keys
+
+Each surface has two keys, and they do different jobs:
+
+- **Public key** (`INTERFERE_PUBLIC_KEY`). Identifies the surface so the SDK can send telemetry. It's safe to ship in the browser; it only authorizes ingestion.
+- **API key** (`INTERFERE_API_KEY`). A server-side secret, sometimes thought of as the private key. It uploads source maps and registers releases from CI. Keep it out of client code.
+
+## Environments
+
+An environment labels where traffic came from, such as `production`, `staging`, or `preview`. Interfere keeps them separate so development noise doesn't mix in with real problems.
+
+## Releases
+
+A [release](/concepts#release) is a version of your code, identified by its commit. Surfaces track releases so a problem lines up with the deploy that introduced it, which is also how [regressions](/concepts#regression) are caught. Releases come from the Next.js and Vite build plugins automatically, or from the [CLI](/integrations/cli) on other setups.

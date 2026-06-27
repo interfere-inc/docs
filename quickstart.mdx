@@ -1,0 +1,85 @@
+---
+title: "Quickstart"
+description: "Get Interfere running and events flowing in about five minutes."
+---
+
+Work through this checklist end to end and you'll have problems showing up in your dashboard, investigated for you.
+
+<Steps>
+  <Step title="Create a workspace">
+    Sign up and create a workspace. It's the home for your team and everything Interfere finds.
+  </Step>
+  <Step title="Create a surface">
+    A surface is one app you want Interfere to watch: a frontend, a backend, or a marketing site. Create one and copy its keys into your environment:
+
+    - `INTERFERE_PUBLIC_KEY`: used by the SDK to send telemetry. Safe to expose.
+    - `INTERFERE_API_KEY`: used to upload source maps in CI. Keep it server-side.
+  </Step>
+  <Step title="Install the SDK">
+    <Tabs>
+      <Tab title="With an AI agent">
+        Paste this into your coding agent (Cursor, Claude Code, and the like) and let it wire everything up:
+
+        ```text
+        Set up the Interfere SDK in this project. Detect my framework
+        (Next.js, Vite, or NestJS) and follow the matching Interfere
+        install guide step by step. Read INTERFERE_PUBLIC_KEY from my
+        environment and never print my keys.
+        ```
+
+        You can also open **Ask AI** at the top of these docs and ask it to install Interfere in your project.
+      </Tab>
+      <Tab title="Manually">
+        Follow the guide for your stack:
+
+        <CardGroup cols={3}>
+          <Card title="Next.js" icon="/icons/tech/nextjs/currentcolor.svg" href="/sdk/next-js">
+            App Router
+          </Card>
+          <Card title="Vite + React" icon="/icons/tech/vite/transparent.svg" href="/sdk/vite">
+            SPA or SSR
+          </Card>
+          <Card title="NestJS" icon="/icons/tech/nestjs/transparent.svg" href="/sdk/nestjs">
+            Backend
+          </Card>
+        </CardGroup>
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="Connect your integrations">
+    Integrations give Interfere the context to investigate and a way to reach your team. From **Settings → Integrations**, connect:
+
+    - **GitHub** so a problem ties back to the commit that caused it.
+    - **Your deploy platform** (Vercel or Cloudflare) so problems line up with releases. On AWS, Fly, or your own servers, use the [CLI](/integrations/cli) instead.
+    - **Slack** to get problems where your team already works.
+
+    See [all integrations](/integrations/overview).
+  </Step>
+  <Step title="Deploy">
+    Ship your app. Once it's running, events start flowing and your first problems appear in the dashboard, already grouped and triaged. Trigger an error to confirm the whole path end to end.
+  </Step>
+</Steps>
+
+## Not seeing events?
+
+The SDK tells you what it's doing, so a quick check usually explains it.
+
+<AccordionGroup>
+  <Accordion title="Turn on debug logging">
+    Set `INTERFERE_DEBUG=1` to print lifecycle events at startup: when the SDK initializes, the release it resolved, and any exporter errors. It's the fastest way to see whether data is leaving your app.
+  </Accordion>
+
+  <Accordion title="Nothing in development">
+    The Next.js SDK stays quiet outside production so local noise doesn't reach your dashboard. To capture while testing, call `init({ enabled: true })` (on Vite, gate it with `import.meta.env.PROD`). See each SDK's FAQ.
+  </Accordion>
+
+  <Accordion title='A "no release slug" warning'>
+    The collector needs a release to attach telemetry to. The Next.js and Vite plugins upload one during the build automatically. On a backend or a custom platform, run the [CLI](/integrations/cli) as a postbuild step (`interfere sourcemaps upload ./dist`) with `INTERFERE_API_KEY` set.
+  </Accordion>
+
+  <Accordion title="Telemetry blocked by an ad-blocker">
+    Some ad-blockers drop requests to telemetry endpoints. Route them through your own domain with the proxy route described in each SDK guide.
+  </Accordion>
+</AccordionGroup>
+
+Still stuck? Reach out at [support@interfere.com](mailto:support@interfere.com).

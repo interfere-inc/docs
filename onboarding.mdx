@@ -1,0 +1,43 @@
+---
+title: "Onboarding"
+description: "What the first-run setup asks for, step by step."
+---
+
+The first time you sign in, Interfere walks you through a short setup. Each step is needed before your account is ready, so you work through them in order rather than skipping ahead. Most take a minute. Here's what each one is for.
+
+## Workspace
+
+Create your workspace: a name, a URL (your slug, such as `interfere.com/~/acme`), your company email domain, and a [data residency](#data-residency) region.
+
+The domain is the field worth getting right. It's your team's email domain (`acme.com`), and it's how colleagues on the same domain can join later. See [Workspace domains](/product/settings#workspace-domains).
+
+## Surface
+
+Set up your first [surface](/concepts#surface), the app Interfere will watch:
+
+- **Name** it.
+- **Pick your stack** so Interfere shows the right install steps.
+- **Copy your keys**: the public key the SDK uses, and the API key for releases.
+- **Link your codebase** so problems tie back to your source.
+
+## Integrations
+
+Connect the tools around your code:
+
+- **Source**: your code repository, so a problem links to the commit behind it.
+- **Destination**: your deploy platform, so problems line up with releases.
+- **Events**: with the SDK installed and deployed, this step confirms Interfere is receiving data. Once events are flowing, you're set.
+
+See [Integrations](/integrations/overview) for what each provider does.
+
+## Billing
+
+Choose a plan to finish setup.
+
+## Data residency
+
+When you create the workspace you pick where your data is stored, currently the US or the EU. It's set once for the workspace and shapes your keys (you'll see the region in them, for example `interfere_pub_us_…`). Pick the region that matches your requirements before you create the workspace.
+
+## Can I skip steps?
+
+No. Each step gates the next, so the account isn't ready until they're all done. The only one that waits on you is **Events**: it completes when your deployed app sends its first event, so finish the install and ship to clear it.
