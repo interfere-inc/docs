@@ -19,8 +19,22 @@ Interfere authorizes through Cloudflare with read-only scopes:
 | --- | --- |
 | `memberships.read` | List the Cloudflare accounts you can access. |
 | `workers-scripts.read` | List the Worker scripts in your account. |
+| `offline-access` | Get a refresh token so the connection stays alive without re-auth. |
+
+## Tag your deploys with the commit SHA
+
+To tie each Worker version back to the code that shipped it, pass the commit SHA when you deploy:
+
+```bash
+wrangler deploy --tag $GITHUB_SHA
+```
+
+GitHub Actions sets `GITHUB_SHA` automatically.
+
+Interfere reads this tag from each Worker version and links it to its source commit. Use the raw commit SHA (7–40 hex characters); prefixed tags like `release-abc123` or `v1.2.3` are ignored.
 
 ## Gotchas
 
 - **One account at a time.** If you belong to more than one Cloudflare account, Interfere connects the first one it can access.
 - **Reconnect if access lapses.** If the connection expires, reconnect it from Settings → Integrations.
+- **No tag, no source link.** Deploys without a `--tag` commit SHA still show up as releases, but they won't be tied to a commit.
