@@ -7,7 +7,7 @@ This page explains the words you'll come across while using Interfere.
 
 ## Surface
 
-A surface is one of your apps that Interfere watches: a web frontend, a backend service, or a marketing site. Each surface has its own public key and its own SDK install.
+A surface is one of your apps that Interfere watches: a web frontend, a backend service, or a marketing site. Each surface has its own public key and its own SDK install. Manage them from [Surfaces](https://interfere.com/~/*/surfaces).
 
 Give each app you deploy separately its own surface. A Next.js frontend and a NestJS API are two surfaces. A customer storefront and an internal admin tool are two more. You connect each surface to its [source and destination](#sources-and-destinations) so its problems link back to your code and your deployments.
 
@@ -61,4 +61,4 @@ These are the [integrations](/integrations/overview) that connect Interfere to t
 - A **source** is where your code lives (GitHub and its enterprise variants). Interfere uses it to link a problem to the commit behind it and to base a proposed fix on your real code.
 - A **destination** is where your code runs (Vercel, Cloudflare). Interfere watches your deployments so a problem lines up with the release that shipped it.
 
-Connect them from **Settings → Integrations**. The [Integrations](/integrations/overview) section covers each provider, the access it needs, and how to set it up.
+Connect them from [**Settings → Integrations**](https://interfere.com/~/*/settings/integrations). The [Integrations](/integrations/overview) section covers each provider, the access it needs, and how to set it up.

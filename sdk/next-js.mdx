@@ -9,7 +9,7 @@ description: "Add error tracking, session replay, and product analytics to your 
 This page covers the install and the handful of settings most teams actually touch: naming your app, identifying your users, and respecting consent.
 
 <Note>
-  You'll need a **surface public key** (`interfere_pub_<region>_…`) from your project's dashboard. For source-map upload and release tracking you'll also want an **Interfere API key** (`interfere_secret_<region>_…`). See [Environment variables](#environment-variables).
+  You'll need a **surface public key** (`interfere_pub_<region>_…`) from [Surfaces](https://interfere.com/~/*/surfaces). For source-map upload and release tracking you'll also want an **Interfere API key** (`interfere_secret_<region>_…`). See [Environment variables](#environment-variables).
 </Note>
 
 ## Prerequisites
@@ -100,7 +100,7 @@ Five steps, each wired once. After this you don't touch it again.
 
 <Check>
   That's the whole install. Run your app, trigger an error, and it shows up in your dashboard within
-  seconds, already grouped and triaged. There's nothing else to configure. (The SDK stays quiet
+  seconds, already grouped and triaged. Open your [workspace](https://interfere.com/~/*) to confirm it. There's nothing else to configure. (The SDK stays quiet
   outside production; see [the FAQ](#faq) to capture in development.)
 </Check>
 
@@ -108,7 +108,7 @@ Five steps, each wired once. After this you don't touch it again.
 
 | Variable                             | Required     | Description                                                                                                                                                        |
 | ------------------------------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `INTERFERE_PUBLIC_KEY`               | Yes          | Your surface public key (`interfere_pub_<region>_…`, where `<region>` is `us` or `eu`). Safe to expose; it only authorizes ingestion.                              |
+| `INTERFERE_PUBLIC_KEY`               | Yes          | Your [surface public key](https://interfere.com/~/*/surfaces) (`interfere_pub_<region>_…`, where `<region>` is `us` or `eu`). Safe to expose; it only authorizes ingestion.                              |
 | `INTERFERE_API_KEY`                  | For releases | Interfere API key (`interfere_secret_<region>_…`). A **server-side build credential** for source-map upload and release metadata. Never expose it in browser code. |
 | `NEXT_PUBLIC_INTERFERE_ROUTE_PREFIX` | No           | Override the proxy route prefix. Defaults to `/api/interfere`. See [Custom route prefix](#custom-route-prefix).                                                    |
 
@@ -159,7 +159,7 @@ init({ plugins: { replay: false } });
 
 ## Identity
 
-By default a session is anonymous. Link it to your authenticated user so a problem shows you who hit it, with a name and email instead of an opaque id. Call `identity.set()` from the `useInterfere` hook once your user loads:
+By default a session is anonymous. Link it to your authenticated user so a problem shows you who hit it in [Users](https://interfere.com/~/*/users), with a name and email instead of an opaque id. Call `identity.set()` from the `useInterfere` hook once your user loads:
 
 ```tsx
 import { useInterfere } from "@interfere/next/provider";
