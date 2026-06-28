@@ -3,15 +3,15 @@ title: "Surfaces"
 description: "Manage the apps Interfere watches, their keys, environments, and releases."
 ---
 
-A [surface](/concepts#surface) is one of your apps. This is where you set one up and check it's healthy.
+A [surface](/concepts#surface) is one of your apps. This is where you [create one](https://interfere.com/~/*/surfaces/create), manage existing [surfaces](https://interfere.com/~/*/surfaces), and check they're healthy.
 
 ## Events flowing
 
-Once your SDK is installed and sending data, the surface shows events flowing and the chart fills in with the volume of events over time. Before the first event arrives, the surface waits. If you've deployed but still see nothing, check that the SDK is installed and your keys are set.
+Once your SDK is installed and sending data, the surface shows events flowing and the chart fills in with the volume of events over time. Before the first event arrives, the surface waits. If you've deployed but still see nothing, open [Surfaces](https://interfere.com/~/*/surfaces) and check that the SDK is installed and your keys are set.
 
 ## Keys
 
-Each surface has two keys, and they do different jobs:
+Each surface has two keys in [Surfaces](https://interfere.com/~/*/surfaces), and they do different jobs:
 
 - **Public key** (`INTERFERE_PUBLIC_KEY`). Identifies the surface so the SDK can send telemetry. It's safe to ship in the browser; it only authorizes ingestion.
 - **API key** (`INTERFERE_API_KEY`). A server-side secret, sometimes thought of as the private key. It uploads source maps and registers releases from CI. Keep it out of client code.

@@ -9,7 +9,7 @@ sidebarTitle: "Vite"
 It works for a plain single-page app and for server-rendered setups like TanStack Start. This page covers the install plus the handful of settings most teams actually touch.
 
 <Note>
-  You'll need a **surface public key** (`interfere_pub_<region>_…`) from your project's dashboard. For source-map upload and release tracking you'll also want an **Interfere API key** (`interfere_secret_<region>_…`). See [Environment variables](#environment-variables).
+  You'll need a **surface public key** (`interfere_pub_<region>_…`) from [Surfaces](https://interfere.com/~/*/surfaces). For source-map upload and release tracking you'll also want an **Interfere API key** (`interfere_secret_<region>_…`). See [Environment variables](#environment-variables).
 </Note>
 
 ## Prerequisites
@@ -95,7 +95,7 @@ These four steps cover a single-page app. If you server-render (TanStack Start, 
 
 <Check>
   That's the whole install for a single-page app. Run it, trigger an error, and it shows up in your
-  dashboard within seconds, already grouped and triaged. (To control whether the SDK runs in
+  dashboard within seconds, already grouped and triaged. Open your [workspace](https://interfere.com/~/*) to confirm it. (To control whether the SDK runs in
   development, see [the FAQ](#faq).)
 </Check>
 
@@ -103,7 +103,7 @@ These four steps cover a single-page app. If you server-render (TanStack Start, 
 
 | Variable                    | Required     | Description                                                                                                                                   |
 | --------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `VITE_INTERFERE_PUBLIC_KEY` | Yes          | Your surface public key (`interfere_pub_<region>_…`, where `<region>` is `us` or `eu`). Safe to expose; the plugin stamps it into your build. |
+| `VITE_INTERFERE_PUBLIC_KEY` | Yes          | Your [surface public key](https://interfere.com/~/*/surfaces) (`interfere_pub_<region>_…`, where `<region>` is `us` or `eu`). Safe to expose; the plugin stamps it into your build. |
 | `INTERFERE_API_KEY`         | For releases | Interfere API key (`interfere_secret_<region>_…`). A **build-time credential** for source-map upload and release metadata.                    |
 
 <Warning>
@@ -151,7 +151,7 @@ init({ plugins: { replay: false } });
 
 ## Identity
 
-Sessions start out anonymous. Attach the signed-in user and a problem will show you exactly who ran into it, by name and email instead of a random id. Call `identity.set()` from the `useInterfere` hook once you have a user:
+Sessions start out anonymous. Attach the signed-in user and a problem will show you exactly who ran into it in [Users](https://interfere.com/~/*/users), by name and email instead of a random id. Call `identity.set()` from the `useInterfere` hook once you have a user:
 
 ```tsx
 import { useInterfere } from "@interfere/vite/provider";

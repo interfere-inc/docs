@@ -9,7 +9,7 @@ icon: "terminal"
 You only need it when you're not already using a bundler plugin. The [Next.js](/sdk/next-js) and [Vite](/sdk/vite) plugins do this automatically during the build. Reach for the CLI when there is no plugin for your setup: a Node or NestJS backend, a bundler we do not have a plugin for, or any deploy that is not on Vercel or Cloudflare, such as AWS, Fly, Render, or your own servers.
 
 <Note>
-  The CLI uses your **Interfere API key** (`INTERFERE_API_KEY`, the `interfere_secret_<region>_…` build credential). It's a server-side secret, so keep it in CI and never in client code.
+  The CLI uses your **Interfere API key** (`INTERFERE_API_KEY`, the `interfere_secret_<region>_…` build credential) from [Surfaces](https://interfere.com/~/*/surfaces). It's a server-side secret, so keep it in CI and never in client code.
 </Note>
 
 ## Install
@@ -67,7 +67,7 @@ Commit SHA, branch, and run details are detected automatically on GitHub Actions
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `INTERFERE_API_KEY` | Yes | Your Interfere API key (`interfere_secret_<region>_…`). Authenticates the upload. |
+| `INTERFERE_API_KEY` | Yes | Your [Interfere API key](https://interfere.com/~/*/surfaces) (`interfere_secret_<region>_…`). Authenticates the upload. |
 | `INTERFERE_API_URL` | No | Override the collector URL for a regional or self-hosted instance. Defaults to `https://in.interfere.com`. |
 | `INTERFERE_SOURCE_ID` | No | Override the commit SHA used to identify the release. Auto-detected from CI or `git` otherwise. |
 

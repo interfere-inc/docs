@@ -6,7 +6,7 @@ description: "Instrument your NestJS backend so server errors reach Interfere wi
 `@interfere/nest` connects your NestJS backend to Interfere. Once it's wired in, unhandled exceptions across your controllers and providers are captured with full server-side stack traces, and you get manual capture and tracing when you want them.
 
 <Note>
-  Set your **surface public key** (`INTERFERE_PUBLIC_KEY`, `interfere_pub_<region>_…`) so telemetry routes to your project. For readable stack traces you'll also upload source maps with the [CLI](/integrations/cli), which needs your **Interfere API key** (`INTERFERE_API_KEY`).
+  Set your **surface public key** (`INTERFERE_PUBLIC_KEY`, `interfere_pub_<region>_…`) from [Surfaces](https://interfere.com/~/*/surfaces) so telemetry routes to your project. For readable stack traces you'll also upload source maps with the [CLI](/integrations/cli), which needs your **Interfere API key** (`INTERFERE_API_KEY`).
 </Note>
 
 ## Prerequisites
@@ -62,7 +62,7 @@ npm install @interfere/nest
 </Steps>
 
 <Check>
-  Throw an error from a route and it shows up in your dashboard within seconds, already grouped and triaged.
+  Throw an error from a route and it shows up in your [workspace](https://interfere.com/~/*) within seconds, already grouped and triaged.
 </Check>
 
 ## Source maps and releases
@@ -123,7 +123,7 @@ const order = await withSpan("checkout.submit", () => submitOrder(cart));
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `INTERFERE_PUBLIC_KEY` | Yes | Your surface public key (`interfere_pub_<region>_…`). Routes telemetry to your project. |
+| `INTERFERE_PUBLIC_KEY` | Yes | Your [surface public key](https://interfere.com/~/*/surfaces) (`interfere_pub_<region>_…`). Routes telemetry to your project. |
 | `INTERFERE_API_KEY` | For releases | Used by the [CLI](/integrations/cli) to upload source maps (`interfere_secret_<region>_…`). A build-time secret; keep it in CI. |
 | `INTERFERE_ENVIRONMENT` | No | Environment label for releases. Falls back to `VERCEL_ENV`, then `NODE_ENV`. |
 | `INTERFERE_DEBUG` | No | Set to `1` for lifecycle logs while setting up. |

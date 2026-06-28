@@ -26,17 +26,17 @@ Interfere never requests write access. It can't push code, open pull requests, o
 
 ## Connecting
 
-Connect GitHub from **Settings → Integrations** and install the Interfere app on the repositories you choose. Then pick the host type that matches your setup:
+Connect [GitHub](https://interfere.com/~/*/settings/integrations/github) from **Settings → Integrations** and install the Interfere app on the repositories you choose. Then pick the host type that matches your setup:
 
 <Tabs>
   <Tab title="GitHub.com">
     The default. Install the Interfere app from GitHub and choose the repositories to grant. Nothing else to configure.
   </Tab>
   <Tab title="Enterprise Cloud">
-    For organizations on GitHub Enterprise Cloud with a `*.ghe.com` host. Enter your enterprise host, for example `acme.ghe.com`. Interfere registers an app for your enterprise, then you install it and pick repositories.
+    For organizations on GitHub Enterprise Cloud with a `*.ghe.com` host. Enter your enterprise host, for example `acme.ghe.com`, from the [Enterprise Cloud integration](https://interfere.com/~/*/settings/integrations/ghe_cloud). Interfere registers an app for your enterprise, then you install it and pick repositories.
   </Tab>
   <Tab title="Enterprise Server">
-    For self-hosted GitHub. Enter your server URL, for example `github.acme.com`. Interfere calls your server's API at `https://your-host/api/v3`, so the server must be reachable from Interfere. Each server gets its own app registration.
+    For self-hosted GitHub. Enter your server URL, for example `github.acme.com`, from the [Enterprise Server integration](https://interfere.com/~/*/settings/integrations/ghe_server). Interfere calls your server's API at `https://your-host/api/v3`, so the server must be reachable from Interfere. Each server gets its own app registration.
   </Tab>
 </Tabs>
 

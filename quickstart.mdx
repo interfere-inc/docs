@@ -7,10 +7,10 @@ Work through this checklist end to end and you'll have problems showing up in yo
 
 <Steps>
   <Step title="Create a workspace">
-    Sign up and create a workspace. It's the home for your team and everything Interfere finds.
+    [Sign up](https://interfere.com/onboarding) and create a workspace. It's the home for your team and everything Interfere finds.
   </Step>
   <Step title="Create a surface">
-    A surface is one app you want Interfere to watch: a frontend, a backend, or a marketing site. Create one and copy its keys into your environment:
+    A surface is one app you want Interfere to watch: a frontend, a backend, or a marketing site. [Create one](https://interfere.com/~/*/surfaces/create) and copy its keys into your environment:
 
     - `INTERFERE_PUBLIC_KEY`: used by the SDK to send telemetry. Safe to expose.
     - `INTERFERE_API_KEY`: used to upload source maps in CI. Keep it server-side.
@@ -47,7 +47,7 @@ Work through this checklist end to end and you'll have problems showing up in yo
     </Tabs>
   </Step>
   <Step title="Connect your integrations">
-    Integrations give Interfere the context to investigate and a way to reach your team. From **Settings → Integrations**, connect:
+    Integrations give Interfere the context to investigate and a way to reach your team. From [**Settings → Integrations**](https://interfere.com/~/*/settings/integrations), connect:
 
     - **GitHub** so a problem ties back to the commit that caused it.
     - **Your deploy platform** (Vercel or Cloudflare) so problems line up with releases. On AWS, Fly, or your own servers, use the [CLI](/integrations/cli) instead.
@@ -56,7 +56,7 @@ Work through this checklist end to end and you'll have problems showing up in yo
     See [all integrations](/integrations/overview).
   </Step>
   <Step title="Deploy">
-    Ship your app. Once it's running, events start flowing and your first problems appear in the dashboard, already grouped and triaged. Trigger an error to confirm the whole path end to end.
+    Ship your app. Once it's running, events start flowing and your first problems appear in your [workspace](https://interfere.com/~/*), already grouped and triaged. Trigger an error to confirm the whole path end to end.
   </Step>
 </Steps>
 
