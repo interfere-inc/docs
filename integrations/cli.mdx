@@ -92,7 +92,7 @@ CircleCI, GitLab CI, and Buildkite are detected the same way. Outside a supporte
 
 ### AWS, Fly, Render, and self-hosted deploys
 
-There's no separate AWS integration — anywhere you build and deploy yourself, the CLI is how releases and source maps reach Interfere. Run it as a step in whatever pipeline produces your build (AWS CodeBuild or CodePipeline, an EC2 or ECS build runner, Fly's `flyctl deploy`, Render's build command, a self-hosted Jenkins or Drone, etc.), after the build and before — or alongside — the deploy.
+There's no separate AWS integration — anywhere you build and deploy yourself, the CLI is how releases and source maps reach Interfere. Run it as a step in whatever pipeline produces your build, after the build and before (or alongside) the deploy. That covers AWS CodeBuild and CodePipeline, an EC2 or ECS build runner, Fly's `flyctl deploy`, Render's build command, a self-hosted Jenkins or Drone, and similar setups.
 
 AWS CodeBuild example:
 
