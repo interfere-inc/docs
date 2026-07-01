@@ -1,5 +1,6 @@
 ---
 title: "NestJS"
+icon: "/icons/tech/nestjs/transparent.svg"
 description: "Instrument your NestJS backend so server errors reach Interfere with full stack traces."
 ---
 
@@ -125,5 +126,5 @@ const order = await withSpan("checkout.submit", () => submitOrder(cart));
 | --- | --- | --- |
 | `INTERFERE_PUBLIC_KEY` | Yes | Your [surface public key](https://interfere.com/~/*/surfaces) (`interfere_pub_<region>_…`). Routes telemetry to your project. |
 | `INTERFERE_API_KEY` | For releases | Used by the [CLI](/integrations/cli) to upload source maps (`interfere_secret_<region>_…`). A build-time secret; keep it in CI. |
-| `INTERFERE_ENVIRONMENT` | No | Environment label for releases. Falls back to `VERCEL_ENV`, then `NODE_ENV`. |
+| `INTERFERE_ENVIRONMENT` | No | Labels this process's telemetry and releases (`production`, `staging`, or a label you choose). Falls back to `VERCEL_ENV`, then `NODE_ENV`, then `development`. Interfere drops the `development`, `local`, and `test` environments before ingestion, so set a real one to capture from it. |
 | `INTERFERE_DEBUG` | No | Set to `1` for lifecycle logs while setting up. |

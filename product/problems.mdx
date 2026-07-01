@@ -1,5 +1,6 @@
 ---
 title: "The problem view"
+icon: "bug"
 sidebarTitle: "Problem view"
 description: "Everything you need to understand and fix one problem, with a timeline at its heart."
 ---
@@ -25,11 +26,20 @@ The timeline is the heart of the problem view: one chronological thread of the i
 - **Relevant sessions.** Jump straight to the [session replays](https://interfere.com/~/*/users) where the problem actually appeared, so you spend your time on where it shows up in a real user's flow.
 - **Filtering.** Filter the timeline down to the part you care about when there's a lot going on.
 
-## Collaborate
+## Work the problem
 
-A problem is rarely one person's job, so the timeline is where your team works it together.
+You don't file problems, and you rarely set their status by hand. Interfere surfaces them from your events and moves them through their [statuses](/concepts#statuses) on its own as it investigates. Your job is to direct and decide. From the problem view you can:
 
-- **Assign it.** Hand a problem to the right teammate.
-- **Discuss inline.** Comment and mention people on the timeline to pull in whoever's needed, from the engineer who owns the code to a designer or PM.
-- **Get notified.** Interfere notifies the right people when a problem needs them. Choose where those notifications go in [Alerts](https://interfere.com/~/*/settings/alerts).
-- **Carry it into Slack.** Mentions and assignments reach you as Slack messages, and you can keep the conversation there. See [Slack](/integrations/slack) or open the [Slack integration](https://interfere.com/~/*/settings/integrations/slack).
+- **Assign it.** Hand the problem to the right teammate. Press <kbd>a</kbd> to open the assignee picker.
+- **Set priority.** Mark it high, medium, or low so the team knows what to pick up first. Press <kbd>p</kbd> to set it.
+- **Edit the title or description.** Interfere writes both for you. Tighten either one if you want it to read a certain way for your team.
+- **Discuss inline.** Comment on the timeline and @mention people to pull in whoever's needed, from the engineer who owns the code to a designer or PM.
+- **Subscribe.** Follow a problem to get its updates, or unsubscribe to step back. Press <kbd>s</kbd> to toggle it.
+- **Dismiss it.** When a problem isn't worth acting on, dismiss it to clear it from your active list. Interfere keeps the record in case it returns.
+- **Archive it.** Remove a problem you don't want to see at all.
+
+Interfere handles the rest of the lifecycle. It marks a problem resolved once the issue stops recurring, and reopens it as a [regression](/concepts#regression) if it comes back on a later release. You never mark something resolved by hand.
+
+## Get notified
+
+Interfere notifies the right people when a problem needs them. Choose where those notifications go in [Alerts](https://interfere.com/~/*/settings/alerts). Mentions and assignments also reach you as Slack messages, and you can keep the conversation there. See [Slack](/integrations/slack) or open the [Slack integration](https://interfere.com/~/*/settings/integrations/slack).

@@ -1,5 +1,6 @@
 ---
 title: "Vite (React)"
+icon: "/icons/tech/vite/transparent.svg"
 description: "Install the Interfere SDK in your Vite app. One-time setup, then Interfere captures everything you ship."
 sidebarTitle: "Vite"
 ---
@@ -105,6 +106,7 @@ These four steps cover a single-page app. If you server-render (TanStack Start, 
 | --------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | `VITE_INTERFERE_PUBLIC_KEY` | Yes          | Your [surface public key](https://interfere.com/~/*/surfaces) (`interfere_pub_<region>_…`, where `<region>` is `us` or `eu`). Safe to expose; the plugin stamps it into your build. |
 | `INTERFERE_API_KEY`         | For releases | Interfere API key (`interfere_secret_<region>_…`). A **build-time credential** for source-map upload and release metadata.                    |
+| `INTERFERE_ENVIRONMENT`     | No           | Labels this build's telemetry and releases (`production`, `staging`, `preview`, or a label you choose). The plugin stamps it into the build, so it needs no `VITE_` prefix. Defaults to `VERCEL_ENV`, then `NODE_ENV`, then `development`. See [Environments](#environments). |
 
 <Warning>
   Only `VITE_`-prefixed variables reach the browser. Keep `INTERFERE_API_KEY` out of any `VITE_`
@@ -127,6 +129,22 @@ init({ serviceName: "@acme/storefront" });
   A stable name for this app. Interfere uses it to keep each surface's data separate, and to
   correlate the same issue across surfaces into one problem.
 </ParamField>
+
+### Environments
+
+Interfere tags everything it captures with the environment it ran in, and labels each release the same way. In the dashboard, releases carry an environment badge and you can filter by environment, so production data and preview data stay apart.
+
+Set it with `INTERFERE_ENVIRONMENT`:
+
+```env
+INTERFERE_ENVIRONMENT=production
+```
+
+The label is free-form: `production`, `staging`, `preview`, `canary`, or whatever you name it. If you don't set it, Interfere falls back to `VERCEL_ENV`, then `NODE_ENV`, then `development`. The plugin stamps the value into your build, so it needs no `VITE_` prefix.
+
+<Warning>
+  Interfere drops local-like environments (`development`, `local`, `test`) before ingestion, so everyday local traffic never reaches your dashboard. A build with no environment set defaults to `development` and is filtered out. Set a real environment, or turn off environment filtering for the surface, to capture from one.
+</Warning>
 
 ### Choose what's captured
 

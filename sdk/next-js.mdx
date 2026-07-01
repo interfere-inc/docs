@@ -1,5 +1,6 @@
 ---
 title: "Next.js"
+icon: "/icons/tech/nextjs/currentcolor.svg"
 mode: "default"
 description: "Add error tracking, session replay, and product analytics to your Next.js app with a single provider."
 ---
@@ -110,6 +111,7 @@ Five steps, each wired once. After this you don't touch it again.
 | ------------------------------------ | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `INTERFERE_PUBLIC_KEY`               | Yes          | Your [surface public key](https://interfere.com/~/*/surfaces) (`interfere_pub_<region>_…`, where `<region>` is `us` or `eu`). Safe to expose; it only authorizes ingestion.                              |
 | `INTERFERE_API_KEY`                  | For releases | Interfere API key (`interfere_secret_<region>_…`). A **server-side build credential** for source-map upload and release metadata. Never expose it in browser code. |
+| `INTERFERE_ENVIRONMENT`              | No           | Labels this deployment's telemetry and releases (`production`, `staging`, `preview`, or a label you choose). Read at build time and stamped into the bundle, so it needs no `NEXT_PUBLIC_` prefix. Defaults to `VERCEL_ENV`, then `NODE_ENV`, then `development`. See [Environments](#environments). |
 | `NEXT_PUBLIC_INTERFERE_ROUTE_PREFIX` | No           | Override the proxy route prefix. Defaults to `/api/interfere`. See [Custom route prefix](#custom-route-prefix).                                                    |
 
 <Warning>
@@ -135,6 +137,26 @@ init({ serviceName: "@acme/storefront" });
   A stable name for this app. Interfere uses it to keep each surface's data separate, and to
   correlate the same issue across surfaces into one problem.
 </ParamField>
+
+### Environments
+
+Interfere tags everything it captures with the environment it ran in, and labels each release the same way. In the dashboard, releases carry an environment badge and you can filter by environment, so production data and preview data stay apart.
+
+Set it with `INTERFERE_ENVIRONMENT`:
+
+```env
+INTERFERE_ENVIRONMENT=production
+```
+
+The label is free-form: `production`, `staging`, `preview`, `canary`, or whatever you name it. If you don't set it, Interfere falls back to `VERCEL_ENV`, then `NODE_ENV`, then `development`. On Vercel you usually get the right value without doing anything.
+
+<Note>
+  Interfere reads this at build time and bakes it into your bundle, so it does not need a `NEXT_PUBLIC_` prefix.
+</Note>
+
+<Warning>
+  Interfere drops local-like environments (`development`, `local`, `test`) before ingestion, so everyday local traffic never reaches your dashboard. An app with no environment set defaults to `development` and is filtered out, which is one reason nothing shows up until you deploy. Set a real environment, or turn off environment filtering for the surface, to capture from one.
+</Warning>
 
 ### Choose what's captured
 
@@ -288,11 +310,11 @@ The SDK proxies telemetry through `/api/interfere` by default. Move it to any pa
 ## Other frameworks
 
 <CardGroup cols={3}>
-  <Card title="Vite + React" icon="/icons/tech/vite/transparent.svg">
+  <Card title="Vite + React" icon="/icons/tech/vite/transparent.svg" href="/sdk/vite">
     `@interfere/vite`: a Vite plugin plus `init()` before render. Works for SPA and SSR.
   </Card>
 
-<Card title="TanStack Start" icon="/icons/tech/tanstack/currentcolor.svg">
+<Card title="TanStack Start" icon="/icons/tech/tanstack/currentcolor.svg" href="/sdk/vite#server-side-rendering">
   `@interfere/vite`: the same plugin, with a server route for proxying.
 </Card>
 
@@ -305,7 +327,7 @@ The SDK proxies telemetry through `/api/interfere` by default. Move it to any pa
 
 <AccordionGroup>
   <Accordion title="Why isn't anything showing up in development?">
-    The SDK stays quiet when `NODE_ENV !== "production"`, so local noise doesn't reach your dashboard. To capture while testing, call `init({ enabled: true })` in `instrumentation-client.ts`.
+    The SDK stays quiet when `NODE_ENV !== "production"`, so local noise doesn't reach your dashboard. To capture while testing, call `init({ enabled: true })` in `instrumentation-client.ts`. Interfere also drops the `development`, `local`, and `test` environments before ingestion, so set a real [environment](#environments) too if you want that data to land.
   </Accordion>
 
 <Accordion title="Do you handle the same issue across multiple apps?">

@@ -18,14 +18,34 @@ Work through this checklist end to end and you'll have problems showing up in yo
   <Step title="Install the SDK">
     <Tabs>
       <Tab title="With an AI agent">
-        Paste this into your coding agent (Cursor, Claude Code, and the like) and let it wire everything up:
+        Point your coding agent at the Interfere install prompt and it wires everything up. Run the command for your agent:
 
-        ```text
-        Set up the Interfere SDK in this project. Detect my framework
-        (Next.js, Vite, or NestJS) and follow the matching Interfere
-        install guide step by step. Read INTERFERE_PUBLIC_KEY from my
-        environment and never print my keys.
+        <CodeGroup>
+
+        ```bash Claude Code
+        curl -sL https://interfere.com/prompts/onboarding/v8/onboarding-nextjs.md | claude -p "Add Interfere to this codebase"
         ```
+
+        ```bash Codex
+        codex -s workspace-write -a on-request "$(curl -sL https://interfere.com/prompts/onboarding/v8/onboarding-nextjs.md) Add Interfere to this codebase"
+        ```
+
+        ```bash Cursor
+        cursor-agent --print --force "$(curl -sL https://interfere.com/prompts/onboarding/v8/onboarding-nextjs.md) Add Interfere to this codebase"
+        ```
+
+        </CodeGroup>
+
+        On Vite, swap `onboarding-nextjs.md` for `onboarding-vite.md`. Want to read the prompt first? Open it directly:
+
+        <CardGroup cols={2}>
+          <Card title="Next.js install prompt" icon="/icons/tech/nextjs/currentcolor.svg" href="https://interfere.com/prompts/onboarding/v8/onboarding-nextjs.md">
+            Covers Next.js, NestJS, and other Node backends.
+          </Card>
+          <Card title="Vite install prompt" icon="/icons/tech/vite/transparent.svg" href="https://interfere.com/prompts/onboarding/v8/onboarding-vite.md">
+            Covers Vite and React apps.
+          </Card>
+        </CardGroup>
 
         You can also open **Ask AI** at the top of these docs and ask it to install Interfere in your project.
       </Tab>
