@@ -165,6 +165,17 @@ header h1 + p {
   font-weight: 550;
 }
 
+/* --- Sidebar category titles ----------------------------------------------
+   The nav group headers (Getting Started, Product, SDKs, Integrations) use
+   semi-medium weight, matching the app. Scoped to the sidebar nav so page
+   headings aren't affected. */
+#sidebar h3,
+#sidebar [role="heading"],
+[aria-label="Pages"] h3,
+[aria-label="Pages"] [role="heading"] {
+  font-weight: 550 !important;
+}
+
 /* --- Table identifier tokens ----------------------------------------------
    Mintlify breaks inline code mid-token in table cells (INTERFERE_PUBLIC_KE /
    Y). Keep first-column identifiers on one line so env-var names read cleanly;
