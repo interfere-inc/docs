@@ -29,16 +29,18 @@ Interfere builds a problem by matching evidence that shares the same root cause.
 
 Every problem has a status that tells you where it is and whether it needs you.
 
-| Status | What it means | Your move |
+| Status | What it means | Who sets it |
 | --- | --- | --- |
-| <span> <img src="/icons/status/investigating.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> Investigating </span> | Interfere is working out what happened and why. If it can't reach a conclusion on its own, it flags the problem for you. | Usually nothing |
-| <img src="/icons/status/active.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> Active | A confirmed problem, explained and waiting on a fix. | Decide on the fix |
-| <img src="/icons/status/in-recovery.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> In recovery | The problem looks like it's clearing on its own. Interfere watches before closing it. | Nothing |
-| <span><img src="/icons/status/needs-attention.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> Needs attention</span> | Likely a regression that Interfere isn't sure about. | Confirm it |
-| <img src="/icons/status/resolved.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> Resolved | Marked fixed. Interfere keeps watching in case it returns. | You set this |
-| <img src="/icons/status/dismissed.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> Dismissed | Not worth acting on. | You set this |
+| <span> <img src="/icons/status/light/investigating.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> Investigating </span> | Interfere is working out what happened and why. If it can't reach a conclusion on its own, it flags the problem for you. | Interfere |
+| <img src="/icons/status/light/active.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> Active | A confirmed problem, explained and waiting on a fix. | Interfere |
+| <img src="/icons/status/light/in-recovery.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> In recovery | The problem looks like it's clearing on its own. Interfere watches for a while before it closes it out. | Interfere |
+| <span><img src="/icons/status/light/needs-attention.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> Needs attention</span> | Likely a regression that Interfere isn't sure about. | Interfere |
+| <img src="/icons/status/light/resolved.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> Resolved | The problem has stopped and stayed gone. Interfere keeps watching in case it returns. | Interfere |
+| <img src="/icons/status/light/dismissed.svg" alt="" style={{display:"inline-block",height:"24px",width:"24px",verticalAlign:"middle",marginRight:"0.5em"}} /> Dismissed | Not worth acting on. | You |
 
-You dismiss a problem when it isn't worth acting on. It leaves your active list, and Interfere still remembers it, so you keep the history if it ever returns. You mark a problem resolved once you've shipped a fix; Interfere then watches later releases and reopens it as a [regression](#regression) if the same issue comes back.
+Interfere drives status as it investigates and watches a problem. It works through Investigating, marks a problem Active once it's confirmed, and marks it Resolved when the problem stops recurring. If the same issue comes back on a later release, Interfere reopens the resolved problem as a [regression](#regression).
+
+The one status you set yourself is Dismissed. Dismiss a problem when it isn't worth acting on. It leaves your active list, and Interfere still keeps the record, so you have the history if it ever returns. See [the problem view](/product/problems#work-the-problem) for how to dismiss.
 
 ### Fixes
 

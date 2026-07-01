@@ -50,6 +50,15 @@ code-group,
   font-variant-ligatures: none;
 }
 
+/* Keyboard keys: force Berkeley Mono to match the app UI. Mintlify styles
+   `kbd` with its own font, so this needs to win on specificity. */
+kbd {
+  font-family:
+    "BerkeleyMono", ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas",
+    "Liberation Mono", "Courier New", monospace !important;
+  font-variant-ligatures: none;
+}
+
 /* --- Selection ------------------------------------------------------------
    Inverted/standout treatment from the design system (kept monochrome to
    match the docs palette). */
@@ -103,6 +112,15 @@ code-group,
   background: rgba(255, 255, 255, 0.7) !important; /* white-a9 */
 }
 
+/* Align the CTA's right edge with the content panel. The topbar gutter
+   (lg:px-7) stops the button ~20px short of the panel's right edge, so pull it
+   back into line. Only applies where the button shows (lg and up). */
+@media (min-width: 1024px) {
+  #topbar-cta-button {
+    margin-right: -1.25rem !important;
+  }
+}
+
 /* --- Surfaces -------------------------------------------------------------
    Soften borders and round surfaces to match the design system's hairline
    borders (gray-a3) and rounded containers (radius-2xl = 12px). */
@@ -113,4 +131,68 @@ pre {
 
 :not(pre) > code {
   border-radius: 6px !important;
+}
+
+/* --- Dark-mode logos ------------------------------------------------------
+   The `currentcolor` brand marks (Next.js, Vercel, GitHub, …) render as solid
+   black when Mintlify inlines them as <img>, so they vanish on the dark
+   background. They're single-color marks, so inverting them to white in dark
+   mode is safe. Colored variants (`transparent`, `original`) are left alone,
+   since inverting those would wreck their brand colors. */
+.dark img[src$="/currentcolor.svg"] {
+  filter: invert(1);
+}
+
+/* --- TechIcon light/dark swap ---------------------------------------------
+   Backs the light/dark <img> pair emitted by components/TechIcon.tsx so it
+   shows the right variant per theme. */
+.tech-icon__image--dark {
+  display: none;
+}
+
+.dark .tech-icon__image--light {
+  display: none;
+}
+
+.dark .tech-icon__image--dark {
+  display: inline-block;
+}
+
+/* --- Page subtitle --------------------------------------------------------
+   The description under the H1 uses semi-medium weight, matching the app. */
+#content-area header p,
+header h1 + p {
+  font-weight: 550;
+}
+
+/* --- Table identifier tokens ----------------------------------------------
+   Mintlify breaks inline code mid-token in table cells (INTERFERE_PUBLIC_KE /
+   Y). Keep first-column identifiers on one line so env-var names read cleanly;
+   description-column code is left free to wrap. */
+table td:first-child code,
+table th:first-child code {
+  white-space: nowrap;
+}
+
+/* --- Content width --------------------------------------------------------
+   The theme caps the article at max-w-xl (576px), which is too narrow for our
+   env-var tables and code. Widen it, and trim the oversized desktop gutters to
+   give the extra room back to content. The right-hand "On this page" column
+   still fits alongside. */
+#content-area {
+  max-width: 48rem !important;
+}
+
+@media (min-width: 1024px) {
+  #content-container {
+    padding-left: 2.5rem !important;
+    padding-right: 2.5rem !important;
+  }
+}
+
+/* Drop the right/bottom gutter on the main content wrapper so it sits flush
+   against the viewport edge. (Left padding is left intact.) */
+.lg\:flex-1.lg\:overflow-x-clip > div {
+  padding-right: 0 !important;
+  padding-bottom: 0 !important;
 }
