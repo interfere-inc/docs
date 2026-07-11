@@ -115,7 +115,7 @@ These four steps cover a single-page app. If you server-render (TanStack Start, 
 
 ## Configuration
 
-The defaults are meant to be left alone, so plenty of apps never open this section. When you do need it, both settings live on the same `init()` call from step 3.
+The defaults are meant to be left alone, so plenty of apps never open this section. When you do need it, `serviceName` lives on the `init()` call from step 3, and what's captured is set on the provider.
 
 ### Name your app
 
@@ -148,10 +148,10 @@ The label is free-form: `production`, `staging`, `preview`, `canary`, or whateve
 
 ### Choose what's captured
 
-Interfere captures every signal below unless you say otherwise. Switch any of them off with `plugins`, for instance to drop session replay when recordings aren't welcome:
+Interfere captures every signal below unless you say otherwise. Switch any of them off with the provider's `plugins` prop, for instance to drop session replay when recordings aren't welcome:
 
-```ts src/main.tsx
-init({ plugins: { replay: false } });
+```tsx src/app.tsx
+<InterfereProvider plugins={{ replay: false }}>{/* your routes */}</InterfereProvider>
 ```
 
 <ParamField path="plugins" type="object">
@@ -254,10 +254,44 @@ consent.set(); // grant everything
 Interfere works with any consent platform (c15t, CookieYes, OneTrust). Map its booleans to the categories above.
 
 <Tip>
-  To apply consent before the first render, and avoid any flash where a non-consented feature loads,
-  pass it to `init({consent})` instead. The provider prop then keeps it in sync as the user changes
-  their mind.
+  Set the `consent` prop from the provider's first render so a non-consented feature never gets a
+  chance to load. Update it through the hook as the user changes their mind.
 </Tip>
+
+## Mask replay data
+
+Session replay records the DOM, so anything on screen can land in a recording. Password inputs are masked for you, and three privacy classes are always active — they're hard-wired, so no config can turn them off. Add a class to any element to redact more; nothing else to set up.
+
+| Class              | Effect                                                                                     |
+| ------------------ | ------------------------------------------------------------------------------------------ |
+| `interfere-block`  | The element isn't recorded. It replays as a same-size placeholder. Drops a whole input, widget, or region. |
+| `interfere-ignore` | The element still renders, but its input events aren't recorded — keystrokes and changes are never captured. |
+| `interfere-mask`   | The element's text and its children's text is masked. Applies to rendered text, not input values. |
+
+```tsx
+<input className="interfere-block" />                {/* whole element dropped */}
+<input className="interfere-ignore" />               {/* input events not recorded */}
+<span className="interfere-mask">$128,400.00</span>  {/* text + children masked */}
+```
+
+To mask input values by type, pass a `replay` config to the provider's `plugins`. Only passwords are masked by default; set `maskAllInputs: true` for a stricter baseline that redacts every input.
+
+```tsx src/app.tsx
+<InterfereProvider
+  plugins={{
+    replay: {
+      maskInputOptions: { email: true }, // mask specific input types
+      // maskAllInputs: true,            // or mask every input value
+    },
+  }}
+>
+  {/* your routes */}
+</InterfereProvider>
+```
+
+<Note>
+  For finer control, `plugins.replay` also forwards raw [rrweb](https://github.com/rrweb-io/rrweb) options — `maskTextSelector` / `blockSelector` / `ignoreSelector` to target elements by CSS selector, `maskInputFn` / `maskTextFn` to transform masked values, and `recordCanvas`. These are additive; the `interfere-*` classes still apply.
+</Note>
 
 ## Report a handled error
 
@@ -372,6 +406,6 @@ try {
 </Accordion>
 
   <Accordion title="Can I ship errors only, without analytics or replay?">
-    Yes. Disable the signals you don't want with `plugins`, for example `init({ plugins: { replay: false, pageEvents: false } })`. To drop browser tracing from the bundle entirely, pass `init({ tracing: false })`.
+    Yes. Disable the signals you don't want with the provider's `plugins` prop, for example `<InterfereProvider plugins={{ replay: false, pageEvents: false }}>`. To drop browser tracing from the bundle entirely, pass `init({ tracing: false })`.
   </Accordion>
 </AccordionGroup>
