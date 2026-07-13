@@ -146,6 +146,23 @@ The label is free-form: `production`, `staging`, `preview`, `canary`, or whateve
   Interfere drops local-like environments (`development`, `local`, `test`) before ingestion, so everyday local traffic never reaches your dashboard. A build with no environment set defaults to `development` and is filtered out. Set a real environment, or turn off environment filtering for the surface, to capture from one.
 </Warning>
 
+### Custom ingest domain
+
+Point the browser SDK at a subdomain of your own site to survive ad-blocker deny-lists (no server component involved), or at a regional endpoint. Set `apiHost` on the plugin:
+
+```ts vite.config.ts
+import { interfere } from "@interfere/vite/plugin";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  build: { sourcemap: true },
+  plugins: [react(), interfere({ apiHost: "https://in.yourapp.com" })],
+});
+```
+
+Add a CNAME pointing your subdomain at the target shown in your dashboard; Interfere provisions TLS automatically. To target a regional endpoint instead, set `apiHost` (or `VITE_INTERFERE_API_URL`) to that URL. Ingest requests never carry cookies.
+
 ### Choose what's captured
 
 Interfere captures every signal below unless you say otherwise. Switch any of them off with the provider's `plugins` prop, for instance to drop session replay when recordings aren't welcome:
@@ -309,48 +326,36 @@ try {
 
 ## Server-side rendering
 
-If you server-render with TanStack Start (or another Nitro-based setup), do the [Quick start](#quick-start) steps, then add the pieces below. Two things change: your server errors get captured too, and browser telemetry routes through your own domain so ad-blockers and CORS don't drop it. The plugin detects an SSR framework and switches to this proxy mode for you.
+If you server-render with TanStack Start (or another Nitro-based setup), do the [Quick start](#quick-start) steps, then boot server instrumentation and split the browser `init()` behind a runtime guard. Telemetry posts directly from the browser — set [`apiHost`](#custom-ingest-domain) on the plugin for an ad-blocker-resistant subdomain.
 
 <Steps>
-  <Step title="Add the telemetry route">
-    A catch-all route proxies browser telemetry through your origin and boots server instrumentation. For TanStack Start:
+  <Step title="Boot server instrumentation and browser init from the router">
+    Call `register()` on the server (OTel bootstrap) and `init()` in the browser. Guard on `typeof window` so each half only runs where it should.
 
-    ```tsx src/routes/api/interfere/$.tsx
-    import { handle } from "@interfere/vite/handler";
+    ```tsx src/router.tsx
+    import { init } from "@interfere/vite/init";
     import { register } from "@interfere/vite/server";
-    import { createFileRoute } from "@tanstack/react-router";
+    import { createRouter } from "@tanstack/react-router";
+    import { routeTree } from "./routeTree.gen";
 
     if (typeof window === "undefined") {
-      register();
+      register().catch(() => {});
+    } else {
+      init();
     }
 
-    export const Route = createFileRoute("/api/interfere/$")({
-      server: {
-        handlers: {
-          GET: ({ request }) => handle(request),
-          POST: ({ request }) => handle(request),
-          OPTIONS: ({ request }) => handle(request),
-        },
-      },
-    });
+    export const getRouter = () =>
+      createRouter({ routeTree, scrollRestoration: true });
     ```
 
-  </Step>
-  <Step title="Start the SDK in your client entry">
-    Call `init()` before hydration, in your client entry rather than `main.tsx`.
-
-    ```tsx src/client.tsx
-    import { init } from "@interfere/vite/init";
-
-    init();
-    // ...hydrateRoot(...)
-    ```
+    You can drop step 3 (`init()` in `main.tsx`) from the Quick start — the router handles it now.
 
   </Step>
   <Step title="Wrap the root route with the provider">
     ```tsx src/routes/__root.tsx
     import { InterfereProvider } from "@interfere/vite/provider";
-    
+    import { Outlet } from "@tanstack/react-router";
+
     function RootComponent() {
       return (
         <InterfereProvider>
@@ -379,7 +384,7 @@ try {
 
 <CardGroup cols={2}>
   <Card title="Next.js" icon="/icons/tech/nextjs/currentcolor.svg" href="/sdk/next-js">
-    `@interfere/next`: a build plugin, the ingest route, and a provider for the App Router.
+    `@interfere/next`: a build plugin, server instrumentation, and a provider for the App Router.
   </Card>
 
   <Card title="NestJS" icon="/icons/tech/nestjs/transparent.svg" href="/sdk/nestjs">
@@ -395,9 +400,7 @@ try {
   </Accordion>
 
 <Accordion title="Some telemetry is blocked by ad-blockers on my SPA.">
-  A pure single-page app sends telemetry straight to Interfere, which some ad-blockers filter. If
-  that's a concern, run it behind a small server and add the proxy route from [Server-side
-  rendering](#server-side-rendering); requests then go through your own domain.
+  Set [`apiHost`](#custom-ingest-domain) on the plugin to a subdomain of your own site — a CNAME to the target shown in your dashboard. Telemetry then posts to your own origin, no server route needed.
 </Accordion>
 
 <Accordion title="Do you handle the same issue across multiple apps?">

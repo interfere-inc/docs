@@ -98,7 +98,7 @@ The SDK tells you what it's doing, so a quick check usually explains it.
   </Accordion>
 
   <Accordion title="Telemetry blocked by an ad-blocker">
-    Some ad-blockers drop requests to telemetry endpoints. Route them through your own domain with the proxy route described in each SDK guide.
+    Some ad-blockers drop requests to telemetry endpoints. Set `apiHost` on the SDK to a subdomain of your own site — a CNAME to the target shown in your dashboard — so telemetry posts to your own origin. See the [Next.js](/sdk/next-js#custom-ingest-domain) or [Vite](/sdk/vite#custom-ingest-domain) SDK guides.
   </Accordion>
 </AccordionGroup>
 
