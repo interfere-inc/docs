@@ -21,7 +21,7 @@ This page covers the install and the handful of settings most teams actually tou
 
 ## Quick start
 
-Five steps, each wired once. After this you don't touch it again.
+Four steps, each wired once. After this you don't touch it again.
 
 <Steps>
   <Step title="Install the package">
@@ -60,18 +60,10 @@ Five steps, each wired once. After this you don't touch it again.
 
   </Step>
   <Step title="Wire server instrumentation">
-    So server-side errors get captured too, not just client-side ones. That covers Server Components, route handlers, and server actions.
+    So server-side errors get captured and OTel bootstraps for Server Components, route handlers, and server actions. Next.js calls the exported `register()` on server start.
 
     ```ts instrumentation.ts
-    export { onRequestError } from "@interfere/next/server";
-    ```
-
-  </Step>
-  <Step title="Mount the ingest route">
-    Telemetry is sent through your own domain, so ad-blockers and CORS don't drop it. The path must match your route prefix (default `/api/interfere`).
-
-    ```ts app/api/interfere/[[...path]]/route.ts
-    export * from "@interfere/next/route-handler";
+    export { onRequestError, register } from "@interfere/next/instrumentation";
     ```
 
   </Step>
@@ -112,7 +104,7 @@ Five steps, each wired once. After this you don't touch it again.
 | `INTERFERE_PUBLIC_KEY`               | Yes          | Your [surface public key](https://interfere.com/~/*/surfaces) (`interfere_pub_<region>_…`, where `<region>` is `us` or `eu`). Safe to expose; it only authorizes ingestion.                              |
 | `INTERFERE_API_KEY`                  | For releases | Interfere API key (`interfere_secret_<region>_…`). A **server-side build credential** for source-map upload and release metadata. Never expose it in browser code. |
 | `INTERFERE_ENVIRONMENT`              | No           | Labels this deployment's telemetry and releases (`production`, `staging`, `preview`, or a label you choose). Read at build time and stamped into the bundle, so it needs no `NEXT_PUBLIC_` prefix. Defaults to `VERCEL_ENV`, then `NODE_ENV`, then `development`. See [Environments](#environments). |
-| `NEXT_PUBLIC_INTERFERE_ROUTE_PREFIX` | No           | Override the proxy route prefix. Defaults to `/api/interfere`. See [Custom route prefix](#custom-route-prefix).                                                    |
+| `INTERFERE_API_URL`                  | No           | Override the ingest endpoint (for example, to target a regional endpoint). Defaults to Interfere's endpoint. See [Custom ingest domain](#custom-ingest-domain). |
 
 <Warning>
   `INTERFERE_API_KEY` is a secret. Keep it in server and CI environments only. The public key
@@ -157,6 +149,24 @@ The label is free-form: `production`, `staging`, `preview`, `canary`, or whateve
 <Warning>
   Interfere drops local-like environments (`development`, `local`, `test`) before ingestion, so everyday local traffic never reaches your dashboard. An app with no environment set defaults to `development` and is filtered out, which is one reason nothing shows up until you deploy. Set a real environment, or turn off environment filtering for the surface, to capture from one.
 </Warning>
+
+### Custom ingest domain
+
+Interfere's public endpoint is the default. Point the browser SDK at a subdomain of your own site to survive ad-blocker deny-lists (no server component involved), or at a regional endpoint:
+
+```ts next.config.ts
+import { withInterfere } from "@interfere/next/config";
+import type { NextConfig } from "next";
+
+const config: NextConfig = {};
+
+export default withInterfere({
+  interfere: { apiHost: "https://in.yourapp.com" },
+  ...config,
+});
+```
+
+Add a CNAME pointing your subdomain at the target shown in your dashboard; Interfere provisions TLS automatically. To target a regional endpoint instead, set `apiHost` (or the `INTERFERE_API_URL` env var) to that URL. Ingest requests never carry cookies.
 
 ### Choose what's captured
 
@@ -330,17 +340,6 @@ export async function placeOrder() {
 }
 ```
 
-## Custom route prefix
-
-The SDK proxies telemetry through `/api/interfere` by default. Move it to any path to get past ad-blocker deny-lists that target well-known SDK routes, or to fit your own API conventions.
-
-<Steps>
-  <Step title="Set the prefix">```env NEXT_PUBLIC_INTERFERE_ROUTE_PREFIX=/__telemetry ```</Step>
-  <Step title="Mount the handler at the matching path">
-    ```ts app/__telemetry/[[...path]]/route.ts export * from "@interfere/next/route-handler"; ```
-  </Step>
-</Steps>
-
 ## Other frameworks
 
 <CardGroup cols={3}>
@@ -349,7 +348,7 @@ The SDK proxies telemetry through `/api/interfere` by default. Move it to any pa
   </Card>
 
 <Card title="TanStack Start" icon="/icons/tech/tanstack/currentcolor.svg" href="/sdk/vite#server-side-rendering">
-  `@interfere/vite`: the same plugin, with a server route for proxying.
+  `@interfere/vite`: the same plugin, with server instrumentation for SSR.
 </Card>
 
   <Card title="NestJS" icon="/icons/tech/nestjs/transparent.svg" href="/sdk/nestjs">
@@ -369,9 +368,8 @@ The SDK proxies telemetry through `/api/interfere` by default. Move it to any pa
   Interfere correlates it into a single problem instead of a separate alert per app.
 </Accordion>
 
-<Accordion title="Do I have to use the proxy route?">
-  It's the recommended path. Proxying telemetry through your own origin avoids CORS and gets past
-  ad-blockers, and it's part of the standard install above.
+<Accordion title="What about ad-blockers?">
+  Set [`apiHost`](#custom-ingest-domain) to a subdomain of your own site — a CNAME to the target shown in your dashboard. Telemetry then posts to your own origin, no server route or middleware needed.
 </Accordion>
 
   <Accordion title="Can I ship errors only, without analytics or replay?">
