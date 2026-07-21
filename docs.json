@@ -55,5 +55,12 @@
   },
   "appearance": {
     "strict": false
+  },
+  "seo": {
+    "metatags": {
+      "og:image": "/og.png",
+      "twitter:card": "summary_large_image",
+      "twitter:image": "/og.png"
+    }
   }
 }
