@@ -1,12 +1,23 @@
-/* ============================================================
-   Interfere docs theme overrides
-   Mirrors the Interfere design system (@interfere/design-system,
-   @interfere/fonts) so the docs match the app, website, and emails.
-   ============================================================ */
+/* Interfere docs — custom styles for Holocron */
 
-/* --- Berkeley Mono (code) -------------------------------------------------
-   Sans (InterVariable) is loaded via docs.json `fonts`. The monospace face
-   is applied here to match @interfere/fonts/css/berkeley-mono.css. */
+/* InterVariable (sans) */
+@font-face {
+  font-family: "InterVariable";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/InterVariable/InterVariable.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "InterVariable";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/InterVariable/InterVariable-Italic.woff2") format("woff2");
+}
+
+/* Berkeley Mono (code) */
 @font-face {
   font-family: "BerkeleyMono";
   font-style: normal;
@@ -23,10 +34,14 @@
   src: url("/fonts/BerkeleyMono/Berkeley%20Mono%20Variable%20Interfere.woff2") format("woff2");
 }
 
-/* --- Base typography ------------------------------------------------------
-   Matches @interfere/design-system base layer: ss03 stylistic set, no
-   synthetic faux-bold/italic, antialiased rendering. */
+/* Apply InterVariable globally — body, headings, and UI */
+:root {
+  --font-sans: "InterVariable", sans-serif;
+  --weight-heading: 550;
+}
+
 body {
+  font-family: "InterVariable", sans-serif;
   font-feature-settings: "ss03";
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -34,34 +49,24 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Apply Berkeley Mono everywhere code is rendered. */
+/* Force InterVariable on all headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "InterVariable", sans-serif;
+}
+
+/* Apply Berkeley Mono to all code elements */
 code,
 kbd,
 samp,
 pre,
-code-block,
-code-block *,
-code-group,
 [class*="language-"],
 .token {
-  font-family:
-    "BerkeleyMono", ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas",
-    "Liberation Mono", "Courier New", monospace;
+  font-family: "BerkeleyMono", ui-monospace, "SFMono-Regular", "Menlo", "Monaco",
+    "Consolas", "Liberation Mono", "Courier New", monospace;
   font-variant-ligatures: none;
 }
 
-/* Keyboard keys: force Berkeley Mono to match the app UI. Mintlify styles
-   `kbd` with its own font, so this needs to win on specificity. */
-kbd {
-  font-family:
-    "BerkeleyMono", ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas",
-    "Liberation Mono", "Courier New", monospace !important;
-  font-variant-ligatures: none;
-}
-
-/* --- Selection ------------------------------------------------------------
-   Inverted/standout treatment from the design system (kept monochrome to
-   match the docs palette). */
+/* Selection colors matching interfere design system */
 ::selection {
   background: #202020;
   color: #ffffff;
@@ -70,129 +75,4 @@ kbd {
 .dark ::selection {
   background: #eeeeee;
   color: #111111;
-}
-
-/* --- Primary CTA button ---------------------------------------------------
-   Matches the design system's default button (int-btn-primary), which uses
-   the inverted-solid token: black-a12 on white in light mode, white-a12 on
-   black in dark mode, with -a10 hover / -a9 active. Mintlify only supports a
-   single accent hex, so the topbar CTA is matched here directly. */
-#topbar-cta-button,
-#topbar-cta-button:is(a, button) {
-  background: rgba(0, 0, 0, 0.95) !important; /* inverted-solid (black-a12) */
-  color: #ffffff !important; /* on-inverted-foreground */
-  border: none !important;
-  border-radius: 8px !important; /* int-btn-rounded (rounded-lg) */
-  font-weight: 500 !important; /* font-medium */
-  box-shadow: none !important;
-  transition:
-    background-color 150ms ease-out,
-    color 150ms ease-out !important;
-}
-
-#topbar-cta-button:hover {
-  background: rgba(0, 0, 0, 0.8) !important; /* inverted-solid-hover (black-a10) */
-}
-
-#topbar-cta-button:active {
-  background: rgba(0, 0, 0, 0.7) !important; /* inverted-solid-active (black-a9) */
-}
-
-.dark #topbar-cta-button,
-.dark #topbar-cta-button:is(a, button) {
-  background: rgba(255, 255, 255, 0.95) !important; /* inverted-solid (white-a12) */
-  color: #000000 !important; /* on-inverted-foreground */
-}
-
-.dark #topbar-cta-button:hover {
-  background: rgba(255, 255, 255, 0.8) !important; /* white-a10 */
-}
-
-.dark #topbar-cta-button:active {
-  background: rgba(255, 255, 255, 0.7) !important; /* white-a9 */
-}
-
-/* Align the CTA's right edge with the content panel. The topbar gutter
-   (lg:px-7) stops the button ~20px short of the panel's right edge, so pull it
-   back into line. Only applies where the button shows (lg and up). */
-@media (min-width: 1024px) {
-  #topbar-cta-button {
-    margin-right: -1.25rem !important;
-  }
-}
-
-/* --- Surfaces -------------------------------------------------------------
-   Soften borders and round surfaces to match the design system's hairline
-   borders (gray-a3) and rounded containers (radius-2xl = 12px). */
-code-block,
-pre {
-  border-radius: 12px !important;
-}
-
-:not(pre) > code {
-  border-radius: 6px !important;
-}
-
-/* --- Dark-mode logos ------------------------------------------------------
-   The `currentcolor` brand marks (Next.js, Vercel, GitHub, …) render as solid
-   black when Mintlify inlines them as <img>, so they vanish on the dark
-   background. They're single-color marks, so inverting them to white in dark
-   mode is safe. Colored variants (`transparent`, `original`) are left alone,
-   since inverting those would wreck their brand colors. */
-.dark img[src$="/currentcolor.svg"] {
-  filter: invert(1);
-}
-
-/* --- TechIcon light/dark swap ---------------------------------------------
-   Backs the light/dark <img> pair emitted by components/TechIcon.tsx so it
-   shows the right variant per theme. */
-.tech-icon__image--dark {
-  display: none;
-}
-
-.dark .tech-icon__image--light {
-  display: none;
-}
-
-.dark .tech-icon__image--dark {
-  display: inline-block;
-}
-
-/* --- Page subtitle --------------------------------------------------------
-   The description under the H1 uses semi-medium weight, matching the app. */
-#content-area header p,
-header h1 + p {
-  font-weight: 550;
-}
-
-/* --- Table identifier tokens ----------------------------------------------
-   Mintlify breaks inline code mid-token in table cells (INTERFERE_PUBLIC_KE /
-   Y). Keep first-column identifiers on one line so env-var names read cleanly;
-   description-column code is left free to wrap. */
-table td:first-child code,
-table th:first-child code {
-  white-space: nowrap;
-}
-
-/* --- Content width --------------------------------------------------------
-   The theme caps the article at max-w-xl (576px), which is too narrow for our
-   env-var tables and code. Widen it, and trim the oversized desktop gutters to
-   give the extra room back to content. The right-hand "On this page" column
-   still fits alongside. */
-#content-area {
-  max-width: 48rem !important;
-}
-
-@media (min-width: 1024px) {
-  #content-container {
-    padding-left: 2.5rem !important;
-    padding-right: 2.5rem !important;
-  }
-}
-
-/* Drop the right/bottom gutter on the main content wrapper so it sits flush
-   against the viewport edge. (Left padding is left intact.) */
-.lg\:flex-1.lg\:overflow-x-clip > div {
-  padding-right: 0 !important;
-  padding-bottom: 0 !important;
 }

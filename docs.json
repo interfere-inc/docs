@@ -1,18 +1,11 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "theme": "almond",
+  "$schema": "https://holocron.so/docs.json",
   "name": "Interfere",
   "description": "Interfere empowers engineers, product managers and designers with real-time understanding of previously unseen bugs and issues.",
   "colors": {
     "primary": "#202020",
     "light": "#EEEEEE",
     "dark": "#202020"
-  },
-  "background": {
-    "color": {
-      "light": "#FFFFFF",
-      "dark": "#111111"
-    }
   },
   "favicon": {
     "light": "/icons/favicon/light.png",
@@ -23,20 +16,63 @@
     "light": "/icons/logo/light.svg",
     "dark": "/icons/logo/dark.svg"
   },
-  "fonts": {
-    "$ref": "./config/fonts.json"
-  },
   "icons": {
     "library": "lucide"
   },
-  "styling": {
-    "eyebrows": "breadcrumbs"
-  },
-  "contextual": {
-    "options": ["copy", "view", "assistant", "mcp", "add-mcp"]
-  },
   "navigation": {
-    "$ref": "./config/navigation.json"
+    "groups": [
+      {
+        "group": "Getting Started",
+        "pages": [
+          "index",
+          "quickstart",
+          "onboarding",
+          "concepts",
+          "power-user"
+        ]
+      },
+      {
+        "group": "Product",
+        "pages": [
+          "product/activity",
+          "product/inbox",
+          "product/problems",
+          "product/users",
+          "product/surfaces",
+          "product/settings",
+          "product/security",
+          "product/compliance"
+        ]
+      },
+      {
+        "group": "SDKs",
+        "pages": [
+          "sdk/next-js",
+          "sdk/vite",
+          "sdk/nestjs"
+        ]
+      },
+      {
+        "group": "Integrations",
+        "pages": [
+          "integrations/overview",
+          "integrations/github",
+          "integrations/vercel",
+          "integrations/cloudflare-workers",
+          "integrations/slack",
+          "integrations/cli"
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "GitHub",
+          "href": "https://github.com/interfere-inc",
+          "icon": "lucide:github"
+        }
+      ]
+    }
   },
   "navbar": {
     "links": [],
@@ -52,8 +88,5 @@
       "github": "https://github.com/interfere-inc",
       "linkedin": "https://www.linkedin.com/company/interfere-inc/"
     }
-  },
-  "appearance": {
-    "strict": false
   }
 }
