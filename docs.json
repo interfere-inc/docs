@@ -8,8 +8,8 @@
     "dark": "#202020"
   },
   "favicon": {
-    "light": "/icons/favicon/light.png",
-    "dark": "/icons/favicon/dark.png"
+    "light": "/icons/logo/light.svg",
+    "dark": "/icons/logo/dark.svg"
   },
   "logo": {
     "href": "https://interfere.com",
