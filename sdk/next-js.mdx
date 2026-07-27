@@ -135,17 +135,17 @@ Five steps, each wired once. After this you don't touch it again.
   Keep `withInterfere()` the **outermost** wrapper. Its cleanup step runs last, so any other build plugin you compose runs — and uploads — before Interfere purges the maps.
 </Warning>
 
-### Coexisting with other source-map uploaders
+### Coexisting with other build tools
 
-Sentry (`@sentry/nextjs`) and PostHog (`@posthog/nextjs-config`) read the same `.next` output and also delete maps after upload by default. When more than one uploader runs, the first to delete starves every later one. The rule: only the **last** uploader to run deletes; every earlier one keeps its maps.
+Sentry (`@sentry/nextjs`) and PostHog (`@posthog/nextjs-config`) read the same `.next` output and also delete maps after upload by default. When more than one tool uploads maps, the first to delete starves every later one. The rule: only the **last** tool to run deletes; every earlier one keeps its maps.
 
-| Uploader  | Deletion flag                            | Default | Keep maps for a later uploader |
-| --------- | ---------------------------------------- | ------- | ------------------------------ |
-| Interfere | `sourceMaps.purge`                       | `true`  | `false`                        |
-| Sentry    | `sourcemaps.deleteSourcemapsAfterUpload` | `true`  | `false`                        |
-| PostHog   | `sourcemaps.deleteAfterUpload`           | `true`  | `false`                        |
+| Tool      | Deletion flag                            | Default | Keep maps for a later tool |
+| --------- | ---------------------------------------- | ------- | -------------------------- |
+| Interfere | `sourceMaps.purge`                       | `true`  | `false`                    |
+| Sentry    | `sourcemaps.deleteSourcemapsAfterUpload` | `true`  | `false`                    |
+| PostHog   | `sourcemaps.deleteAfterUpload`           | `true`  | `false`                    |
 
-Make Interfere the last uploader, so it purges while Sentry keeps its maps:
+Make Interfere the last tool to run, so it purges while Sentry keeps its maps:
 
 ```ts next.config.ts
 import { withInterfere } from "@interfere/next/config";
@@ -161,7 +161,7 @@ export default withInterfere(
 );
 ```
 
-If another tool runs last instead, invert it: set `sourceMaps: { purge: false }` on Interfere and leave that tool's deletion flag on. Un-symbolicated traces after a deploy mean an earlier uploader deleted the maps too soon — flip the flags so the purging plugin is genuinely last.
+If another tool runs last instead, invert it: set `sourceMaps: { purge: false }` on Interfere and leave that tool's deletion flag on. Un-symbolicated traces after a deploy mean an earlier tool deleted the maps too soon — flip the flags so the purging tool is genuinely last.
 
 <ParamField path="sourceMaps.purge" default="true" type="boolean">
   Passed as the first argument to `withInterfere(settings, config)`. Deletes source maps from the build output after upload. Set to `false` when another tool shares the same `.next` build and runs its own upload afterward.
