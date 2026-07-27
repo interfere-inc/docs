@@ -1,17 +1,12 @@
 // Hero matching the interfere.com homepage layout.
 // Side-by-side: heading left, subtitle + CTAs right on desktop.
 // Rendered inside <Above> which sits above the page grid.
-// Uses pl matching sidebar+gap so the hero aligns with the content column.
+// Hero aligns to the left edge of the page (flush with sidebar).
 'use client'
 
 export function HeroSection() {
   return (
-    <div
-      className='relative flex flex-col items-start justify-between gap-6 pt-8 pb-12 lg:flex-row lg:items-end lg:gap-0 lg:pt-16 lg:pb-12'
-      style={{
-        paddingLeft: 'calc(var(--grid-nav-width, 230px) + var(--grid-gap, 50px))',
-      }}
-    >
+    <div className='relative flex flex-col items-start justify-between gap-6 pt-4 pb-10 lg:flex-row lg:items-end lg:gap-0 lg:pt-8 lg:pb-10'>
       <h1 className='flex max-w-sm flex-wrap items-center font-medium text-foreground leading-none md:max-w-md lg:max-w-xl text-[32px] sm:text-[40px] lg:text-[56px]'>
         <span className='relative block'>
           <span className='block whitespace-nowrap'>
