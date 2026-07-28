@@ -3,5 +3,26 @@
   "name": "interfere-docs-website",
   "main": "spiceflow/cloudflare-entrypoint",
   "compatibility_date": "2026-06-27",
-  "compatibility_flags": ["nodejs_compat"]
+  "compatibility_flags": ["nodejs_compat"],
+
+  // interfere.com is proxied through Cloudflare, so the docs are served by a
+  // route at the edge instead of a reverse proxy to a third party.
+  //
+  // `/docs*` (not `/docs/*`) is deliberate: route patterns cannot contain query
+  // parameters, and the only way to match a URL that has one is to end the
+  // pattern with a wildcard. `/docs/*` would miss the bare `/docs`, and a plain
+  // `/docs` would miss `/docs?utm_source=...`.
+  //
+  // The tradeoff is that `/docs*` also matches a future top-level path starting
+  // with "docs", like `/docsearch`. If that ever happens, add a more specific
+  // route with no script to bypass Workers for it.
+  //
+  // www is not listed: www.interfere.com already 301s to the apex with the path
+  // preserved, so adding it would serve the docs on two hostnames.
+  "routes": [
+    {
+      "pattern": "interfere.com/docs*",
+      "zone_name": "interfere.com"
+    }
+  ]
 }
