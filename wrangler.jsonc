@@ -1,0 +1,7 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "interfere-docs-website",
+  "main": "spiceflow/cloudflare-entrypoint",
+  "compatibility_date": "2026-06-27",
+  "compatibility_flags": ["nodejs_compat"]
+}
