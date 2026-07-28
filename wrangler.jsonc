@@ -1,0 +1,34 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "interfere-docs-website",
+  "main": "spiceflow/cloudflare-entrypoint",
+  "compatibility_date": "2026-06-27",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // interfere.com is proxied through Cloudflare, so the docs are served by a
+  // route at the edge instead of a reverse proxy to a third party.
+  //
+  // `/docs*` (not `/docs/*`) is deliberate: route patterns cannot contain query
+  // parameters, and the only way to match a URL that has one is to end the
+  // pattern with a wildcard. `/docs/*` would miss the bare `/docs`, and a plain
+  // `/docs` would miss `/docs?utm_source=...`.
+  //
+  // `/docs*` does also match a path like `/docsearch`, but nothing on the site
+  // starts with "docs" today, so those are 404s either way and only the 404 page
+  // changes. Listing `/docs` and `/docs/*` instead would trade that for a real
+  // regression: `/docs?utm_source=...` works today and would start 404ing.
+  //
+  // If a real page at `/docsomething` ever ships, add a more specific route with
+  // no script attached to bypass Workers for it. Note Cloudflare's known route
+  // specificity bug means adding `/docs/*` alongside `/docs*` does nothing, the
+  // broader pattern wins even for `/docs/quickstart`.
+  //
+  // www is not listed: www.interfere.com already 301s to the apex with the path
+  // preserved, so adding it would serve the docs on two hostnames.
+  "routes": [
+    {
+      "pattern": "interfere.com/docs*",
+      "zone_name": "interfere.com"
+    }
+  ]
+}

@@ -1,13 +1,23 @@
 {
   "name": "@interfere/docs",
-  "private": false,
+  "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "mint dev",
+    "dev": "vite",
+    "build": "vite build",
+    "deploy": "vite build && wrangler deploy",
     "fmt": "oxfmt"
   },
+  "dependencies": {
+    "@holocron.so/vite": "^0.29.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
   "devDependencies": {
-    "@interfere/typescript-config": "latest",
-    "@types/bun": "latest",
-    "mintlify": "latest"
+    "@cloudflare/vite-plugin": "^1.47.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "vite": "^8.0.0",
+    "wrangler": "^4.114.0"
   }
 }
