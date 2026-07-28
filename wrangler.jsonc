@@ -13,9 +13,15 @@
   // pattern with a wildcard. `/docs/*` would miss the bare `/docs`, and a plain
   // `/docs` would miss `/docs?utm_source=...`.
   //
-  // The tradeoff is that `/docs*` also matches a future top-level path starting
-  // with "docs", like `/docsearch`. If that ever happens, add a more specific
-  // route with no script to bypass Workers for it.
+  // `/docs*` does also match a path like `/docsearch`, but nothing on the site
+  // starts with "docs" today, so those are 404s either way and only the 404 page
+  // changes. Listing `/docs` and `/docs/*` instead would trade that for a real
+  // regression: `/docs?utm_source=...` works today and would start 404ing.
+  //
+  // If a real page at `/docsomething` ever ships, add a more specific route with
+  // no script attached to bypass Workers for it. Note Cloudflare's known route
+  // specificity bug means adding `/docs/*` alongside `/docs*` does nothing, the
+  // broader pattern wins even for `/docs/quickstart`.
   //
   // www is not listed: www.interfere.com already 301s to the apex with the path
   // preserved, so adding it would serve the docs on two hostnames.
