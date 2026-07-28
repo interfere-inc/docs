@@ -9,7 +9,7 @@
     "fmt": "oxfmt"
   },
   "dependencies": {
-    "@holocron.so/vite": "^0.28.0",
+    "@holocron.so/vite": "^0.29.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
