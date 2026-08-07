@@ -59,8 +59,12 @@
   "seo": {
     "metatags": {
       "og:image": "/og.png",
+      "og:image:width": "1200",
+      "og:image:height": "630",
+      "og:image:alt": "Interfere Documentation",
       "twitter:card": "summary_large_image",
-      "twitter:image": "/og.png"
+      "twitter:image": "/og.png",
+      "twitter:image:alt": "Interfere Documentation"
     }
   }
 }
