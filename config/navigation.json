@@ -1,5 +1,11 @@
 {
   "directory": "card",
+  "tabs": [
+    {
+      "tab": "API Reference",
+      "openapi": "https://api.interfere.com/openapi.json"
+    }
+  ],
   "groups": [
     {
       "group": "Getting Started",
