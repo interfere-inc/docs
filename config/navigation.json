@@ -2,53 +2,56 @@
   "directory": "card",
   "tabs": [
     {
+      "tab": "Documentation",
+      "groups": [
+        {
+          "group": "Getting Started",
+          "expanded": true,
+          "pages": [
+            "index",
+            "quickstart",
+            "onboarding",
+            "concepts",
+            "power-user"
+          ]
+        },
+        {
+          "group": "Product",
+          "pages": [
+            "product/activity",
+            "product/inbox",
+            "product/problems",
+            "product/users",
+            "product/surfaces",
+            "product/settings",
+            "product/security",
+            "product/compliance"
+          ]
+        },
+        {
+          "group": "SDKs",
+          "pages": [
+            "sdk/next-js",
+            "sdk/vite",
+            "sdk/nestjs"
+          ]
+        },
+        {
+          "group": "Integrations",
+          "root": "integrations/overview",
+          "pages": [
+            "integrations/github",
+            "integrations/vercel",
+            "integrations/cloudflare-workers",
+            "integrations/slack",
+            "integrations/cli"
+          ]
+        }
+      ]
+    },
+    {
       "tab": "API Reference",
       "openapi": "https://api.interfere.com/openapi.json"
-    }
-  ],
-  "groups": [
-    {
-      "group": "Getting Started",
-      "expanded": true,
-      "pages": [
-        "index",
-        "quickstart",
-        "onboarding",
-        "concepts",
-        "power-user"
-      ]
-    },
-    {
-      "group": "Product",
-      "pages": [
-        "product/activity",
-        "product/inbox",
-        "product/problems",
-        "product/users",
-        "product/surfaces",
-        "product/settings",
-        "product/security",
-        "product/compliance"
-      ]
-    },
-    {
-      "group": "SDKs",
-      "pages": [
-        "sdk/next-js",
-        "sdk/vite",
-        "sdk/nestjs"
-      ]
-    },
-    {
-      "group": "Integrations",
-      "root": "integrations/overview",
-      "pages": [
-        "integrations/github",
-        "integrations/vercel",
-        "integrations/cloudflare-workers",
-        "integrations/slack",
-        "integrations/cli"
-      ]
     }
   ]
 }
