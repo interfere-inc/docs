@@ -38,8 +38,8 @@
         },
         {
           "group": "Integrations",
-          "root": "integrations/overview",
           "pages": [
+            "integrations/overview",
             "integrations/github",
             "integrations/vercel",
             "integrations/cloudflare-workers",
@@ -50,8 +50,18 @@
       ]
     },
     {
-      "tab": "API Reference",
-      "openapi": "https://api.interfere.com/openapi.json"
+      "tab": "Reference",
+      "versions": [
+        {
+          "version": "Version 3",
+          "groups": [
+            {
+              "group": "Platform API",
+              "openapi": "https://api.interfere.com/openapi.json"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
