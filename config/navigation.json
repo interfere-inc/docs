@@ -1,47 +1,66 @@
 {
   "directory": "card",
-  "groups": [
+  "tabs": [
     {
-      "group": "Getting Started",
-      "expanded": true,
-      "pages": [
-        "index",
-        "quickstart",
-        "onboarding",
-        "concepts",
-        "power-user"
+      "tab": "Documentation",
+      "groups": [
+        {
+          "group": "Getting Started",
+          "expanded": true,
+          "pages": [
+            "index",
+            "quickstart",
+            "onboarding",
+            "concepts",
+            "power-user"
+          ]
+        },
+        {
+          "group": "Product",
+          "pages": [
+            "product/activity",
+            "product/inbox",
+            "product/problems",
+            "product/users",
+            "product/surfaces",
+            "product/settings",
+            "product/security",
+            "product/compliance"
+          ]
+        },
+        {
+          "group": "SDKs",
+          "pages": [
+            "sdk/next-js",
+            "sdk/vite",
+            "sdk/nestjs"
+          ]
+        },
+        {
+          "group": "Integrations",
+          "pages": [
+            "integrations/overview",
+            "integrations/github",
+            "integrations/vercel",
+            "integrations/cloudflare-workers",
+            "integrations/slack",
+            "integrations/cli"
+          ]
+        }
       ]
     },
     {
-      "group": "Product",
-      "pages": [
-        "product/activity",
-        "product/inbox",
-        "product/problems",
-        "product/users",
-        "product/surfaces",
-        "product/settings",
-        "product/security",
-        "product/compliance"
-      ]
-    },
-    {
-      "group": "SDKs",
-      "pages": [
-        "sdk/next-js",
-        "sdk/vite",
-        "sdk/nestjs"
-      ]
-    },
-    {
-      "group": "Integrations",
-      "root": "integrations/overview",
-      "pages": [
-        "integrations/github",
-        "integrations/vercel",
-        "integrations/cloudflare-workers",
-        "integrations/slack",
-        "integrations/cli"
+      "tab": "Reference",
+      "versions": [
+        {
+          "version": "Version 3",
+          "groups": [
+            {
+              "group": "Platform API",
+              "openapi": "https://api.interfere.com/openapi.json"
+            }
+          ]
+        }
       ]
     }
   ]

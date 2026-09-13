@@ -54,7 +54,7 @@ npm install @interfere/nest
 
     ```ts src/app.module.ts
     import { Module } from "@nestjs/common";
-    import { InterfereModule } from "@interfere/nest";
+    import { InterfereModule } from "@interfere/nest/module";
 
     @Module({ imports: [InterfereModule.forRoot()] })
     export class AppModule {}

@@ -115,7 +115,7 @@ These four steps cover a single-page app. If you server-render (TanStack Start, 
 
 ## Configuration
 
-The defaults are meant to be left alone, so plenty of apps never open this section. When you do need it, both settings live on the same `init()` call from step 3.
+The defaults are meant to be left alone, so plenty of apps never open this section. When you do need it, `serviceName` lives on the `init()` call from step 3, and what's captured is set on the provider.
 
 ### Name your app
 
@@ -146,12 +146,29 @@ The label is free-form: `production`, `staging`, `preview`, `canary`, or whateve
   Interfere drops local-like environments (`development`, `local`, `test`) before ingestion, so everyday local traffic never reaches your dashboard. A build with no environment set defaults to `development` and is filtered out. Set a real environment, or turn off environment filtering for the surface, to capture from one.
 </Warning>
 
+### Custom ingest domain
+
+Point the browser SDK at a subdomain of your own site to survive ad-blocker deny-lists (no server component involved), or at a regional endpoint. Set `apiHost` on the plugin:
+
+```ts vite.config.ts
+import { interfere } from "@interfere/vite/plugin";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  build: { sourcemap: true },
+  plugins: [react(), interfere({ apiHost: "https://in.yourapp.com" })],
+});
+```
+
+Add a CNAME pointing your subdomain at the target shown in your dashboard; Interfere provisions TLS automatically. To target a regional endpoint instead, set `apiHost` (or `VITE_INTERFERE_API_URL`) to that URL. Ingest requests never carry cookies.
+
 ### Choose what's captured
 
-Interfere captures every signal below unless you say otherwise. Switch any of them off with `plugins`, for instance to drop session replay when recordings aren't welcome:
+Interfere captures every signal below unless you say otherwise. Switch any of them off with the provider's `plugins` prop, for instance to drop session replay when recordings aren't welcome:
 
-```ts src/main.tsx
-init({ plugins: { replay: false } });
+```tsx src/app.tsx
+<InterfereProvider plugins={{ replay: false }}>{/* your routes */}</InterfereProvider>
 ```
 
 <ParamField path="plugins" type="object">
@@ -254,10 +271,44 @@ consent.set(); // grant everything
 Interfere works with any consent platform (c15t, CookieYes, OneTrust). Map its booleans to the categories above.
 
 <Tip>
-  To apply consent before the first render, and avoid any flash where a non-consented feature loads,
-  pass it to `init({consent})` instead. The provider prop then keeps it in sync as the user changes
-  their mind.
+  Set the `consent` prop from the provider's first render so a non-consented feature never gets a
+  chance to load. Update it through the hook as the user changes their mind.
 </Tip>
+
+## Mask replay data
+
+Session replay records the DOM, so anything on screen can land in a recording. Password inputs are masked for you, and three privacy classes are always active — they're hard-wired, so no config can turn them off. Add a class to any element to redact more; nothing else to set up.
+
+| Class              | Effect                                                                                     |
+| ------------------ | ------------------------------------------------------------------------------------------ |
+| `interfere-block`  | The element isn't recorded. It replays as a same-size placeholder. Drops a whole input, widget, or region. |
+| `interfere-ignore` | The element still renders, but its input events aren't recorded — keystrokes and changes are never captured. |
+| `interfere-mask`   | The element's text and its children's text is masked. Applies to rendered text, not input values. |
+
+```tsx
+<input className="interfere-block" />                {/* whole element dropped */}
+<input className="interfere-ignore" />               {/* input events not recorded */}
+<span className="interfere-mask">$128,400.00</span>  {/* text + children masked */}
+```
+
+To mask input values by type, pass a `replay` config to the provider's `plugins`. Only passwords are masked by default; set `maskAllInputs: true` for a stricter baseline that redacts every input.
+
+```tsx src/app.tsx
+<InterfereProvider
+  plugins={{
+    replay: {
+      maskInputOptions: { email: true }, // mask specific input types
+      // maskAllInputs: true,            // or mask every input value
+    },
+  }}
+>
+  {/* your routes */}
+</InterfereProvider>
+```
+
+<Note>
+  For finer control, `plugins.replay` also forwards raw [rrweb](https://github.com/rrweb-io/rrweb) options — `maskTextSelector` / `blockSelector` / `ignoreSelector` to target elements by CSS selector, `maskInputFn` / `maskTextFn` to transform masked values, and `recordCanvas`. These are additive; the `interfere-*` classes still apply.
+</Note>
 
 ## Report a handled error
 
@@ -275,48 +326,36 @@ try {
 
 ## Server-side rendering
 
-If you server-render with TanStack Start (or another Nitro-based setup), do the [Quick start](#quick-start) steps, then add the pieces below. Two things change: your server errors get captured too, and browser telemetry routes through your own domain so ad-blockers and CORS don't drop it. The plugin detects an SSR framework and switches to this proxy mode for you.
+If you server-render with TanStack Start (or another Nitro-based setup), do the [Quick start](#quick-start) steps, then boot server instrumentation and split the browser `init()` behind a runtime guard. Telemetry posts directly from the browser — set [`apiHost`](#custom-ingest-domain) on the plugin for an ad-blocker-resistant subdomain.
 
 <Steps>
-  <Step title="Add the telemetry route">
-    A catch-all route proxies browser telemetry through your origin and boots server instrumentation. For TanStack Start:
+  <Step title="Boot server instrumentation and browser init from the router">
+    Call `register()` on the server (OTel bootstrap) and `init()` in the browser. Guard on `typeof window` so each half only runs where it should.
 
-    ```tsx src/routes/api/interfere/$.tsx
-    import { handle } from "@interfere/vite/handler";
+    ```tsx src/router.tsx
+    import { init } from "@interfere/vite/init";
     import { register } from "@interfere/vite/server";
-    import { createFileRoute } from "@tanstack/react-router";
+    import { createRouter } from "@tanstack/react-router";
+    import { routeTree } from "./routeTree.gen";
 
     if (typeof window === "undefined") {
-      register();
+      register().catch(() => {});
+    } else {
+      init();
     }
 
-    export const Route = createFileRoute("/api/interfere/$")({
-      server: {
-        handlers: {
-          GET: ({ request }) => handle(request),
-          POST: ({ request }) => handle(request),
-          OPTIONS: ({ request }) => handle(request),
-        },
-      },
-    });
+    export const getRouter = () =>
+      createRouter({ routeTree, scrollRestoration: true });
     ```
 
-  </Step>
-  <Step title="Start the SDK in your client entry">
-    Call `init()` before hydration, in your client entry rather than `main.tsx`.
-
-    ```tsx src/client.tsx
-    import { init } from "@interfere/vite/init";
-
-    init();
-    // ...hydrateRoot(...)
-    ```
+    You can drop step 3 (`init()` in `main.tsx`) from the Quick start — the router handles it now.
 
   </Step>
   <Step title="Wrap the root route with the provider">
     ```tsx src/routes/__root.tsx
     import { InterfereProvider } from "@interfere/vite/provider";
-    
+    import { Outlet } from "@tanstack/react-router";
+
     function RootComponent() {
       return (
         <InterfereProvider>
@@ -345,7 +384,7 @@ try {
 
 <CardGroup cols={2}>
   <Card title="Next.js" icon="/icons/tech/nextjs/currentcolor.svg" href="/sdk/next-js">
-    `@interfere/next`: a build plugin, the ingest route, and a provider for the App Router.
+    `@interfere/next`: a build plugin, server instrumentation, and a provider for the App Router.
   </Card>
 
   <Card title="NestJS" icon="/icons/tech/nestjs/transparent.svg" href="/sdk/nestjs">
@@ -361,9 +400,7 @@ try {
   </Accordion>
 
 <Accordion title="Some telemetry is blocked by ad-blockers on my SPA.">
-  A pure single-page app sends telemetry straight to Interfere, which some ad-blockers filter. If
-  that's a concern, run it behind a small server and add the proxy route from [Server-side
-  rendering](#server-side-rendering); requests then go through your own domain.
+  Set [`apiHost`](#custom-ingest-domain) on the plugin to a subdomain of your own site — a CNAME to the target shown in your dashboard. Telemetry then posts to your own origin, no server route needed.
 </Accordion>
 
 <Accordion title="Do you handle the same issue across multiple apps?">
@@ -372,6 +409,6 @@ try {
 </Accordion>
 
   <Accordion title="Can I ship errors only, without analytics or replay?">
-    Yes. Disable the signals you don't want with `plugins`, for example `init({ plugins: { replay: false, pageEvents: false } })`. To drop browser tracing from the bundle entirely, pass `init({ tracing: false })`.
+    Yes. Disable the signals you don't want with the provider's `plugins` prop, for example `<InterfereProvider plugins={{ replay: false, pageEvents: false }}>`. To drop browser tracing from the bundle entirely, pass `init({ tracing: false })`.
   </Accordion>
 </AccordionGroup>
