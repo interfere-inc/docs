@@ -1,10 +1,12 @@
 ---
 title: "TypeScript"
-description: "Call the Interfere API from JavaScript and TypeScript."
+description: "Call the public Interfere API from JavaScript or TypeScript."
 icon: "/icons/tech/typescript/original.svg"
 ---
 
-`@interfere/javascript` provides a typed client for the Interfere API. Use it for release workflows and other API calls. For capturing errors and sessions inside an app, use the [Next.js](/sdk/next-js), [Vite](/sdk/vite), [NestJS](/sdk/nestjs), or [Node.js](/sdk/node) SDK.
+`@interfere/javascript` is the typed client for the Interfere API. Use it to register releases, upload source maps, and build custom API workflows.
+
+To capture errors and sessions from an app, install its [framework SDK](/quickstart#install-the-sdk).
 
 ## Install
 
@@ -12,20 +14,17 @@ icon: "/icons/tech/typescript/original.svg"
 npm install @interfere/javascript
 ```
 
-The package includes ESM, CommonJS, and TypeScript declarations. It requires native Fetch and FormData, available in Node.js 18 and later.
+The package supports ESM and CommonJS and includes TypeScript declarations. Use a runtime with native Fetch and FormData, such as Node.js 18 or later.
 
-## Authenticate
+## Make a request
 
-For build operations, use a surface secret key with `release:write`:
+Set `INTERFERE_API_KEY` to a surface secret key with `release:write`, then run this from your server or build environment:
 
 ```ts
 import { InterfereClient } from "@interfere/javascript";
 
 const token = process.env.INTERFERE_API_KEY;
-
-if (!token) {
-  throw new Error("Set INTERFERE_API_KEY before running the build client.");
-}
+if (!token) throw new Error("Set INTERFERE_API_KEY");
 
 const client = new InterfereClient({
   baseUrl: "https://api.interfere.com",
@@ -33,40 +32,42 @@ const client = new InterfereClient({
 });
 
 const config = await client.releases.getReleasesConfig();
+console.log(config);
 ```
 
-For endpoints that accept a public key, use `publicKeyHeader`:
+The response identifies the release configuration associated with the credential. Keep secret keys out of browser bundles.
 
-```ts
-import { InterfereClient } from "@interfere/javascript";
+## Authentication options
 
-const client = new InterfereClient({
-  baseUrl: "https://api.interfere.com",
-  publicKeyHeader: { apiKey: "YOUR_SURFACE_PUBLIC_KEY" },
-});
+Use `apiKey: { token }` for bearer authentication or `apiKeyHeader: { apiKey }` to send a secret key through `x-api-key`.
 
-const config = await client.config.getSdkConfig();
-```
-
-`apiKeyHeader: { apiKey: "..." }` sends a secret key through `x-api-key` instead of bearer authentication. Choose a credential accepted by the operation. Keep secret keys out of browser bundles.
+For an operation accepting a public ingestion key, use `publicKeyHeader: { apiKey }`. Check the operation's authentication requirements in the API reference. See [API keys](/integrations/api-keys) for the different credential types.
 
 ## Register releases and upload source maps
 
-The Next.js and Vite plugins handle this workflow during builds. For a custom build pipeline, call the release methods in order:
+Next.js and Vite build plugins handle releases automatically. For another build system, follow [Releases and source maps](/sdk/releases#custom-build-pipelines).
 
-1. Call `client.releases.createRelease()` with the build ID, source commit, and deployment destination. Use `null` when there is no native destination integration.
-2. Call `client.releases.signSourceMapUploads()` with the release slug and complete file inventory, including each file's build-relative path and declared size.
-3. Call `client.releases.uploadSourceMap()` for each file. Upload bytes in ordered chunks with the correct offset, at most 512 KiB per request, before the upload session expires.
-4. Call `client.releases.finalizeSourceMaps()` with the complete manifest after every chunk is accepted. Keep source maps until finalization succeeds.
+## Handle errors
 
-Read the [release API reference](/api-reference/releases/create-release) for request fields and response schemas. The SDK's generated types describe the same contract.
+API failures throw `InterfereError`. Inspect the status before deciding whether to retry:
 
-For AWS CodeBuild, ECS, EC2, Lambda, Fly, Render, or a container build, run these calls in CI after compiling the app. Supply the secret key through your CI secret manager. When the runtime has no git checkout, set `INTERFERE_SOURCE_ID` to the same commit SHA used during the build.
+```ts
+import { InterfereError } from "@interfere/javascript";
 
-## Timeouts, retries, and errors
+try {
+  await client.releases.getReleasesConfig();
+} catch (error) {
+  if (error instanceof InterfereError) {
+    console.error("Interfere request failed", error.statusCode);
+  }
+  throw error;
+}
+```
 
-Set `timeoutInSeconds` and `maxRetries` on the client or an individual request. Pass `abortSignal` in request options to cancel a request.
+## Timeouts and retries
 
-By default, eligible requests retry twice for HTTP `408`, `429`, and `5xx` responses and respect `Retry-After`. Network failures and other HTTP statuses are not retried. Follow each operation's retry contract for writes; use `maxRetries: 0` when you need to inspect the result before retrying.
+Set `timeoutInSeconds` and `maxRetries` on the client or an individual request. Pass `abortSignal` in request options to cancel it.
 
-API failures throw `InterfereError` with `statusCode` and `body`. Handle the error before using the result, and avoid logging credentials or full response bodies from credential-creation operations.
+Eligible requests retry twice by default for HTTP `408`, `429`, and `5xx` responses and respect `Retry-After`. Network failures and other HTTP statuses are not retried.
+
+For a write whose result is uncertain, inspect the resource before trying again. Set `maxRetries: 0` when your workflow needs to make that decision itself.

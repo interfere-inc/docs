@@ -1,0 +1,57 @@
+---
+title: "Identify users"
+description: "Associate sessions and problems with signed-in users."
+icon: "/icons/ui/users.svg"
+---
+
+Call `identity.set()` after your app loads its authenticated user. Interfere attaches the identity to the session so you can find the person in [Users](/product/users) and see the problems affecting them.
+
+## Sync the signed-in user
+
+Render this component inside `InterfereProvider` and pass the user from your authentication system. For Vite and TanStack Start, change the import to `@interfere/vite/provider`.
+
+```tsx identity.tsx
+"use client";
+
+import { useInterfere } from "@interfere/next/provider";
+import { useEffect } from "react";
+
+type User = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+export function SyncIdentity({ user }: { user: User | null }) {
+  const { identity } = useInterfere();
+
+  useEffect(() => {
+    if (!user) return;
+    identity.set({
+      identifier: user.id,
+      name: user.name,
+      email: user.email,
+      source: { type: "custom", name: "Acme" },
+    });
+  }, [identity, user]);
+
+  return null;
+}
+```
+
+Use a stable internal user ID for `identifier`. An email can change, so it should not be the identifier.
+
+## Identity fields
+
+| Field        | Purpose                                 |
+| ------------ | --------------------------------------- |
+| `identifier` | Required stable user ID                 |
+| `source`     | Required provider type and display name |
+| `name`       | Display name                            |
+| `email`      | Email address                           |
+| `avatar`     | Avatar URL                              |
+| `traits`     | Additional user properties              |
+
+Set `source.type` to `clerk`, `auth0`, or `custom`. Set `source.name` to the provider's display name.
+
+Identity calls are deduplicated per session. Identity clears when the session rotates. Read the current session ID with `useSession` from your framework's provider package.

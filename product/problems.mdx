@@ -1,43 +1,46 @@
 ---
-title: "The problem view"
+title: "Investigations"
+description: "Read the evidence, coordinate a fix, and follow recovery."
 icon: "/icons/ui/bug.svg"
-sidebarTitle: "Problem view"
-description: "Read investigations, inspect traces, and review affected sessions."
 ---
 
-Open a problem from the [Inbox](https://interfere.com/~/*) to see its description, affected users, evidence, and investigation timeline.
+Open a problem from the [Inbox](/product/inbox) to see what happened, who it affected, and what Interfere found. A problem groups related occurrences so your team can work on one investigation.
 
-![Problem view showing details, timeline activity, evidence, and collaboration](/images/problem-detail.png)
+## Check the impact
 
-## Read the investigation
+Review the affected users and occurrences before deciding priority. An error during checkout may need attention even if it affects fewer users than an error on a rarely used settings page.
 
-The timeline records investigation updates and team discussion. Root-cause explanations include the relevant code and supporting facts. Follow the evidence links to inspect the records behind a conclusion. You can filter the timeline when you need a particular type of update.
+Use the findings list to review occurrences by day. Expand a day to inspect individual records. Release and environment details help establish when the issue started and where it happens.
 
-An investigation may still be running or may fail before reaching a conclusion. Its current status remains visible in the Inbox. Recurring errors can trigger further investigation, and later releases can reopen a resolved problem as a regression.
+## Read the explanation and evidence
 
-## Inspect occurrences and traces
+The timeline contains investigation updates and team discussion. Follow the evidence linked from an explanation to inspect the records behind it.
 
-The findings list groups occurrences by day. Expand a day to inspect its records or collapse it to scan a longer time range.
+For a checkout error, that might mean opening the failing request's trace, finding the exception, and checking the referenced code in the release that produced it. Use **Jump to error** in the trace to locate the failing span, then inspect its stack frames and surrounding spans.
 
-Open a trace to review its spans and timing. Use **Jump to error** to locate the error in the span list, then inspect the stack trace for its call frames. Browser and platform details help distinguish failures that affect a particular environment.
-
-## Watch affected sessions
-
-Open the problem's sessions to see what affected users did. Filter by a visited URL to focus on a route, then open a replay. Opening a session from a problem keeps the session's other events available for context. When you jump to an error, replay starts seven seconds before it where recording data is available.
+Browser and platform details can help narrow a problem to a specific environment. Open an affected [session replay](/product/session-replay) to see the actions leading up to the failure.
 
 ## Work the problem
 
-- Assign a teammate with <kbd>A</kbd>.
-- Set high, medium, or low priority with <kbd>P</kbd>.
-- Edit the title or description to add context for your team.
-- Comment on the timeline and mention teammates.
-- Toggle your subscription with <kbd>S</kbd>.
-- Dismiss a problem that does not need action, or archive it to remove it from your working view.
+Assign an owner with <kbd>A</kbd> and set priority with <kbd>P</kbd>. Edit the title or description to add context, and use timeline comments to discuss findings or mention teammates.
 
-Use the feedback control to report an issue with the investigation. Include what is wrong and any evidence that would change the conclusion.
+Subscribe with <kbd>S</kbd> to receive updates. If the explanation is wrong, use the feedback control and include the evidence that contradicts it.
 
-Interfere manages recovery and resolution as it observes new events. See [statuses](/concepts#statuses) for the lifecycle.
+Dismiss a problem when your team has decided it does not need action. Archive it to remove it from your working view. Neither action deploys a fix to your app.
 
-## Notifications and editor access
+## Statuses
 
-Configure notifications in [Alerts](https://interfere.com/~/*/settings/alerts). Connect [Slack](/integrations/slack) for team notifications, or use the [MCP server](/integrations/mcp) to inspect the same workspace from a coding agent.
+| Status          | Meaning                                                     |
+| --------------- | ----------------------------------------------------------- |
+| Detected        | Interfere has detected an issue for investigation           |
+| Reasoning       | The investigation is examining evidence and possible causes |
+| Active          | The problem needs a fix                                     |
+| In recovery     | Interfere is monitoring whether the issue has stopped       |
+| Needs attention | The problem needs further review                            |
+| Resolved        | The issue has stopped recurring                             |
+| Dismissed       | Your team has decided not to act                            |
+| Failed          | The investigation could not complete                        |
+
+Interfere manages investigation, recovery, and resolution as it observes events. A resolved problem can reopen as a regression if the issue returns. [Release metadata](/sdk/releases) connects those occurrences to the code that produced them.
+
+You can also inspect the investigation through [AI Agents](/integrations/plugins), [MCP](/integrations/mcp), or the [CLI](/integrations/cli#inspect-a-problem).

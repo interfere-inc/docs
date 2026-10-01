@@ -1,0 +1,59 @@
+---
+title: "Releases and source maps"
+description: "Connect runtime errors to the code and build that produced them."
+icon: "/icons/ui/layers.svg"
+---
+
+A release identifies a version of your code. Source maps let Interfere map compiled stack frames back to the original files and lines.
+
+## Next.js and Vite builds
+
+The framework build plugins register releases and upload source maps. Set `INTERFERE_API_KEY` to a surface secret key with `release:write` in the build environment.
+
+For Next.js, wrap your config with `withInterfere()`. The plugin enables production browser source maps when an API key is present, runs its release pipeline after production compilation, and removes maps after upload.
+
+For Vite, add `interfere()` and set `build.sourcemap: true`. The plugin uploads the generated maps during the build.
+
+Review the Interfere output in the build log. If release preparation fails, fix the reported key, source metadata, or upload error before relying on source-level investigations for that release.
+
+## Use the same commit at build time and runtime
+
+The build plugins derive release identity from your commit SHA. They read CI metadata such as `VERCEL_GIT_COMMIT_SHA` or `GITHUB_SHA`, or use the local git checkout.
+
+If the build or deployed runtime has no git checkout, set `INTERFERE_SOURCE_ID` to the full commit SHA in both environments. A Docker build and its deployed container must identify the same commit.
+
+Redeploying the same commit does not create a new code version. Use [environment labels](/sdk/configuration#environments) to distinguish production and staging traffic.
+
+## Share source maps with other tools
+
+Only delete maps after every tool that needs them has uploaded them. Keep `withInterfere()` outermost when it owns the final cleanup step.
+
+To let a later uploader handle cleanup, disable Interfere's purge:
+
+```ts next.config.ts
+import { withInterfere } from "@interfere/next/config";
+import type { NextConfig } from "next";
+
+const config: NextConfig = {};
+
+export default withInterfere({ sourceMaps: { purge: false } }, config);
+```
+
+When Interfere runs last, configure earlier uploaders to retain their maps. An existing `runAfterProductionCompile` hook runs before Interfere's pipeline.
+
+## Custom build pipelines
+
+Use the [TypeScript Platform SDK](/platform-sdk/typescript) for builds without a framework plugin. Authenticate with a surface secret key, then complete the following sequence:
+
+1. Call `client.releases.createRelease()` with the build ID, source commit, and deployment destination. Use `destination: null` when there is no native deployment integration. The response's `destination.slug` identifies the release for uploads.
+2. Call `client.releases.signSourceMapUploads()` with `releaseSlug` and the complete inventory of paths and byte sizes.
+3. Upload each file with `client.releases.uploadSourceMap()`. Send chunks of at most 512 KiB in byte-offset order. Finish before the returned `expiresAt` time.
+4. Call `client.releases.finalizeSourceMaps()` with `releaseSlug`, the bundler, and the complete file manifest. Keep the maps until the response confirms the batch was accepted.
+
+Each final manifest entry includes `path`, `hash`, `debugId`, and `chunkUrl`. Paths must match the signed inventory. The [release API reference](/api-reference/releases/create-release) defines the request and response fields.
+
+This workflow runs after compilation in CI, regardless of where the app is hosted. Keep the build credential in CI and use the public key for runtime capture.
+
+## Missing source code in a stack trace
+
+Check that the build uploaded maps successfully, the release uses the expected commit, and the deployed runtime has the same `INTERFERE_SOURCE_ID`. If another build tool deletes maps, move deletion after all upload steps.

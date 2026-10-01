@@ -1,10 +1,10 @@
 ---
 title: "Terraform"
-description: "Manage Interfere surfaces with the Terraform provider."
+description: "Manage workspace settings, surfaces, and private API keys."
 icon: "/icons/tech/terraform/original.svg"
 ---
 
-The Interfere Terraform provider manages surfaces with the `interfere_surface` resource. It supports creation, reads, renaming, deletion, import, and drift correction.
+The Interfere Terraform provider manages existing workspace settings, surfaces, and private API keys.
 
 ## Configure the provider
 
@@ -14,7 +14,7 @@ Add the provider to your Terraform configuration:
 terraform {
   required_providers {
     interfere = {
-      source = "interfere/interfere"
+      source = "interfere-inc/interfere"
     }
   }
 }
@@ -29,6 +29,25 @@ Set `INTERFERE_TOKEN` through your shell or secret manager to a [workspace API k
 - `org:surfaces:delete`
 
 Use a workspace API key for unattended runs. A release-only surface key cannot manage workspace resources.
+
+## Manage workspace settings
+
+Use `interfere_workspace` to manage an existing workspace's name and slug:
+
+```hcl
+resource "interfere_workspace" "team" {
+  workspace_slug = "acme"
+  name           = "Acme engineering"
+}
+```
+
+This resource adopts an existing workspace. It does not create one. Removing the resource from Terraform only removes it from state; it does not delete the workspace.
+
+Grant the provider credential `org:workspace_basics:read` and `org:workspace_basics:write` for this resource.
+
+```bash
+terraform import interfere_workspace.team acme
+```
 
 ## Create a surface
 
@@ -53,7 +72,14 @@ output "surface_slug" {
 }
 ```
 
-Set `workspace_slug` to your workspace's URL slug and `creation_id` to a nonzero UUID. Keep that UUID stable across plans and retries; do not use an expression that generates a new UUID on every run.
+Supply values in `terraform.tfvars`:
+
+```hcl terraform.tfvars
+workspace_slug = "acme"
+creation_id    = "9e3c0d0e-3bf7-48ae-9271-6ea58e7b970d"
+```
+
+Replace `acme` with your workspace slug and generate a nonzero UUID for this surface. Keep that UUID stable across plans and retries; do not use `uuid()` to generate a different value on every run.
 
 ```bash
 terraform init
@@ -61,7 +87,7 @@ terraform plan
 terraform apply
 ```
 
-The resource returns `id` and `slug`. Surface creation also issues default credentials. The provider discards those credentials and does not store them in Terraform state. Manage SDK and build credentials through the surface's key settings.
+The resource returns `id` and `slug`. Surface creation also issues default credentials. Manage SDK and build credentials through the surface's key settings. They are not stored in Terraform state.
 
 ## Update or replace a surface
 
@@ -85,6 +111,31 @@ terraform import interfere_surface.app acme/storefront
 ```
 
 The creation UUID cannot be recovered during import. Supply a new UUID in your configuration. The next apply records it without recreating the imported surface.
+
+## Manage private API keys
+
+Use `interfere_private_key` for a workspace automation key or a surface build key. Set `surface_slug` to scope a key to a surface; omit it for a workspace key.
+
+```hcl
+resource "interfere_private_key" "releases" {
+  workspace_slug           = "acme"
+  surface_slug             = interfere_surface.app.slug
+  idempotency_key          = "c8a2c920-ff67-4ed0-a344-e3172279ae9d"
+  name                     = "Release uploads"
+  scopes                   = ["release:write"]
+  seconds_until_expiration = 2592000
+}
+```
+
+For workspace keys, the provider credential needs `org:workspace_auth:read` and `org:workspace_auth:write`. For surface keys, it needs `org:surfaces:read` and `org:surfaces:write`. The credential must also be allowed to grant the requested scopes.
+
+The example expires after 30 days. Omit `seconds_until_expiration` or set it to `null` for no expiry. Changing grants or lifetime replaces the key, so choose a fresh creation UUID for the replacement.
+
+The resource's `secret` output is sensitive and **is stored in Terraform state**. Use a state backend with access controls appropriate for credentials. Import restores metadata only; it cannot recover the secret.
+
+```bash
+terraform import interfere_private_key.releases acme/KEY_ID
+```
 
 ## Recover from an uncertain request
 

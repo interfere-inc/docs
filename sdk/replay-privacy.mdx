@@ -1,0 +1,43 @@
+---
+title: "Replay privacy"
+description: "Mask text and inputs, or exclude parts of a page from recording."
+icon: "/icons/ui/shield-check.svg"
+---
+
+Replay records the page's DOM. Password inputs are masked by default. Configure additional masking before recording customer sessions.
+
+## Mask input values
+
+Set `maskAllInputs: true` on the provider to mask all input values:
+
+```tsx
+<InterfereProvider plugins={{ replay: { maskAllInputs: true } }}>{children}</InterfereProvider>
+```
+
+To mask selected input types, use `maskInputOptions`, for example `{ email: true }`.
+
+## Exclude content with classes
+
+| Class              | Effect                                                                  |
+| ------------------ | ----------------------------------------------------------------------- |
+| `interfere-block`  | Replaces the element with a placeholder of the same size                |
+| `interfere-ignore` | Excludes keystrokes and input changes while leaving the element visible |
+| `interfere-mask`   | Masks rendered text in the element and its children                     |
+
+```tsx
+<section className="interfere-block">{paymentDetails}</section>
+<input className="interfere-ignore" name="private-note" />
+<span className="interfere-mask">{accountBalance}</span>
+```
+
+`interfere-mask` applies to rendered text. Use input masking or `interfere-block` for input values.
+
+## Selectors and custom masking
+
+The `plugins.replay` configuration accepts rrweb options including `maskTextSelector`, `blockSelector`, `ignoreSelector`, `maskInputFn`, `maskTextFn`, and `recordCanvas`. The Interfere privacy classes continue to apply alongside these options.
+
+## Disable replay
+
+Set `plugins={{ replay: false }}` to disable recording, or control it with the [replay consent category](/sdk/consent).
+
+Verify the result by opening a new [session replay](/product/session-replay) after changing the configuration. Masking changes apply to new recordings.

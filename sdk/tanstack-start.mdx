@@ -1,0 +1,80 @@
+---
+title: "TanStack Start"
+description: "Initialize browser and server capture in a Start app."
+icon: "/icons/tech/tanstack/currentcolor.svg"
+---
+
+TanStack Start uses the Vite integration for builds and browser capture, with separate server instrumentation.
+
+## Install and configure the build
+
+```bash
+npm install @interfere/vite @interfere/react
+```
+
+Add `interfere()` to your existing Vite plugins and enable `build.sourcemap`. Keep the Start and React plugins already in your app.
+
+```ts
+import { interfere } from "@interfere/vite/plugin";
+```
+
+Set the keys from your [surface](/product/surfaces) in the build environment:
+
+```env
+VITE_INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
+INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
+INTERFERE_API_KEY=YOUR_SURFACE_SECRET_KEY
+INTERFERE_ENVIRONMENT=staging
+```
+
+Keep the secret key in the build environment. Provide `INTERFERE_PUBLIC_KEY` and the environment label to the server runtime as well.
+
+## Initialize in the router
+
+Initialize the server SDK on the server and the browser SDK in the browser. Add this to your router module, preserving your router options.
+
+```tsx src/router.tsx
+import { init } from "@interfere/vite/init";
+import { register } from "@interfere/vite/server";
+import { createRouter } from "@tanstack/react-router";
+import { routeTree } from "./routeTree.gen";
+
+if (typeof window === "undefined") {
+  register().catch((error) => console.error("Interfere initialization failed", error));
+} else {
+  init();
+}
+
+export const getRouter = () => createRouter({ routeTree, scrollRestoration: true });
+```
+
+## Wrap the root route
+
+Wrap your existing root route component with the provider:
+
+```tsx src/routes/__root.tsx
+import { InterfereProvider } from "@interfere/vite/provider";
+import { Outlet } from "@tanstack/react-router";
+
+function RootComponent() {
+  return (
+    <InterfereProvider>
+      <Outlet />
+    </InterfereProvider>
+  );
+}
+```
+
+Keep this component connected to your existing root route definition. Configure [consent](/sdk/consent) and [replay masking](/sdk/replay-privacy) on the provider.
+
+## Verify capture
+
+Deploy to staging and use the [Vite test button](/sdk/vite#verify-capture) to verify browser capture. To check server capture, report a test error from a server function:
+
+```ts
+import { captureError } from "@interfere/vite/server";
+
+captureError(new Error("Interfere server setup test"));
+```
+
+Open the surface's event chart to check incoming traffic. Remove the test captures after verification. See [No events arriving](/sdk/troubleshooting) if either side is missing.

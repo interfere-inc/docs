@@ -1,39 +1,51 @@
 ---
 title: "Inbox"
+description: "Triage problems by impact, environment, and owner."
 icon: "/icons/ui/inbox.svg"
-description: "Filter, prioritize, and assign problems across your workspace."
 ---
 
-The [Inbox](https://interfere.com/~/*) lists problems detected from your app's events. Related occurrences are grouped so you can review their impact and investigation together.
+The [Inbox](https://interfere.com/~/*) groups related occurrences into problems. Use it to decide what needs attention and who should work on it.
 
-![Inbox board showing problems grouped by status](/images/inbox.png)
+<Frame caption="Review related occurrences as problems, then assign and prioritize the work.">
+  <div className="screenshot-stage">
+    <div className="screenshot-crop screenshot-crop--inbox">
+      <img
+        src="/images/inbox-list.png"
+        alt="Two problems grouped under Investigating in the Inbox list."
+        noZoom
+      />
+    </div>
+  </div>
+</Frame>
 
-## Choose a view
+## Find the problems to work on
 
-Use the board to group problems by status, or the list for a compact view. Open **Display** to sort by priority, affected users, first detected, or last detected, in ascending or descending order. Failed investigations can be shown or hidden.
+Start with an environment filter, such as **production**, then narrow by surface, status, priority, or assignee. Use the problem ID filter to return to specific problems.
 
-## Filter problems
+For example, filter to your checkout surface and production environment, then sort by affected users to review the problems with the widest impact first.
 
-Filter by environment to focus on production, staging, or another deployment environment. Combine filters such as surface, assignee, priority, and status to narrow the list. A problem ID filter lets you return to a specific set of problems.
+Open **Display** to switch between board and list views and sort by priority, affected users, first detected, or last detected. You can also show or hide failed investigations.
 
-Press <kbd>Alt</kbd> <kbd>Shift</kbd> <kbd>F</kbd> to clear active filters. On macOS, use <kbd>Option</kbd> for Alt.
+Press <kbd>Alt</kbd> <kbd>Shift</kbd> <kbd>F</kbd> to clear filters. On macOS, use <kbd>Option</kbd> for Alt.
 
-## Select and act in bulk
+## Assign and prioritize
 
-Select several problems to assign them, change their priority, or subscribe to updates in one action. These actions follow your workspace permissions.
+Select a problem and press <kbd>A</kbd> to assign it or <kbd>P</kbd> to set its priority. Select several problems to apply the same change together.
 
-| Shortcut           | Action                                          |
-| ------------------ | ----------------------------------------------- |
-| Arrow keys         | Move through problems.                          |
-| Shift + arrow keys | Extend or reduce the selection.                 |
-| ⌘ A or Ctrl A      | Select all filtered problems.                   |
-| Escape             | Clear the selection.                            |
-| A                  | Assign selected problems.                       |
-| P                  | Set priority for selected problems.             |
-| S                  | Change your subscription for selected problems. |
+| Shortcut           | Action                         |
+| ------------------ | ------------------------------ |
+| Arrow keys         | Move through problems          |
+| Shift + arrow keys | Extend or reduce the selection |
+| ⌘ A or Ctrl A      | Select all filtered problems   |
+| Escape             | Clear the selection            |
+| A                  | Assign the selection           |
+| P                  | Set priority                   |
+| S                  | Change your subscription       |
 
-Text fields keep their normal editing shortcuts.
+These shortcuts apply outside text fields.
 
-## Follow an investigation
+## Open an investigation
 
-Open a problem to read its timeline, inspect evidence, and review sessions. An investigation can still be in progress or fail before it produces an explanation. See [problem statuses](/concepts#statuses) and the [problem view](/product/problems).
+Open a problem to read its explanation and inspect the [supporting evidence](/product/problems). A **Failed** investigation needs review; it does not mean the issue is fixed.
+
+Subscribe with <kbd>S</kbd> to follow comments and status changes. Choose how you receive those updates in [Notifications](/product/notifications).

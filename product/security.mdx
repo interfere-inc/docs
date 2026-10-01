@@ -1,65 +1,35 @@
 ---
 title: "Security"
 icon: "/icons/ui/shield.svg"
-description: "How you sign in to Interfere, how team access is controlled, and where we stand on compliance."
+description: "Configure sign-in requirements and network access."
 ---
 
-How your team signs in, and who can reach what. For certifications and reports, see [Compliance](/product/compliance).
+Manage how members sign in and which networks can access your workspace. For security reports and certifications, visit [Interfere security](https://interfere.com/security).
 
-## Signing in
+## Sign in
 
-Email and passkeys work for everyone. Organizations can add single sign-on through their own identity provider.
+Sign in with an email one-time code or a passkey. Add a passkey in [Profile settings](https://interfere.com/~/*/settings/profile) after your first sign-in. Passkeys can use device biometrics or a hardware security key.
 
-<CardGroup cols={2}>
-  <Card title="Email one-time passcode (OTP)" icon="/icons/ui/mail.svg">
-    Enter your work email and we send a single-use code. No password to manage, reuse, or leak. This is the default for new accounts.
-  </Card>
+## Single sign-on
 
-  <Card title="Passkeys" icon="/icons/ui/fingerprint.svg">
-    Sign in with your device's biometrics or a hardware security key: Face ID, Touch ID, Windows Hello, or a YubiKey. Phishing-resistant, and you add one from [profile settings](https://interfere.com/~/*/settings/profile) after your first sign-in.
-  </Card>
-</CardGroup>
+Connect a SAML 2.0 identity provider to manage team sign-in. Contact [support@interfere.com](mailto:support@interfere.com) with your provider to arrange setup.
 
-## Single sign-on (SSO)
+Existing members link their Interfere account to the identity provider when they next sign in. New members who join through SSO receive Member access; an administrator can change their role afterward.
 
-Organizations can have members sign in through their own identity provider (IdP) with SAML 2.0, so access follows the accounts and groups you already manage. Interfere works with any SAML 2.0 provider, including Okta, Microsoft Entra ID, Google Workspace, OneLogin, and JumpCloud.
-
-Our team sets up SSO with you; it isn't self-serve. To turn it on for your organization, reach out at [support@interfere.com](mailto:support@interfere.com), open [support settings](https://interfere.com/~/*/settings/support), and tell us which identity provider you use. We'll exchange the SAML details and enable it together.
-
-### How SSO behaves
-
-<AccordionGroup>
-  <Accordion title="Linking existing accounts" icon="/icons/ui/link.svg">
-    After SSO is on, current members link their existing Interfere account to your IdP the next time they sign in. It's a one-time step for each person and keeps their history and settings intact.
-  </Accordion>
-
-<Accordion title="New members" icon="/icons/ui/user-plus.svg">
-  Someone signing in through SSO for the first time joins with standard member access. An
-  administrator can change their role afterward.
-</Accordion>
-
-<Accordion title="Requiring SSO" icon="/icons/ui/key.svg">
-  You can require everyone in your organization to sign in through SSO. While it's required, email
-  and passkey sign-in are turned off, so your identity provider is the only way in.
-</Accordion>
-
-  <Accordion title="Directory sync (SCIM)" icon="/icons/ui/sync.svg">
-    With SCIM, your identity provider provisions and deprovisions accounts for you. When someone joins or leaves the relevant group in your IdP, their Interfere access follows, so off-boarding isn't a manual step.
-  </Accordion>
-</AccordionGroup>
+When SSO is required, members must use the identity provider. Email and passkey sign-in are disabled. SCIM directory sync can provision and deprovision accounts from your identity provider.
 
 ## Roles and permissions
 
-Interfere uses role-based access control. Every member has a role that sets what they can see and change, from full administration down to read-only access. Manage roles from your workspace's [team settings](https://interfere.com/~/*/settings/team).
+Assign Owner, Admin, or Member access in [Members and roles](/product/members).
 
 ## Network access
 
-Enterprise workspaces can restrict dashboard and API access to allowed networks in [Settings → Security](https://interfere.com/~/*/settings/security). Editing rules requires workspace authentication management permission.
+Enterprise workspaces can restrict dashboard and API access in [Security settings](https://interfere.com/~/*/settings/security). Changing rules requires workspace authentication management permission.
 
-Select **Add a network**, enter an IPv4 or IPv6 address, CIDR range, or ASN, and add a description. For example, a CIDR entry can identify an office network and an ASN can identify a network operator. You can keep up to 100 rules.
+Select **Add a network**, enter an IPv4 or IPv6 address, CIDR range, or ASN, and add a description. You can configure up to 100 rules.
 
-With no rules, authenticated members can reach the workspace from any network. Once rules are configured, connections must match an allowed network. An ASN allows that operator's entire network, including other customers, so use a narrower IP range when appropriate.
+With no rules, authenticated members can access the workspace from any network. Once rules exist, connections must match an allowed network. An ASN permits the network operator's entire network, including other customers. Use a narrower IP range when you need access limited to your own network.
 
-If access is blocked, connect through an allowed company network or VPN. Ask a workspace administrator to review the rules if the expected network is missing. Workspace permissions still apply after a connection passes the network check.
+If a connection is blocked, connect through an allowed company network or VPN. Ask an administrator to review the rules if your expected network is missing. Members still need workspace permissions after passing the network check.
 
-Review administrative changes in the [audit log](/product/audit-log).
+Review changes in the [Audit log](/product/audit-log).

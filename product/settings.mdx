@@ -1,21 +1,12 @@
 ---
-title: "Settings"
+title: "Workspace settings"
+description: "Manage workspace details, domains, billing, and support access."
 icon: "/icons/ui/settings.svg"
-description: "Workspace, profile, alerts, integrations, team, and billing."
 ---
 
-Settings is where you manage your workspace and how Interfere reaches your team.
+Your workspace contains your team's surfaces, problems, integrations, and access settings. Open [Workspace settings](https://interfere.com/~/*/settings/workspace) to manage its name and defaults.
 
-![Workspace settings with profile, alerts, integrations, team, and billing navigation](/images/settings.png)
-
-- [**Workspace.**](https://interfere.com/~/*/settings/workspace) Your workspace name and defaults.
-- [**Profile.**](https://interfere.com/~/*/settings/profile) Your own account details.
-- [**Alerts.**](https://interfere.com/~/*/settings/alerts) Turn on notifications and choose where they go. Route each category to a channel, so new problems can land in one place and team activity in another. See [Slack](/integrations/slack) for how routing works.
-- [**Integrations.**](https://interfere.com/~/*/settings/integrations) Connect your code host, deploy platform, and Slack.
-- [**Team.**](https://interfere.com/~/*/settings/team) Invite teammates so you can investigate and resolve problems together, and set each person's role. See [Roles and permissions](/product/security#roles-and-permissions).
-- [**Security.**](https://interfere.com/~/*/settings/security) Configure sign-in requirements and [network access](/product/security#network-access).
-- [**Audit log.**](https://interfere.com/~/*/settings/audit-log) Owners and administrators can review [administrative events](/product/audit-log).
-- [**Billing.**](https://interfere.com/~/*/settings/billing) Your plan and invoices.
+The workspace slug appears in its URL. For `interfere.com/~/acme`, use `acme` in the CLI, API, and Terraform provider.
 
 ## Workspace domains
 
@@ -31,12 +22,26 @@ You add one domain when you create the workspace, and you can add more later. Ea
 
 Remove a domain in [workspace settings](https://interfere.com/~/*/settings/workspace) and joining returns to manual invites.
 
+## Data residency
+
+Choose US or EU data residency when you create the workspace. The choice applies to the workspace and its regional keys. Select the region that meets your requirements before completing setup.
+
+## Team access
+
+Invite teammates and change roles in [Members and roles](/product/members). Configure [SSO and network access](/product/security) in Security, and review administrative changes in the [Audit log](/product/audit-log).
+
+## Personal settings
+
+Update your account details and passkeys in [Profile](https://interfere.com/~/*/settings/profile). Choose notification channels in [Notifications](/product/notifications).
+
+## Billing
+
+Open [Billing](https://interfere.com/~/*/settings/billing) to manage your plan and invoices.
+
 ## Support access
 
-Support access lets the Interfere team temporarily sign in to your workspace to troubleshoot with you, acting with the same access you have. It's **off by default** and fully under your control:
+Support access lets the Interfere team temporarily access your workspace to troubleshoot with you, using the same access you have. It is off by default.
 
-- You turn it on only when you want hands-on help.
-- It's time-boxed. You choose how long it lasts, from one hour (the default) up to a week, after which it switches off on its own.
-- You can revoke it at any time.
+Enable it in [Support settings](https://interfere.com/~/*/settings/support) when working with support. Choose a duration from one hour to one week. Access expires automatically, and you can revoke it earlier.
 
-Leave it off for normal use, and switch it on only for the window you're working with support. To reach support, email [support@interfere.com](mailto:support@interfere.com) or open [support settings](https://interfere.com/~/*/settings/support).
+Contact [support@interfere.com](mailto:support@interfere.com) for help.
