@@ -8,8 +8,25 @@ Use the Interfere CLI to inspect problems, read investigation evidence, and call
 
 ## Install and sign in
 
-```bash
+<CodeGroup>
+
+```bash npm
 npm install -g @interfere/cli
+```
+
+```bash pnpm
+pnpm add -g @interfere/cli
+```
+
+```bash Bun
+bun add -g @interfere/cli
+```
+
+</CodeGroup>
+
+Then sign in and select your workspace:
+
+```bash
 interfere auth login --scheme oauth-production
 export INTERFERE_WORKSPACE=your-workspace
 interfere problems list
@@ -17,7 +34,7 @@ interfere problems list
 
 Sign-in opens your browser. Sign in to Interfere, then set `INTERFERE_WORKSPACE` to the workspace slug from its URL. For `interfere.com/~/acme`, use `acme`.
 
-Native binaries support macOS on Apple Silicon and Intel, Linux on ARM64 and x64, and Windows on x64. Keep npm optional dependencies enabled so installation can select the binary for your platform.
+Native binaries support macOS on Apple Silicon and Intel, Linux on ARM64 and x64, and Windows on x64. Keep optional dependencies enabled so installation can select the binary for your platform.
 
 ## Discover commands and arguments
 
