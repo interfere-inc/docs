@@ -2,7 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "almond",
   "name": "Interfere",
-  "description": "Interfere empowers engineers, product managers and designers with real-time understanding of previously unseen bugs and issues.",
+  "description": "Investigate application errors with traces, logs, session replays, and release context.",
   "colors": {
     "primary": "#202020",
     "light": "#EEEEEE",
@@ -42,8 +42,8 @@
     "links": [],
     "primary": {
       "type": "button",
-      "label": "Get Started",
-      "href": "https://interfere.com/auth/waitlist"
+      "label": "Get started",
+      "href": "https://interfere.com/onboarding"
     }
   },
   "footer": {
@@ -66,5 +66,19 @@
       "twitter:image": "/og.png",
       "twitter:image:alt": "Interfere Documentation"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/sdk/javascript",
+      "destination": "/platform-sdk/typescript"
+    },
+    {
+      "source": "/power-user",
+      "destination": "/product/inbox"
+    },
+    {
+      "source": "/integrations/overview",
+      "destination": "/product/settings"
+    }
+  ]
 }

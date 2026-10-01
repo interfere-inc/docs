@@ -196,3 +196,18 @@ table th:first-child code {
   padding-right: 0 !important;
   padding-bottom: 0 !important;
 }
+
+:root {
+  --text-secondary-icon-filter: brightness(0);
+  --text-secondary-icon-opacity: calc(155 / 255);
+}
+
+.dark {
+  --text-secondary-icon-filter: brightness(0) invert(1);
+  --text-secondary-icon-opacity: calc(175 / 255);
+}
+
+img[src*="/icons/ui/"] {
+  filter: var(--text-secondary-icon-filter);
+  opacity: var(--text-secondary-icon-opacity);
+}

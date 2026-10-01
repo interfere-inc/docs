@@ -1,0 +1,78 @@
+---
+title: "MCP"
+description: "Connect coding agents to your Interfere workspace."
+icon: "/icons/ui/link.svg"
+---
+
+The Interfere MCP server gives your agent access to problems, sessions, releases, and workspace operations. It uses your Interfere account and existing workspace permissions.
+
+| Connection     | URL                                      |
+| -------------- | ---------------------------------------- |
+| Read and write | `https://mcp.interfere.com/mcp`          |
+| Read-only      | `https://mcp.interfere.com/mcp/readonly` |
+
+Both endpoints use Streamable HTTP and OAuth. Choose read-only when the agent only needs to investigate. The server rejects operations that are not explicitly declared read-only on that endpoint, including mutations sent through `execute`.
+
+## Connect with a plugin
+
+The [Claude Code and Cursor plugins](/integrations/plugins) configure the server and include an investigation skill. Use a plugin if you want both the connection and guidance for investigating problems.
+
+## Connect directly
+
+<Tabs>
+  <Tab title="Claude Code">
+    Add the server from your terminal:
+
+    ```bash
+    claude mcp add --transport http interfere https://mcp.interfere.com/mcp
+    ```
+
+    Open `/mcp` in Claude Code and complete the Interfere sign-in flow. For a read-only connection, use the `/mcp/readonly` URL instead. See [Claude Code's MCP settings](https://code.claude.com/docs/en/mcp) for configuration scopes.
+
+  </Tab>
+  <Tab title="Cursor">
+    Add the server to your project's `.cursor/mcp.json`, or merge it into your existing configuration:
+
+    ```json
+    {
+      "mcpServers": {
+        "interfere": {
+          "url": "https://mcp.interfere.com/mcp"
+        }
+      }
+    }
+    ```
+
+    Open Cursor's MCP settings and complete the sign-in flow. For a read-only connection, use the `/mcp/readonly` URL. See [Cursor's MCP documentation](https://cursor.com/docs/mcp) for global configuration.
+
+  </Tab>
+  <Tab title="Other clients">
+    Add a remote HTTP MCP server using one of the URLs above. Your client must support OAuth for remote MCP servers. Complete the connection flow in the client, then choose the workspace you want to use.
+  </Tab>
+</Tabs>
+
+Keep credentials out of MCP configuration files. Sign-in requests `interfere:access`, `user:org:read`, and `offline_access` so the client can access Interfere, select your workspace, and refresh its connection.
+
+## Ask about your workspace
+
+Give the agent a problem link, surface, or time range:
+
+- "Investigate errors from the last hour in the checkout surface."
+- "Show the sessions affected by this problem and the release where it began."
+- "Compare the investigation's root cause with the supporting traces."
+
+The server exposes two tools. `search` discovers operations and their schemas. `execute` runs requests against those operations. Agents should inspect the current contract before constructing requests and check each returned HTTP status before using its body.
+
+The write-enabled endpoint can change data within your permissions. Ask for a specific change when you want one. An investigation does not require changing problem status or workspace settings.
+
+## Troubleshooting
+
+| Result                                        | Next step                                                                                              |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Sign-in fails or a request returns `401`      | Reconnect through your client's MCP settings.                                                          |
+| A request returns `403`                       | Check workspace membership, permissions, and [network access rules](/product/security#network-access). |
+| A write is rejected on the read-only endpoint | Use the write-enabled connection for an intended change.                                               |
+| A request or response is too large            | Narrow the time range or paginate. Requests are limited to 1 MiB and responses to 8 MiB.               |
+| A write times out                             | Read the resource's current state before deciding whether to retry.                                    |
+
+The **Add MCP** option in this documentation site's contextual menu connects a documentation search server. Use the URLs on this page to connect to your product workspace.

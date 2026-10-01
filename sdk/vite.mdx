@@ -1,16 +1,14 @@
 ---
 title: "Vite (React)"
 icon: "/icons/tech/vite/transparent.svg"
-description: "Install the Interfere SDK in your Vite app. One-time setup, then Interfere captures everything you ship."
+description: "Install the Interfere SDK in your Vite app. Configure browser capture, releases, and source maps."
 sidebarTitle: "Vite"
 ---
 
-`@interfere/vite` wires Interfere into your Vite build and your running app together. You set it up once: drop in the plugin and start the SDK before render. After that, Interfere records everything the app produces (errors, sessions, traces, and logs) with no sampling and no knobs to turn. It then collapses related symptoms into one problem, weighs how much it matters, and works out the cause for you.
-
-It works for a plain single-page app and for server-rendered setups like TanStack Start. This page covers the install plus the handful of settings most teams actually touch.
+`@interfere/vite` publishes release metadata and source maps during your build. The browser SDK captures errors, sessions, traces, and logs. This guide covers React single-page apps and server-rendered setups such as TanStack Start.
 
 <Note>
-  You'll need a **surface public key** (`interfere_pub_<region>_…`) from [Surfaces](https://interfere.com/~/*/surfaces). For source-map upload and release tracking you'll also want an **Interfere API key** (`interfere_secret_<region>_…`). See [Environment variables](#environment-variables).
+  You'll need a **surface public key** (`interfere_public_<region>_...`) from [Surfaces](https://interfere.com/~/*/surfaces). For source-map upload and release tracking you'll also want an **Interfere API key** (`interfere_secret_<region>_…`). See [Environment variables](#environment-variables).
 </Note>
 
 ## Prerequisites
@@ -95,17 +93,16 @@ These four steps cover a single-page app. If you server-render (TanStack Start, 
 </Steps>
 
 <Check>
-  That's the whole install for a single-page app. Run it, trigger an error, and it shows up in your
-  dashboard within seconds, already grouped and triaged. Open your [workspace](https://interfere.com/~/*) to confirm it. (To control whether the SDK runs in
-  development, see [the FAQ](#faq).)
+  Deploy the app, trigger a test error, and check your [workspace](https://interfere.com/~/*) for
+  incoming events. See [the FAQ](#faq) to enable capture during development.
 </Check>
 
 ## Environment variables
 
-| Variable                    | Required     | Description                                                                                                                                   |
-| --------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `VITE_INTERFERE_PUBLIC_KEY` | Yes          | Your [surface public key](https://interfere.com/~/*/surfaces) (`interfere_pub_<region>_…`, where `<region>` is `us` or `eu`). Safe to expose; the plugin stamps it into your build. |
-| `INTERFERE_API_KEY`         | For releases | Interfere API key (`interfere_secret_<region>_…`). A **build-time credential** for source-map upload and release metadata.                    |
+| Variable                    | Required     | Description                                                                                                                                                                                                                                                                   |
+| --------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_INTERFERE_PUBLIC_KEY` | Yes          | Your [surface public key](https://interfere.com/~/*/surfaces) (`interfere_public_<region>_...`, where `<region>` is `us` or `eu`). Safe to expose; the plugin stamps it into your build.                                                                                      |
+| `INTERFERE_API_KEY`         | For releases | Interfere API key (`interfere_secret_<region>_…`). A **build-time credential** for source-map upload and release metadata.                                                                                                                                                    |
 | `INTERFERE_ENVIRONMENT`     | No           | Labels this build's telemetry and releases (`production`, `staging`, `preview`, or a label you choose). The plugin stamps it into the build, so it needs no `VITE_` prefix. Defaults to `VERCEL_ENV`, then `NODE_ENV`, then `development`. See [Environments](#environments). |
 
 <Warning>
@@ -115,7 +112,7 @@ These four steps cover a single-page app. If you server-render (TanStack Start, 
 
 ## Configuration
 
-The defaults are meant to be left alone, so plenty of apps never open this section. When you do need it, `serviceName` lives on the `init()` call from step 3, and what's captured is set on the provider.
+Set `serviceName` on the `init()` call and configure capture through the provider.
 
 ### Name your app
 
@@ -132,7 +129,7 @@ init({ serviceName: "@acme/storefront" });
 
 ### Environments
 
-Interfere tags everything it captures with the environment it ran in, and labels each release the same way. In the dashboard, releases carry an environment badge and you can filter by environment, so production data and preview data stay apart.
+Interfere tags telemetry with the environment it ran in, and labels each release the same way. In the dashboard, releases carry an environment badge and you can filter by environment, so production data and preview data stay apart.
 
 Set it with `INTERFERE_ENVIRONMENT`:
 
@@ -143,7 +140,10 @@ INTERFERE_ENVIRONMENT=production
 The label is free-form: `production`, `staging`, `preview`, `canary`, or whatever you name it. If you don't set it, Interfere falls back to `VERCEL_ENV`, then `NODE_ENV`, then `development`. The plugin stamps the value into your build, so it needs no `VITE_` prefix.
 
 <Warning>
-  Interfere drops local-like environments (`development`, `local`, `test`) before ingestion, so everyday local traffic never reaches your dashboard. A build with no environment set defaults to `development` and is filtered out. Set a real environment, or turn off environment filtering for the surface, to capture from one.
+  Interfere drops local-like environments (`development`, `local`, `test`) before ingestion, so
+  everyday local traffic never reaches your dashboard. A build with no environment set defaults to
+  `development` and is filtered out. Set a real environment, or turn off environment filtering for
+  the surface, to capture from one.
 </Warning>
 
 ### Custom ingest domain
@@ -277,13 +277,13 @@ Interfere works with any consent platform (c15t, CookieYes, OneTrust). Map its b
 
 ## Mask replay data
 
-Session replay records the DOM, so anything on screen can land in a recording. Password inputs are masked for you, and three privacy classes are always active — they're hard-wired, so no config can turn them off. Add a class to any element to redact more; nothing else to set up.
+Session replay records the DOM. Password inputs are masked by default. The following privacy classes always apply; add them to elements whose content or input events you need to exclude.
 
-| Class              | Effect                                                                                     |
-| ------------------ | ------------------------------------------------------------------------------------------ |
+| Class              | Effect                                                                                                     |
+| ------------------ | ---------------------------------------------------------------------------------------------------------- |
 | `interfere-block`  | The element isn't recorded. It replays as a same-size placeholder. Drops a whole input, widget, or region. |
-| `interfere-ignore` | The element still renders, but its input events aren't recorded — keystrokes and changes are never captured. |
-| `interfere-mask`   | The element's text and its children's text is masked. Applies to rendered text, not input values. |
+| `interfere-ignore` | The element still renders. Its keystrokes and input changes are not recorded.                              |
+| `interfere-mask`   | The element's text and its children's text is masked. Applies to rendered text, not input values.          |
 
 ```tsx
 <input className="interfere-block" />                {/* whole element dropped */}
@@ -307,7 +307,10 @@ To mask input values by type, pass a `replay` config to the provider's `plugins`
 ```
 
 <Note>
-  For finer control, `plugins.replay` also forwards raw [rrweb](https://github.com/rrweb-io/rrweb) options — `maskTextSelector` / `blockSelector` / `ignoreSelector` to target elements by CSS selector, `maskInputFn` / `maskTextFn` to transform masked values, and `recordCanvas`. These are additive; the `interfere-*` classes still apply.
+  For finer control, `plugins.replay` also forwards raw [rrweb](https://github.com/rrweb-io/rrweb)
+  options, including `maskTextSelector` / `blockSelector` / `ignoreSelector` to target elements by
+  CSS selector, `maskInputFn` / `maskTextFn` to transform masked values, and `recordCanvas`. These
+  are additive; the `interfere-*` classes still apply.
 </Note>
 
 ## Report a handled error
@@ -326,7 +329,7 @@ try {
 
 ## Server-side rendering
 
-If you server-render with TanStack Start (or another Nitro-based setup), do the [Quick start](#quick-start) steps, then boot server instrumentation and split the browser `init()` behind a runtime guard. Telemetry posts directly from the browser — set [`apiHost`](#custom-ingest-domain) on the plugin for an ad-blocker-resistant subdomain.
+If you server-render with TanStack Start (or another Nitro-based setup), do the [Quick start](#quick-start) steps, then boot server instrumentation and split the browser `init()` behind a runtime guard. Telemetry posts directly from the browser. Set [`apiHost`](#custom-ingest-domain) on the plugin for an ad-blocker-resistant subdomain.
 
 <Steps>
   <Step title="Boot server instrumentation and browser init from the router">
@@ -348,7 +351,7 @@ If you server-render with TanStack Start (or another Nitro-based setup), do the 
       createRouter({ routeTree, scrollRestoration: true });
     ```
 
-    You can drop step 3 (`init()` in `main.tsx`) from the Quick start — the router handles it now.
+    You can drop step 3 (`init()` in `main.tsx`) from the Quick start because the router initializes the browser SDK.
 
   </Step>
   <Step title="Wrap the root route with the provider">
@@ -364,6 +367,7 @@ If you server-render with TanStack Start (or another Nitro-based setup), do the 
       );
     }
     ```
+
   </Step>
 </Steps>
 
@@ -400,7 +404,8 @@ try {
   </Accordion>
 
 <Accordion title="Some telemetry is blocked by ad-blockers on my SPA.">
-  Set [`apiHost`](#custom-ingest-domain) on the plugin to a subdomain of your own site — a CNAME to the target shown in your dashboard. Telemetry then posts to your own origin, no server route needed.
+  Set [`apiHost`](#custom-ingest-domain) on the plugin to a subdomain of your own site with a CNAME
+  to the target shown in your dashboard. Telemetry posts to that subdomain without a server route.
 </Accordion>
 
 <Accordion title="Do you handle the same issue across multiple apps?">

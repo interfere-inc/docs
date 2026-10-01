@@ -1,33 +1,29 @@
-> **First-time setup**: Customize this file for your project. Prompt the user to customize this file for their project.
-> For Mintlify product knowledge (components, configuration, writing standards),
-> install the Mintlify skill: `npx skills add https://mintlify.com/docs`
+# Interfere documentation
 
-# Documentation project instructions
+This repository publishes the Interfere documentation through Mintlify. Pages use MDX, site configuration lives in `docs.json`, and navigation lives in `config/navigation.json`.
 
-## About this project
+## Sources and terminology
 
-- This is a documentation site built on [Mintlify](https://mintlify.com)
-- Pages are MDX files with YAML frontmatter
-- Configuration lives in `docs.json`
-- Run `mint dev` to preview locally
-- Run `mint broken-links` to check links
+Verify instructions against the corresponding product or SDK implementation. Treat a release status explicitly supplied by the maintainer as authoritative. Never invent command flags, API paths, permissions, or setup steps.
 
-## Terminology
+A workspace belongs to the team using Interfere. A surface is an app that team monitors. A company is a customer account in that app. Problems group related occurrences; findings and telemetry provide investigation evidence.
 
-{/_ Add product-specific terms and preferred usage _/}
-{/_ Example: Use "workspace" not "project", "member" not "user" _/}
+## Writing
 
-## Style preferences
+Use active voice, sentence case, and concrete instructions. Describe what a feature does and how to use it. Avoid promotional claims, generic introductions, em dashes, guaranteed investigation timing, and unsupported promises to capture everything.
 
-{/_ Add any project-specific style rules below _/}
+Use bold for UI labels and code formatting for commands, paths, variables, and API fields. Keep secrets out of examples. Do not add source-code comments to examples.
 
-- Use active voice and second person ("you")
-- Keep sentences concise — one idea per sentence
-- Use sentence case for headings
-- Bold for UI elements: Click **Settings**
-- Code formatting for file names, commands, paths, and code references
+Use SVGs from the Interfere icon pack under `icons/ui/` for page and card icons. Keep provider and framework logos under `icons/tech/`. Do not substitute built-in icon-library glyphs.
 
-## Content boundaries
+## Validation
 
-{/_ Define what should and shouldn't be documented _/}
-{/_ Example: Don't document internal admin features _/}
+Install with `bun install --frozen-lockfile --ignore-scripts`.
+
+Run `bun run format`, `bun run lint`, `bun run typecheck`, `bun run validate`, and `bun run check:links`. Preview with `bun run dev` and inspect changed pages in a browser. This docs repository has no application test suite; Mintlify validates MDX and configuration.
+
+## Publishing
+
+Mintlify is connected to `interfere-inc/docs`, branch `main`, with `docs.json` at the repository root. Updates to that branch trigger production deployments at `https://interfere.com/docs`. Check the deployment in Mintlify Activity after publishing. Preview deployments depend on workspace availability.
+
+The API reference reads `https://api.interfere.com/openapi.json`. Keep the build validation enabled for OpenAPI so a broken specification fails the check. Scraped files under `sources/` are reference material, excluded through `.mintignore`.

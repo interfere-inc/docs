@@ -1,9 +1,10 @@
 ---
+icon: "/icons/ui/rocket.svg"
 title: "Quickstart"
-description: "Get Interfere running and events flowing in about five minutes."
+description: "Install an SDK, connect integrations, and verify telemetry."
 ---
 
-Work through this checklist end to end and you'll have problems showing up in your dashboard, investigated for you.
+Create a workspace and surface, install the SDK, then verify that Interfere receives your app's events.
 
 <Steps>
   <Step title="Create a workspace">
@@ -14,11 +15,12 @@ Work through this checklist end to end and you'll have problems showing up in yo
 
     - `INTERFERE_PUBLIC_KEY`: used by the SDK to send telemetry. Safe to expose.
     - `INTERFERE_API_KEY`: used to upload source maps in CI. Keep it server-side.
+
   </Step>
   <Step title="Install the SDK">
     <Tabs>
       <Tab title="With an AI agent">
-        Point your coding agent at the Interfere install prompt and it wires everything up. Run the command for your agent:
+        Give your coding agent the install prompt for your framework, then review and test its changes. Run the command for your agent:
 
         <CodeGroup>
 
@@ -65,18 +67,18 @@ Work through this checklist end to end and you'll have problems showing up in yo
         </CardGroup>
       </Tab>
     </Tabs>
+
   </Step>
   <Step title="Connect your integrations">
     Integrations give Interfere the context to investigate and a way to reach your team. From [**Settings → Integrations**](https://interfere.com/~/*/settings/integrations), connect:
 
     - **GitHub** so a problem ties back to the commit that caused it.
-    - **Your deploy platform** (Vercel or Cloudflare) so problems line up with releases. On AWS, Fly, or your own servers, use the [CLI](/integrations/cli) instead.
+    - **Your deploy platform** (Vercel or Cloudflare) so problems line up with releases. The SDK build plugins also work on AWS, Fly, and your own servers. See [build automation](/integrations/cli#build-automation).
     - **Slack** to get problems where your team already works.
 
-    See [all integrations](/integrations/overview).
   </Step>
   <Step title="Deploy">
-    Ship your app. Once it's running, events start flowing and your first problems appear in your [workspace](https://interfere.com/~/*), already grouped and triaged. Trigger an error to confirm the whole path end to end.
+    Deploy your app, then check the surface for incoming events. Trigger a test error and inspect it in your [workspace](https://interfere.com/~/*). Investigation results depend on the events and context available.
   </Step>
 </Steps>
 
@@ -93,12 +95,15 @@ The SDK tells you what it's doing, so a quick check usually explains it.
     The Next.js SDK stays quiet outside production so local noise doesn't reach your dashboard. To capture while testing, call `init({ enabled: true })` (on Vite, gate it with `import.meta.env.PROD`). See each SDK's FAQ.
   </Accordion>
 
-  <Accordion title='A "no release slug" warning'>
-    The collector needs a release to attach telemetry to. The Next.js and Vite plugins upload one during the build automatically. On a backend or a custom platform, run the [CLI](/integrations/cli) as a postbuild step (`interfere sourcemaps upload ./dist`) with `INTERFERE_API_KEY` set.
-  </Accordion>
+<Accordion title='A "no release slug" warning'>
+  The collector needs a release to attach telemetry to. The Next.js and Vite plugins upload one
+  during the build automatically. Check the build output for release-publishing errors and confirm
+  that build and runtime use the same commit SHA. Custom build pipelines can use the build API
+  operations described in [build automation](/integrations/cli#build-automation).
+</Accordion>
 
   <Accordion title="Telemetry blocked by an ad-blocker">
-    Some ad-blockers drop requests to telemetry endpoints. Set `apiHost` on the SDK to a subdomain of your own site — a CNAME to the target shown in your dashboard — so telemetry posts to your own origin. See the [Next.js](/sdk/next-js#custom-ingest-domain) or [Vite](/sdk/vite#custom-ingest-domain) SDK guides.
+    Some ad-blockers drop requests to telemetry endpoints. Set `apiHost` on the SDK to a subdomain of your own site, with a CNAME to the target shown in your dashboard. Telemetry then posts to that subdomain. See the [Next.js](/sdk/next-js#custom-ingest-domain) or [Vite](/sdk/vite#custom-ingest-domain) SDK guides.
   </Accordion>
 </AccordionGroup>
 

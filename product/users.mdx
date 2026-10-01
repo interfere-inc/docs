@@ -1,10 +1,10 @@
 ---
 title: "Users"
-icon: "users"
+icon: "/icons/ui/users.svg"
 description: "The people using your product, and session replays of what they did."
 ---
 
-[Users](https://interfere.com/~/*/users) shows the people using your product and lets you watch what they did. When a problem comes in, you can see exactly who hit it and replay their session to understand how.
+[Users](https://interfere.com/~/*/users) shows user profiles, activity, and recorded sessions. Open a profile to review the active problems affecting that user, then inspect a session for context.
 
 ![User profile showing traits, active problems, and session replay events](/images/user.png)
 
@@ -17,3 +17,9 @@ Each user shows their traits, when they were last active, and which [surfaces](h
 Interfere records sessions so you can watch them back: the pages a user visited, the actions they took, and the problems they ran into along the way. From a problem, jump to the replays where it happened to see it in real context rather than from a stack trace alone.
 
 Session replay is part of the SDK's capture and respects consent: it only runs when the `replay` category is allowed. Gate it from the Consent section on your [Next.js](/sdk/next-js#consent) or [Vite](/sdk/vite#consent) SDK page.
+
+## Review an error
+
+Open a session from a user or problem to inspect its event timeline. Jumping to an error starts replay seven seconds before it when recording data is available. Filter problem sessions by visited URL to narrow the investigation. Resolved problems no longer appear in the user's active-problems panel.
+
+For account-level context, open the associated [company](/product/companies) when available.

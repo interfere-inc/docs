@@ -1,45 +1,43 @@
 ---
 title: "The problem view"
-icon: "bug"
+icon: "/icons/ui/bug.svg"
 sidebarTitle: "Problem view"
-description: "Everything you need to understand and fix one problem, with a timeline at its heart."
+description: "Read investigations, inspect traces, and review affected sessions."
 ---
 
-Open a [problem](/concepts#problem) from your [Inbox](https://interfere.com/~/*) and you get the full picture in one place: what happened, who it hit, why, and what to do about it. This is where most of your time in Interfere is spent.
+Open a problem from the [Inbox](https://interfere.com/~/*) to see its description, affected users, evidence, and investigation timeline.
 
 ![Problem view showing details, timeline activity, evidence, and collaboration](/images/problem-detail.png)
 
-## At a glance
+## Read the investigation
 
-Every problem opens with a plain-language **title and description** that Interfere writes for you, so you know what you're looking at before reading a single stack trace. Alongside it you'll find:
+The timeline records investigation updates and team discussion. Root-cause explanations include the relevant code and supporting facts. Follow the evidence links to inspect the records behind a conclusion. You can filter the timeline when you need a particular type of update.
 
-- **The evidence behind it.** Every [piece of evidence](/concepts#evidence) that rolled up into this problem, linked so you can drill into specific occurrences.
-- **Who it affected.** How many users hit it and how often, and the [users](https://interfere.com/~/*/users) themselves, so you can gauge impact instead of guessing.
+An investigation may still be running or may fail before reaching a conclusion. Its current status remains visible in the Inbox. Recurring errors can trigger further investigation, and later releases can reopen a resolved problem as a regression.
 
-## The timeline
+## Inspect occurrences and traces
 
-The timeline is the heart of the problem view: one chronological thread of the investigation and the work around it.
+The findings list groups occurrences by day. Expand a day to inspect its records or collapse it to scan a longer time range.
 
-- **It updates itself.** Interfere advances the [status](/concepts#statuses) as it investigates and only pulls you in when it needs a human decision, like confirming a likely regression. You're not babysitting a queue.
-- **Root cause, code, and facts.** The timeline lays out what Interfere found: the likely cause, the relevant code, and the facts behind it, so the reasoning is in front of you rather than hidden.
-- **Linked pull requests.** Pull requests that relate to the problem appear on the timeline, so a fix in flight sits next to the problem it addresses.
-- **Relevant sessions.** Jump straight to the [session replays](https://interfere.com/~/*/users) where the problem actually appeared, so you spend your time on where it shows up in a real user's flow.
-- **Filtering.** Filter the timeline down to the part you care about when there's a lot going on.
+Open a trace to review its spans and timing. Use **Jump to error** to locate the error in the span list, then inspect the stack trace for its call frames. Browser and platform details help distinguish failures that affect a particular environment.
+
+## Watch affected sessions
+
+Open the problem's sessions to see what affected users did. Filter by a visited URL to focus on a route, then open a replay. Opening a session from a problem keeps the session's other events available for context. When you jump to an error, replay starts seven seconds before it where recording data is available.
 
 ## Work the problem
 
-You don't file problems, and you rarely set their status by hand. Interfere surfaces them from your events and moves them through their [statuses](/concepts#statuses) on its own as it investigates. Your job is to direct and decide. From the problem view you can:
+- Assign a teammate with <kbd>A</kbd>.
+- Set high, medium, or low priority with <kbd>P</kbd>.
+- Edit the title or description to add context for your team.
+- Comment on the timeline and mention teammates.
+- Toggle your subscription with <kbd>S</kbd>.
+- Dismiss a problem that does not need action, or archive it to remove it from your working view.
 
-- **Assign it.** Hand the problem to the right teammate. Press <kbd>a</kbd> to open the assignee picker.
-- **Set priority.** Mark it high, medium, or low so the team knows what to pick up first. Press <kbd>p</kbd> to set it.
-- **Edit the title or description.** Interfere writes both for you. Tighten either one if you want it to read a certain way for your team.
-- **Discuss inline.** Comment on the timeline and @mention people to pull in whoever's needed, from the engineer who owns the code to a designer or PM.
-- **Subscribe.** Follow a problem to get its updates, or unsubscribe to step back. Press <kbd>s</kbd> to toggle it.
-- **Dismiss it.** When a problem isn't worth acting on, dismiss it to clear it from your active list. Interfere keeps the record in case it returns.
-- **Archive it.** Remove a problem you don't want to see at all.
+Use the feedback control to report an issue with the investigation. Include what is wrong and any evidence that would change the conclusion.
 
-Interfere handles the rest of the lifecycle. It marks a problem resolved once the issue stops recurring, and reopens it as a [regression](/concepts#regression) if it comes back on a later release. You never mark something resolved by hand.
+Interfere manages recovery and resolution as it observes new events. See [statuses](/concepts#statuses) for the lifecycle.
 
-## Get notified
+## Notifications and editor access
 
-Interfere notifies the right people when a problem needs them. Choose where those notifications go in [Alerts](https://interfere.com/~/*/settings/alerts). Mentions and assignments also reach you as Slack messages, and you can keep the conversation there. See [Slack](/integrations/slack) or open the [Slack integration](https://interfere.com/~/*/settings/integrations/slack).
+Configure notifications in [Alerts](https://interfere.com/~/*/settings/alerts). Connect [Slack](/integrations/slack) for team notifications, or use the [MCP server](/integrations/mcp) to inspect the same workspace from a coding agent.

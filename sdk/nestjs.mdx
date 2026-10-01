@@ -7,7 +7,7 @@ description: "Instrument your NestJS backend so server errors reach Interfere wi
 `@interfere/nest` connects your NestJS backend to Interfere. Once it's wired in, unhandled exceptions across your controllers and providers are captured with full server-side stack traces, and you get manual capture and tracing when you want them.
 
 <Note>
-  Set your **surface public key** (`INTERFERE_PUBLIC_KEY`, `interfere_pub_<region>_…`) from [Surfaces](https://interfere.com/~/*/surfaces) so telemetry routes to your project. For readable stack traces you'll also upload source maps with the [CLI](/integrations/cli), which needs your **Interfere API key** (`INTERFERE_API_KEY`).
+  Set your **surface public key** (`INTERFERE_PUBLIC_KEY`, `interfere_public_<region>_...`) from [Surfaces](https://interfere.com/~/*/surfaces) so telemetry routes to your project. For readable stack traces, publish release metadata and source maps through the build API. See [build automation](/integrations/cli#build-automation).
 </Note>
 
 ## Prerequisites
@@ -32,6 +32,7 @@ npm install @interfere/nest
 
     init({ serviceName: "my-api" });
     ```
+
   </Step>
   <Step title="Import it first in your entry file">
     Make `instrument` the very first import in `main.ts`, ahead of everything else.
@@ -48,9 +49,10 @@ npm install @interfere/nest
     }
     bootstrap();
     ```
+
   </Step>
   <Step title="Register the module">
-    `InterfereModule.forRoot()` installs a global exception filter, so unhandled exceptions are captured automatically.
+    `InterfereModule.forRoot()` installs a global exception filter that captures server errors and uncaught throws. Client errors with 4xx status codes produce request spans without error events.
 
     ```ts src/app.module.ts
     import { Module } from "@nestjs/common";
@@ -59,42 +61,38 @@ npm install @interfere/nest
     @Module({ imports: [InterfereModule.forRoot()] })
     export class AppModule {}
     ```
+
   </Step>
 </Steps>
 
 <Check>
-  Throw an error from a route and it shows up in your [workspace](https://interfere.com/~/*) within seconds, already grouped and triaged.
+  Trigger a test error from a deployed route and check your [workspace](https://interfere.com/~/*)
+  for its events.
 </Check>
 
 ## Source maps and releases
 
-A backend has no bundler plugin, so use the [CLI](/integrations/cli) to upload source maps and register each deploy as a release. Add a `postbuild` step:
+Publish release metadata and source maps after compiling the app. Follow the [TypeScript SDK release workflow](/platform-sdk/typescript#register-releases-and-upload-source-maps) for the API calls and upload order.
 
-```json package.json
-{
-  "scripts": {
-    "build": "nest build",
-    "postbuild": "interfere sourcemaps upload ./dist"
-  }
-}
-```
-
-Without an uploaded release, the collector has nothing to attach your telemetry to. See the [CLI page](/integrations/cli) for CI setup and the `INTERFERE_API_KEY`.
+Build and runtime must resolve the same release. Set `INTERFERE_SOURCE_ID` to the same commit SHA in both environments when the deployed app has no git checkout. Keep build credentials in CI and use the surface public key for runtime ingestion.
 
 ## Configuration
 
 Pass options to `init()`. Most apps only set `serviceName`.
 
 <ParamField path="serviceName" default="node-app" type="string">
-  The name your telemetry is grouped under. Give each process a distinct value (an API, a worker, a cron) when they share one public key.
+  The name your telemetry is grouped under. Give each process a distinct value (an API, a worker, a
+  cron) when they share one public key.
 </ParamField>
 
 <ParamField path="serviceNamespace" type="string">
-  Group related services under one product surface, for example `checkout` across an API and its workers.
+  Group related services under one product surface, for example `checkout` across an API and its
+  workers.
 </ParamField>
 
 <ParamField path="environment" type="string">
-  Environment label such as `production` or `staging`. Falls back to `INTERFERE_ENVIRONMENT`, then `VERCEL_ENV`, then `NODE_ENV`.
+  Environment label such as `production` or `staging`. Falls back to `INTERFERE_ENVIRONMENT`, then
+  `VERCEL_ENV`, then `NODE_ENV`.
 </ParamField>
 
 <ParamField path="debug" default="false" type="boolean">
@@ -122,9 +120,9 @@ const order = await withSpan("checkout.submit", () => submitOrder(cart));
 
 ## Environment variables
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `INTERFERE_PUBLIC_KEY` | Yes | Your [surface public key](https://interfere.com/~/*/surfaces) (`interfere_pub_<region>_…`). Routes telemetry to your project. |
-| `INTERFERE_API_KEY` | For releases | Used by the [CLI](/integrations/cli) to upload source maps (`interfere_secret_<region>_…`). A build-time secret; keep it in CI. |
-| `INTERFERE_ENVIRONMENT` | No | Labels this process's telemetry and releases (`production`, `staging`, or a label you choose). Falls back to `VERCEL_ENV`, then `NODE_ENV`, then `development`. Interfere drops the `development`, `local`, and `test` environments before ingestion, so set a real one to capture from it. |
-| `INTERFERE_DEBUG` | No | Set to `1` for lifecycle logs while setting up. |
+| Variable                | Required     | Description                                                                                                                                                                                                                                                                                 |
+| ----------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `INTERFERE_PUBLIC_KEY`  | Yes          | Your [surface public key](https://interfere.com/~/*/surfaces) (`interfere_public_<region>_...`). Routes telemetry to your project.                                                                                                                                                          |
+| `INTERFERE_API_KEY`     | For releases | Used by SDK build plugins to publish release metadata (`interfere_secret_<region>_…`). A build-time secret; keep it in CI.                                                                                                                                                                  |
+| `INTERFERE_ENVIRONMENT` | No           | Labels this process's telemetry and releases (`production`, `staging`, or a label you choose). Falls back to `VERCEL_ENV`, then `NODE_ENV`, then `development`. Interfere drops the `development`, `local`, and `test` environments before ingestion, so set a real one to capture from it. |
+| `INTERFERE_DEBUG`       | No           | Set to `1` for lifecycle logs while setting up.                                                                                                                                                                                                                                             |

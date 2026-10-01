@@ -1,0 +1,47 @@
+---
+title: "AI Agents"
+description: "Install Interfere's MCP connection and investigation skill in your editor."
+icon: "/icons/ui/agents.svg"
+---
+
+The Interfere plugin connects your editor to the [MCP server](/integrations/mcp) and adds a skill for investigating production problems. You need an Interfere account with access to the workspace you want to inspect.
+
+## Claude Code
+
+Run these commands inside Claude Code:
+
+```text
+/plugin marketplace add interfere-inc/plugins
+/plugin install interfere@interfere-plugin-marketplace
+```
+
+Open `/mcp`, connect your Interfere account, and select your workspace.
+
+## Cursor
+
+Install the plugin from the [Interfere plugin repository](https://github.com/interfere-inc/plugins):
+
+```bash
+git clone https://github.com/interfere-inc/plugins.git interfere-plugins
+mkdir -p ~/.cursor/plugins/local
+cp -R interfere-plugins/plugins/interfere ~/.cursor/plugins/local/interfere
+```
+
+Reload Cursor and open **Customize** to connect the Interfere MCP server. Managed installations may require your administrator to allow local plugin imports. The plugin needs no dependency installation or build step.
+
+## Investigate
+
+Ask the agent to investigate a problem, then give it a link or a time range. For example:
+
+```text
+Investigate recent checkout errors in my Interfere workspace. Identify the
+release, affected sessions, and evidence supporting the likely cause.
+```
+
+The skill guides the agent to discover available API operations, establish the workspace, and separate evidence from hypotheses. It does not instruct the agent to change problem status or settings as part of an investigation.
+
+## Connection permissions
+
+The plugin uses `https://mcp.interfere.com/mcp`. This connection permits reads and writes within your existing permissions. For enforced read-only access, configure the [read-only MCP endpoint](/integrations/mcp) directly and disable the plugin's write-enabled connection in your client.
+
+If authentication expires, reconnect through the client. If access is denied, check your workspace permissions. Do not paste passwords or tokens into chat or plugin files.

@@ -5,15 +5,9 @@
       "tab": "Documentation",
       "groups": [
         {
-          "group": "Getting Started",
+          "group": "Getting started",
           "expanded": true,
-          "pages": [
-            "index",
-            "quickstart",
-            "onboarding",
-            "concepts",
-            "power-user"
-          ]
+          "pages": ["index", "quickstart", "onboarding", "concepts"]
         },
         {
           "group": "Product",
@@ -22,44 +16,55 @@
             "product/inbox",
             "product/problems",
             "product/users",
-            "product/surfaces",
+            "product/companies",
+            "product/surfaces"
+          ]
+        },
+        {
+          "group": "Workspace",
+          "pages": [
             "product/settings",
+            "integrations/api-keys",
+            "product/audit-log",
             "product/security",
             "product/compliance"
           ]
         },
         {
           "group": "SDKs",
-          "pages": [
-            "sdk/next-js",
-            "sdk/vite",
-            "sdk/nestjs"
-          ]
+          "pages": ["sdk/next-js", "sdk/vite", "sdk/nestjs", "sdk/node"]
         },
         {
           "group": "Integrations",
           "pages": [
-            "integrations/overview",
             "integrations/github",
             "integrations/vercel",
             "integrations/cloudflare-workers",
-            "integrations/slack",
-            "integrations/cli"
+            "integrations/slack"
+          ]
+        },
+        {
+          "group": "Developer tools",
+          "pages": [
+            "integrations/plugins",
+            "integrations/mcp",
+            "integrations/cli",
+            "integrations/terraform"
           ]
         }
       ]
     },
     {
-      "tab": "Reference",
-      "versions": [
+      "tab": "API",
+      "icon": "/icons/ui/code.svg",
+      "groups": [
         {
-          "version": "Version 3",
-          "groups": [
-            {
-              "group": "Platform API",
-              "openapi": "https://api.interfere.com/openapi.json"
-            }
-          ]
+          "group": "Platform SDK",
+          "pages": ["platform-sdk/typescript"]
+        },
+        {
+          "group": "Public API",
+          "openapi": "https://api.interfere.com/openapi.json"
         }
       ]
     }

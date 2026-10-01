@@ -1,0 +1,67 @@
+---
+title: "Node.js"
+description: "Capture server errors and custom spans in Node.js services and workers."
+icon: "/icons/tech/nodejs/transparent.svg"
+---
+
+`@interfere/node` captures errors and custom spans from Node.js processes. For NestJS or Next.js, use the [NestJS](/sdk/nestjs) or [Next.js](/sdk/next-js) integration.
+
+## Install
+
+```bash
+npm install @interfere/node
+```
+
+Set `INTERFERE_PUBLIC_KEY` to the public key from your [surface](/product/surfaces).
+
+## Initialize
+
+Call `init()` before the work you want to capture:
+
+```ts
+import { init } from "@interfere/node";
+
+init({
+  serviceName: "checkout-worker",
+  environment: "production",
+});
+```
+
+Repeated initialization does not create additional providers. Without a public key, the SDK logs a warning and stays disabled.
+
+## Capture handled errors and spans
+
+```ts
+import { captureError, withSpan } from "@interfere/node";
+
+try {
+  await withSpan("checkout.fulfill", () => fulfill(order));
+} catch (error) {
+  captureError(error);
+  throw error;
+}
+```
+
+The SDK installs handlers for uncaught exceptions and unhandled rejections by default. Set `captureUncaughtException: false` or `captureUnhandledRejection: false` when your application owns those handlers. The uncaught-exception handler flushes telemetry and exits the process.
+
+## Configuration
+
+| Option             | Purpose                                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------------------------------- |
+| `serviceName`      | Identify the process. Defaults to `OTEL_SERVICE_NAME`, then `node-app`.                                 |
+| `serviceNamespace` | Group related services.                                                                                 |
+| `environment`      | Set the deployment environment. Otherwise reads `INTERFERE_ENVIRONMENT`, `VERCEL_ENV`, then `NODE_ENV`. |
+| `debug`            | Print initialization and exporter diagnostics. Also enabled with `INTERFERE_DEBUG=1`.                   |
+
+## Releases and shutdown
+
+Use the [TypeScript SDK](/platform-sdk/typescript#register-releases-and-upload-source-maps) to publish release metadata and source maps from a custom build pipeline. Build and runtime must use the same commit SHA. Set `INTERFERE_SOURCE_ID` in both when git metadata is unavailable.
+
+For a short-lived process, await `flush()` before it exits. Use `close()` when shutting down the SDK and its provider:
+
+```ts
+import { close, flush } from "@interfere/node";
+
+await flush();
+await close();
+```

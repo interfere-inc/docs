@@ -14,12 +14,20 @@ Connecting Vercel lets Interfere follow your deployments, so a new problem point
 
 ## Permissions
 
-You authorize Interfere through Vercel's integration flow and choose which account and projects to include. Interfere reads your projects and receives deployment events. It does not deploy, change project settings, or read your environment variables.
+You authorize Interfere through Vercel's integration flow and choose which account and projects to include. Interfere reads your projects and receives deployment events. Enabling a drain also creates the corresponding Vercel drain configuration.
 
 ## Gotchas
 
 <Warning>
-  A redeploy of the same commit is not a new release. Interfere identifies a release by its commit, so re-running an identical build counts as the same release. Only deploys that include code changes register as new.
+  A redeploy of the same commit is not a new release. Interfere identifies a release by its commit,
+  so re-running an identical build counts as the same release. Only deploys that include code
+  changes register as new.
 </Warning>
 
 - **One account per connection.** A connection is tied to a single Vercel account or team. Connect again to cover another.
+
+## Trace and log drains
+
+After connecting Vercel, open **Configuration** and link a surface to its Vercel project. Open **Drains** to enable trace and log drains for that surface. Each drain shows whether it is live or paused; you can pause, resume, or delete it.
+
+A deployment connection tracks releases. Drains forward runtime telemetry. If you use a trace drain with the Next.js SDK, set `INTERFERE_SERVER_TRACING=drain` so the SDK does not also export server traces. See [Next.js server telemetry](/sdk/next-js#server-telemetry).

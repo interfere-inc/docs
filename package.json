@@ -1,13 +1,21 @@
 {
   "name": "@interfere/docs",
-  "private": false,
+  "private": true,
   "scripts": {
     "dev": "mint dev",
-    "fmt": "oxfmt"
+    "fmt": "bun run format",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint --deny-warnings components",
+    "typecheck": "tsc --noEmit",
+    "validate": "mint validate",
+    "check:links": "mint broken-links --check-anchors --check-redirects"
   },
   "devDependencies": {
-    "@interfere/typescript-config": "latest",
-    "@types/bun": "latest",
-    "mintlify": "latest"
+    "@types/react": "19.2.2",
+    "mintlify": "4.2.791",
+    "oxfmt": "0.66.0",
+    "oxlint": "1.81.0",
+    "typescript": "7.0.2"
   }
 }
