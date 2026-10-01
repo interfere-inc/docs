@@ -1,0 +1,39 @@
+---
+title: "No events arriving"
+description: "Check initialization, environment labels, keys, and delivery."
+icon: "/icons/ui/bug.svg"
+---
+
+If your surface's event chart stays empty after deployment, check these in order.
+
+## 1. Confirm initialization
+
+For Next.js, `instrumentation-client.ts` must call `init()`. Adding the provider alone does not start browser capture. Server capture also needs `instrumentation.ts`.
+
+For Vite, call `init()` before rendering React. For NestJS, import your instrumentation file before any Nest imports. For Node.js, initialize before the work you want to capture.
+
+## 2. Check the environment
+
+Set `INTERFERE_ENVIRONMENT=staging` for a staging deployment or `production` for production. Rebuild Next.js and Vite apps after changing it.
+
+Interfere filters `development`, `local`, and `test` environments before ingestion. Next.js browser capture is also disabled by default outside production mode. To test a local Next.js app, use `init({ enabled: true })` and configure a captured environment.
+
+## 3. Check the public key
+
+Use the public key for the surface you are viewing. Next.js and Node.js read `INTERFERE_PUBLIC_KEY`; the Vite browser build reads `VITE_INTERFERE_PUBLIC_KEY`.
+
+The secret API key is for build operations. It does not replace the public ingestion key.
+
+## 4. Send a test capture
+
+Use the verification example in your framework guide. Confirm that the code runs in the deployed app and inspect the browser's network panel for delivery failures.
+
+If an extension blocks the request, configure a [custom ingest domain](/sdk/configuration#custom-ingest-domain). For server setup diagnostics, use `INTERFERE_DEBUG=1`.
+
+## 5. Separate capture from investigation
+
+Check the surface's event chart first, then clear Inbox filters. A received event does not immediately imply a completed investigation.
+
+If events arrive but the source code is missing from stack traces, check the [release and source-map build](/sdk/releases). If sessions lack recordings, check [replay consent](/sdk/consent) and whether replay is enabled.
+
+When contacting [support](mailto:support@interfere.com), include the surface, deployment environment, test time, and any delivery error. Keep secret keys out of the report.

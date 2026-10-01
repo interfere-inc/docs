@@ -1,0 +1,165 @@
+---
+title: "TanStack Start"
+description: "Initialize browser and server capture in a Start app."
+icon: "/icons/tech/tanstack/currentcolor.svg"
+---
+
+TanStack Start uses the Vite integration for builds and browser capture, with separate server instrumentation.
+
+## Install and configure the build
+
+<CodeGroup>
+
+```bash npm
+npm install @interfere/vite @interfere/react
+```
+
+```bash pnpm
+pnpm add @interfere/vite @interfere/react
+```
+
+```bash Yarn
+yarn add @interfere/vite @interfere/react
+```
+
+```bash Bun
+bun add @interfere/vite @interfere/react
+```
+
+</CodeGroup>
+
+Add the Interfere plugin to `vite.config.ts`. Keep your existing plugins, aliases, and deployment adapter. TanStack Start must precede the React plugin:
+
+```ts vite.config.ts
+import { interfere } from "@interfere/vite/plugin";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  build: { sourcemap: true },
+  plugins: [tanstackStart(), react(), interfere()],
+});
+```
+
+## Set your keys
+
+Copy the keys from your [surface](/product/surfaces) into the build environment:
+
+```env
+VITE_INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
+INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
+INTERFERE_API_KEY=YOUR_SURFACE_SECRET_KEY
+INTERFERE_ENVIRONMENT=staging
+```
+
+Provide `INTERFERE_PUBLIC_KEY` and `INTERFERE_ENVIRONMENT` to the server runtime too. Use `production` for production deployments. Keep the secret key in the build environment.
+
+The server integration requires a Node.js runtime. The Cloudflare Workers deployment integration does not provide Node.js server instrumentation.
+
+## Initialize browser capture
+
+Add `init()` to your router module, guarded so it runs only in the browser. Preserve your existing router options:
+
+```tsx src/router.tsx
+import { init } from "@interfere/vite/init";
+import { createRouter } from "@tanstack/react-router";
+import { routeTree } from "./routeTree.gen";
+
+if (typeof window !== "undefined") {
+  init();
+}
+
+export const getRouter = () => createRouter({ routeTree, scrollRestoration: true });
+```
+
+## Capture server requests
+
+Add these request middleware entries to `src/start.ts`. Initialization runs before Interfere opens a span for the request. Keep any existing middleware in the array:
+
+```ts src/start.ts
+import { register } from "@interfere/vite/server";
+import { interfereRequestMiddleware } from "@interfere/vite/tanstack-start";
+import { createMiddleware, createStart } from "@tanstack/react-start";
+
+const initializeInterfere = createMiddleware().server(async ({ next }) => {
+  await register();
+  return next();
+});
+
+export const startInstance = createStart(() => ({
+  requestMiddleware: [initializeInterfere, interfereRequestMiddleware],
+}));
+```
+
+## Wrap the root route
+
+Add the provider around your root route's content and include `traceMeta()` in the head metadata. Preserve your existing document shell, styles, providers, and error boundaries. A minimal root route is:
+
+```tsx src/routes/__root.tsx
+import { InterfereProvider } from "@interfere/vite/provider";
+import { traceMeta } from "@interfere/vite/tanstack-start";
+import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
+
+export const Route = createRootRoute({
+  head: () => ({
+    meta: [
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      ...traceMeta(),
+    ],
+  }),
+  component: RootComponent,
+});
+
+function RootComponent() {
+  return (
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        <InterfereProvider>
+          <Outlet />
+        </InterfereProvider>
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+```
+
+Configure [consent](/sdk/consent) and [replay masking](/sdk/replay-privacy) on the provider before recording customer sessions.
+
+## Verify browser and server capture
+
+Add a temporary route with separate browser and server test buttons:
+
+```tsx src/routes/interfere-test.tsx
+import { capture } from "@interfere/vite/init";
+import { captureError } from "@interfere/vite/server";
+import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+
+const testServerCapture = createServerFn({ method: "POST" }).handler(() => {
+  captureError(new Error("Interfere server setup test"));
+  return { captured: true };
+});
+
+export const Route = createFileRoute("/interfere-test")({ component: CaptureTest });
+
+function CaptureTest() {
+  return (
+    <main>
+      <button onClick={() => capture(new Error("Interfere browser setup test"))}>
+        Test browser capture
+      </button>
+      <button onClick={() => testServerCapture()}>Test server capture</button>
+    </main>
+  );
+}
+```
+
+Build and deploy to staging, then open `/interfere-test`. Select each button and check the surface's event chart for incoming traffic. Keep the server running long enough to send its telemetry. Remove the test route after verification.
+
+If either side is missing, follow [No events arriving](/sdk/troubleshooting). Once a problem appears, use the [investigation walkthrough](/product/problems) to inspect its evidence.

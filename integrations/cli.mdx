@@ -4,20 +4,37 @@ description: "Use the Interfere API from your terminal, scripts, and coding agen
 icon: "/icons/ui/terminal.svg"
 ---
 
-The Interfere CLI v1.0.0 provides command-line access to workspace data and API operations. Commands and argument schemas come from the API contract.
+Use the Interfere CLI to inspect problems, read investigation evidence, and call workspace operations from your terminal.
 
 ## Install and sign in
 
-```bash
+<CodeGroup>
+
+```bash npm
 npm install -g @interfere/cli
+```
+
+```bash pnpm
+pnpm add -g @interfere/cli
+```
+
+```bash Bun
+bun add -g @interfere/cli
+```
+
+</CodeGroup>
+
+Then sign in and select your workspace:
+
+```bash
 interfere auth login --scheme oauth-production
 export INTERFERE_WORKSPACE=your-workspace
 interfere problems list
 ```
 
-Sign-in opens your browser for authentication and workspace selection. The CLI stores credentials in your operating system's credential store, and refreshes expired access tokens. Linux static builds use a credential file restricted to your user.
+Sign-in opens your browser. Sign in to Interfere, then set `INTERFERE_WORKSPACE` to the workspace slug from its URL. For `interfere.com/~/acme`, use `acme`.
 
-Native binaries support macOS on Apple Silicon and Intel, Linux on ARM64 and x64, and Windows on x64. Keep npm optional dependencies enabled so installation can select the binary for your platform.
+Native binaries support macOS on Apple Silicon and Intel, Linux on ARM64 and x64, and Windows on x64. Keep optional dependencies enabled so installation can select the binary for your platform.
 
 ## Discover commands and arguments
 
@@ -42,6 +59,12 @@ Read a problem, its timeline, and related findings in one command:
 
 ```bash
 interfere problems inspect PROBLEM_ID --workspace acme
+```
+
+The inspect command combines problem details, timeline entries, and related findings. To return only the problem and findings as JSON:
+
+```bash
+interfere problems inspect PROBLEM_ID --workspace acme --query '{problem: problem, findings: findings}' --format json
 ```
 
 ## Preview a request
@@ -70,34 +93,13 @@ Errors in machine output modes are also JSON on stdout, with a nonzero exit stat
 | `INTERFERE_ACCESS_TOKEN` | User access token for noninteractive requests.                                             |
 | `INTERFERE_SECRET_KEY`   | Secret key for API operations that accept key authentication. Its scopes determine access. |
 | `INTERFERE_PUBLIC_KEY`   | Public surface key for ingestion operations.                                               |
-| `INTERFERE_ENVIRONMENT`  | API environment, `production` by default or `preview`.                                     |
 
 Credentials are specific to the operations that accept them. A release-only key cannot manage workspace resources. See [API keys](/integrations/api-keys) for scope and expiry behavior.
 
 The SDK build plugins read `INTERFERE_API_KEY`. The CLI reads `INTERFERE_SECRET_KEY`; use the variable expected by the tool you are running.
 
-## Profiles
-
-Use named profiles to keep workspace defaults and credentials together:
-
-```bash
-interfere profiles --help
-```
-
-Explicit flags override profile values. Profile values override environment variables. Keep separate profiles for separate API environments.
-
-## Preview environment
-
-```bash
-export INTERFERE_ENVIRONMENT=preview
-interfere auth login --scheme oauth-preview
-interfere problems list --workspace your-preview-workspace
-```
-
-Preview uses a separate OAuth client, API endpoint, and stored credential. This setting selects the Interfere API environment; it does not filter your app's production or staging telemetry.
-
 ## Build automation
 
-The [Next.js](/sdk/next-js) and [Vite](/sdk/vite) plugins register releases and upload source maps during builds, including builds deployed to AWS, Fly, Render, or your own servers. For other build systems, follow the [TypeScript SDK release workflow](/platform-sdk/typescript#register-releases-and-upload-source-maps). Inspect the CLI's generated command help and schema for the required request fields.
+The [Next.js](/sdk/next-js) and [Vite](/sdk/vite) plugins register releases and upload source maps during builds, including builds deployed to AWS, Fly, Render, or your own servers. For other build systems, follow the [custom release workflow](/sdk/releases#custom-build-pipelines). Inspect the CLI's generated command help and schema for the required request fields.
 
 Do not automatically repeat a write after a timeout. Check whether the operation succeeded, and preserve its idempotency key when retrying an operation that supports one.

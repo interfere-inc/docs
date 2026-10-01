@@ -1,32 +1,28 @@
 ---
+title: "Introduction"
+description: "Find the cause of application errors and understand who they affect."
 icon: "/icons/ui/book.svg"
-title: "Welcome to Interfere"
-description: "Find and investigate problems using errors, traces, logs, and session replays."
 ---
 
-Interfere collects telemetry from your apps, groups related errors into problems, and investigates their causes. Each problem brings together the affected users, releases, sessions, and supporting evidence.
+Interfere investigates problems in your app using errors, traces, logs, session replays, and the code behind a release.
 
-## Set up an app
+Start in the Inbox. Open a problem to read the investigation, check its evidence, and see the users affected. Your team can assign an owner, discuss the findings, and follow the problem through recovery.
 
-Create a [surface](/product/surfaces) for each app you deploy separately. Install its SDK, set the surface keys, and connect your code repository and deployment platform. The [quickstart](/quickstart) walks through setup and verification.
+<CardGroup cols={2}>
+  <Card title="Set up Interfere" icon="/icons/ui/rocket.svg" href="/quickstart">
+    Connect an app and verify that its first events arrive.
+  </Card>
+  <Card title="Investigate a problem" icon="/icons/ui/bug.svg" href="/product/problems">
+    Follow an error from its symptoms to the supporting code and traces.
+  </Card>
+</CardGroup>
 
-## Investigate a problem
+## Connect your app
 
-Open the [Inbox](/product/inbox) to review problems. Filter by environment or surface, check impact, and open a problem to read the investigation. Use its [traces and session replays](/product/problems) to inspect what happened. Assign the work, add context, and subscribe to updates.
+Install the SDK for [Next.js](/sdk/next-js), [Vite and React](/sdk/vite), [TanStack Start](/sdk/tanstack-start), [NestJS](/sdk/nestjs), or [Node.js](/sdk/node). Connect [GitHub](/integrations/github) so investigations can reference your source code.
+
+Each app you monitor is a **surface**. Your team's **workspace** contains those surfaces, their problems, and your integrations.
 
 ## Work from your own tools
 
-<CardGroup cols={2}>
-  <Card title="MCP" icon="/icons/ui/link.svg" href="/integrations/mcp">
-    Give your coding agent access to problems, sessions, releases, and workspace operations.
-  </Card>
-  <Card title="AI Agents" icon="/icons/ui/agents.svg" href="/integrations/plugins">
-    Connect Interfere and add an investigation skill to your editor.
-  </Card>
-  <Card title="CLI" icon="/icons/ui/terminal.svg" href="/integrations/cli">
-    Query the API from your terminal or scripts with the Interfere CLI.
-  </Card>
-  <Card title="Terraform" icon="/icons/tech/terraform/original.svg" href="/integrations/terraform">
-    Create, rename, import, and delete surfaces with Terraform.
-  </Card>
-</CardGroup>
+Use [AI Agents](/integrations/plugins) or [MCP](/integrations/mcp) to investigate from your editor, the [CLI](/integrations/cli) to inspect problems from a terminal, and [Terraform](/integrations/terraform) to manage surfaces. The [TypeScript Platform SDK](/platform-sdk/typescript) supports custom API workflows.

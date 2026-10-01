@@ -211,3 +211,58 @@ img[src*="/icons/ui/"] {
   filter: var(--text-secondary-icon-filter);
   opacity: var(--text-secondary-icon-opacity);
 }
+
+:root {
+  --screenshot-stage: #f5f5f5;
+  --screenshot-highlight: #ffffff;
+  --screenshot-outline: rgba(0, 0, 0, 0.1);
+}
+
+.dark {
+  --screenshot-stage: #1a1a1a;
+  --screenshot-highlight: #282828;
+  --screenshot-outline: rgba(255, 255, 255, 0.1);
+}
+
+.screenshot-stage {
+  width: 100%;
+  padding: clamp(16px, 4vw, 32px);
+  background: radial-gradient(ellipse at top, var(--screenshot-highlight), var(--screenshot-stage));
+}
+
+.screenshot-crop {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  outline: 1px solid var(--screenshot-outline);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.screenshot-crop img {
+  position: absolute;
+  max-width: none;
+  height: auto;
+  margin: 0;
+}
+
+.screenshot-crop--inbox {
+  aspect-ratio: 780 / 116;
+}
+
+.screenshot-crop--inbox img {
+  width: 193.846154%;
+  left: -31.794872%;
+  top: -41.37931%;
+}
+
+.screenshot-crop--session {
+  aspect-ratio: 400 / 142;
+  max-width: 400px;
+  margin-inline: auto;
+}
+
+.screenshot-crop--session img {
+  width: 378%;
+  left: -15%;
+  top: -143.661972%;
+}

@@ -1,0 +1,32 @@
+---
+title: "Authentication"
+description: "Authenticate requests to the public Interfere API."
+icon: "/icons/ui/key.svg"
+---
+
+The public API reference describes ingestion and release operations. Download the [OpenAPI specification](https://api.interfere.com/openapi.json) to generate a client, or use the [TypeScript Platform SDK](/platform-sdk/typescript).
+
+## Release operations
+
+Use a surface secret key with `release:write`. Send it as a bearer token or in the `x-api-key` header.
+
+```bash
+curl --fail-with-body https://api.interfere.com/v3/releases/config \
+  --header "Authorization: Bearer $INTERFERE_API_KEY"
+```
+
+Set `INTERFERE_API_KEY` to the secret key from your surface. Run secret-key requests from your server or build environment.
+
+## Ingestion operations
+
+Use the surface's public key for endpoints that accept public-key authentication. The SDK supplies it for normal application capture. Check the operation's authentication fields before making a direct request.
+
+## Workspace automation
+
+Use [MCP](/integrations/mcp) or the [CLI](/integrations/cli) to work interactively with workspace data. Use scoped [workspace keys](/integrations/api-keys#workspace-keys) for unattended operations and [Terraform](/integrations/terraform) to manage infrastructure configuration.
+
+## Authentication errors
+
+A `401` response means the request needs a valid credential. Check the key, its expiration, and the authentication method accepted by the operation.
+
+For `403`, check the credential's scopes, its creator's current workspace access, and the workspace's [network rules](/product/security#network-access).

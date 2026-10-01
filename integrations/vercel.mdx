@@ -1,33 +1,36 @@
 ---
 title: "Vercel"
-description: "Watch your Vercel deployments so each release lines up with the deploy that shipped it."
+description: "Link deployments and forward runtime traces and logs."
 icon: "/icons/tech/vercel/currentcolor.svg"
 ---
 
-Connecting Vercel lets Interfere follow your deployments, so a new problem points at the release that introduced it. Connect it from [**Settings → Integrations → Vercel**](https://interfere.com/~/*/settings/integrations/vercel).
+Connect Vercel to associate deployments with Interfere releases. You can also configure drains to send server traces and logs.
 
-## What we use it for
+## Connect and map projects
 
-- Track each deployment through its build: building, ready, errored, or canceled.
-- Match a release to the commit that shipped it, using the commit Vercel records on the deployment.
-- Map your Vercel projects to the surfaces Interfere watches.
+Open [Vercel settings](https://interfere.com/~/*/settings/integrations/vercel) and complete Vercel's authorization flow. Choose the account and projects to include.
 
-## Permissions
+Open **Configuration** and link each Interfere surface to its Vercel project. A connection belongs to one Vercel account or team; add another connection for another account.
 
-You authorize Interfere through Vercel's integration flow and choose which account and projects to include. Interfere reads your projects and receives deployment events. Enabling a drain also creates the corresponding Vercel drain configuration.
+## Verify a deployment
 
-## Gotchas
+Deploy a code change and open the surface's releases. Check that the deployment points to the expected commit. Interfere follows build states including building, ready, errored, and canceled.
 
-<Warning>
-  A redeploy of the same commit is not a new release. Interfere identifies a release by its commit,
-  so re-running an identical build counts as the same release. Only deploys that include code
-  changes register as new.
-</Warning>
-
-- **One account per connection.** A connection is tied to a single Vercel account or team. Connect again to cover another.
+Redeploying the same commit uses the same release identity. The commit identifies the code version.
 
 ## Trace and log drains
 
-After connecting Vercel, open **Configuration** and link a surface to its Vercel project. Open **Drains** to enable trace and log drains for that surface. Each drain shows whether it is live or paused; you can pause, resume, or delete it.
+Open **Drains** after mapping the project and surface. Enable a trace drain, log drain, or both. Each drain shows whether it is live or paused, and you can pause, resume, or delete it.
 
-A deployment connection tracks releases. Drains forward runtime telemetry. If you use a trace drain with the Next.js SDK, set `INTERFERE_SERVER_TRACING=drain` so the SDK does not also export server traces. See [Next.js server telemetry](/sdk/next-js#server-telemetry).
+If the Next.js SDK also exports the same server telemetry, configure it to use the drain:
+
+```env
+INTERFERE_SERVER_TRACING=drain
+INTERFERE_LOG_SOURCING=drain
+```
+
+Set only the variable for each drain you enabled. These settings disable the corresponding SDK exporters; they do not create Vercel drains. See [OpenTelemetry](/sdk/opentelemetry#server-telemetry).
+
+## Permissions
+
+Interfere reads the projects you authorize and receives deployment events. Enabling a drain creates the corresponding drain configuration in Vercel.

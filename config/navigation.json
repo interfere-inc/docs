@@ -7,32 +7,35 @@
         {
           "group": "Getting started",
           "expanded": true,
-          "pages": ["index", "quickstart", "onboarding", "concepts"]
+          "pages": ["index", "quickstart"]
+        },
+        {
+          "group": "SDKs",
+          "pages": ["sdk/next-js", "sdk/vite", "sdk/tanstack-start", "sdk/nestjs", "sdk/node"]
+        },
+        {
+          "group": "SDK configuration",
+          "pages": [
+            "sdk/configuration",
+            "sdk/identity",
+            "sdk/consent",
+            "sdk/replay-privacy",
+            "sdk/error-capture",
+            "sdk/releases",
+            "sdk/opentelemetry",
+            "sdk/troubleshooting"
+          ]
         },
         {
           "group": "Product",
           "pages": [
-            "product/activity",
             "product/inbox",
             "product/problems",
+            "product/session-replay",
             "product/users",
             "product/companies",
             "product/surfaces"
           ]
-        },
-        {
-          "group": "Workspace",
-          "pages": [
-            "product/settings",
-            "integrations/api-keys",
-            "product/audit-log",
-            "product/security",
-            "product/compliance"
-          ]
-        },
-        {
-          "group": "SDKs",
-          "pages": ["sdk/next-js", "sdk/vite", "sdk/nestjs", "sdk/node"]
         },
         {
           "group": "Integrations",
@@ -51,6 +54,18 @@
             "integrations/cli",
             "integrations/terraform"
           ]
+        },
+        {
+          "group": "Workspace",
+          "pages": [
+            "product/settings",
+            "product/members",
+            "product/notifications",
+            "integrations/api-keys",
+            "product/security",
+            "product/audit-log",
+            "product/compliance"
+          ]
         }
       ]
     },
@@ -61,6 +76,10 @@
         {
           "group": "Platform SDK",
           "pages": ["platform-sdk/typescript"]
+        },
+        {
+          "group": "Using the API",
+          "pages": ["api-reference/authentication"]
         },
         {
           "group": "Public API",

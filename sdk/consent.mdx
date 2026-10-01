@@ -1,0 +1,35 @@
+---
+title: "Consent"
+description: "Connect capture categories to your app’s privacy choices."
+icon: "/icons/ui/shield.svg"
+---
+
+For Next.js, Vite + React, and TanStack Start, configure browser consent on `InterfereProvider`. These settings do not control server telemetry. If you omit the `consent` prop, all categories are allowed.
+
+## Set the initial choice
+
+Pass consent from the provider's first render. With the object below, analytics and replay stay disabled while error and log capture remain active.
+
+```tsx
+<InterfereProvider consent={{ analytics: false, replay: false }}>{children}</InterfereProvider>
+```
+
+| Category    | Capture                                          | Behavior              |
+| ----------- | ------------------------------------------------ | --------------------- |
+| `necessary` | Errors and logs                                  | Always on             |
+| `analytics` | Page events, rage clicks, and device information | Controlled by consent |
+| `replay`    | Session recording                                | Controlled by consent |
+
+## Update consent
+
+Map the choices from your consent manager to these categories. You can update the provider prop or call `consent.set()` from a component inside the provider.
+
+```tsx
+const { consent } = useInterfere();
+
+consent.set({ analytics: true, replay: false });
+```
+
+Import `useInterfere` from `@interfere/next/provider` or `@interfere/vite/provider`. Calling `consent.set()` without arguments grants all categories.
+
+To disable a capture feature regardless of consent, use the provider's [plugin configuration](/sdk/configuration#capture-features). Configure [masking](/sdk/replay-privacy) separately for content that must not appear in recordings.

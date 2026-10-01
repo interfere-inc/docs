@@ -79,6 +79,26 @@
     {
       "source": "/integrations/overview",
       "destination": "/product/settings"
+    },
+    {
+      "source": "/onboarding",
+      "destination": "/quickstart"
+    },
+    {
+      "source": "/concepts",
+      "destination": "/product/problems"
+    },
+    {
+      "source": "/interfere",
+      "destination": "/"
+    },
+    {
+      "source": "/product/compliance",
+      "destination": "https://interfere.com/security"
+    },
+    {
+      "source": "/product/activity",
+      "destination": "/product/inbox#workspace-activity"
     }
   ]
 }

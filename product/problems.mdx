@@ -1,43 +1,72 @@
 ---
-title: "The problem view"
+title: "Investigations"
+description: "Follow a problem from the first report to the evidence and recovery."
 icon: "/icons/ui/bug.svg"
-sidebarTitle: "Problem view"
-description: "Read investigations, inspect traces, and review affected sessions."
 ---
 
-Open a problem from the [Inbox](https://interfere.com/~/*) to see its description, affected users, evidence, and investigation timeline.
+Open a problem from the [Inbox](/product/inbox) to read its investigation. **Timeline** holds the explanation and discussion, **Findings** holds the recorded evidence, and **Sessions** shows affected user sessions.
 
-![Problem view showing details, timeline activity, evidence, and collaboration](/images/problem-detail.png)
+The walkthrough below uses an example: customers choosing store pickup cannot finish checkout after a release. Use the same steps with a problem in your workspace.
 
-## Read the investigation
+## 1. Find the affected app
 
-The timeline records investigation updates and team discussion. Root-cause explanations include the relevant code and supporting facts. Follow the evidence links to inspect the records behind a conclusion. You can filter the timeline when you need a particular type of update.
+In the Inbox, filter to the checkout surface and **production** environment. Open the problem describing the failed checkout.
 
-An investigation may still be running or may fail before reaching a conclusion. Its current status remains visible in the Inbox. Recurring errors can trigger further investigation, and later releases can reopen a resolved problem as a regression.
+Check its first and latest detection times, affected users, and priority. Compare the first occurrence with the deployment time. A matching timestamp helps identify the release to inspect; the trace and source code will show whether that release caused the failure.
 
-## Inspect occurrences and traces
+## 2. Read the investigation
 
-The findings list groups occurrences by day. Expand a day to inspect its records or collapse it to scan a longer time range.
+Open **Timeline** and read the explanation. Follow its links to the supporting records.
 
-Open a trace to review its spans and timing. Use **Jump to error** to locate the error in the span list, then inspect the stack trace for its call frames. Browser and platform details help distinguish failures that affect a particular environment.
+In this example, the explanation points to an exception when checkout reads `shippingAddress.postalCode`. The release added this access to a path also used for store pickup, where a shipping address is absent.
 
-## Watch affected sessions
+Before accepting that explanation, check which part is supported by the evidence:
 
-Open the problem's sessions to see what affected users did. Filter by a visited URL to focus on a route, then open a replay. Opening a session from a problem keeps the session's other events available for context. When you jump to an error, replay starts seven seconds before it where recording data is available.
+- The exception names `postalCode` on an undefined value.
+- The failing stack frame points to the checkout code in the deployed release.
+- Affected sessions show customers choosing store pickup before submitting.
 
-## Work the problem
+If the explanation does not fit the recorded behavior, use the feedback control and describe the conflicting evidence.
 
-- Assign a teammate with <kbd>A</kbd>.
-- Set high, medium, or low priority with <kbd>P</kbd>.
-- Edit the title or description to add context for your team.
-- Comment on the timeline and mention teammates.
-- Toggle your subscription with <kbd>S</kbd>.
-- Dismiss a problem that does not need action, or archive it to remove it from your working view.
+## 3. Open the failing trace
 
-Use the feedback control to report an issue with the investigation. Include what is wrong and any evidence that would change the conclusion.
+Open **Findings**, expand a day's occurrences, and select a record. Use **Jump to error** in the trace to locate the failing span.
 
-Interfere manages recovery and resolution as it observes new events. See [statuses](/concepts#statuses) for the lifecycle.
+Inspect the exception, stack frames, surrounding spans, release, and environment. For the pickup example, find the frame that reads `shippingAddress.postalCode` and check the source in that release. The same file in your current branch may already have changed.
 
-## Notifications and editor access
+If a stack frame shows only compiled JavaScript, check [source-map uploads](/sdk/releases#missing-source-code-in-a-stack-trace). If the investigation cannot reference your repository, check the surface's [GitHub connection](/integrations/github).
 
-Configure notifications in [Alerts](https://interfere.com/~/*/settings/alerts). Connect [Slack](/integrations/slack) for team notifications, or use the [MCP server](/integrations/mcp) to inspect the same workspace from a coding agent.
+## 4. Check what the customer did
+
+Open **Sessions** and select an affected session. Filter by a visited URL such as `/checkout` to narrow the list.
+
+In the [replay](/product/session-replay), select the error event and inspect the actions just before it. For this example, verify that the customer selected pickup, submitted checkout, and encountered the failure. Compare another affected session to see whether it follows the same path.
+
+If a customer reported the issue directly, you can also start from their [user profile](/product/users) or [company](/product/companies).
+
+## 5. Assign the fix and follow recovery
+
+Assign an owner with <kbd>A</kbd> and set priority with <kbd>P</kbd>. Add a timeline comment linking the failing trace and the affected release. Mention a teammate when you need their input.
+
+For the example, fix the checkout path so it only requires a shipping address for delivery. Test both delivery and pickup, then deploy through your usual release process.
+
+Subscribe with <kbd>S</kbd> to follow updates. After deployment, check new occurrences and their releases. Interfere moves problems through recovery and resolution as it observes events. If the failure returns, a resolved problem can reopen as a regression.
+
+Dismiss a problem when your team decides it does not need action. Archive it to remove it from your working view.
+
+## Statuses
+
+| Status          | Meaning                                                     |
+| --------------- | ----------------------------------------------------------- |
+| Detected        | Interfere has detected an issue for investigation           |
+| Reasoning       | The investigation is examining evidence and possible causes |
+| Active          | The problem needs a fix                                     |
+| In recovery     | Interfere is monitoring whether the issue has stopped       |
+| Needs attention | The problem needs further review                            |
+| Resolved        | The issue has stopped recurring                             |
+| Dismissed       | Your team has decided not to act                            |
+| Failed          | The investigation could not complete                        |
+
+[Release metadata](/sdk/releases) connects occurrences to the code that produced them.
+
+You can also inspect the investigation through [AI Agents](/integrations/plugins), [MCP](/integrations/mcp), or the [CLI](/integrations/cli#inspect-a-problem).

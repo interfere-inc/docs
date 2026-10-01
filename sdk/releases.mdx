@@ -1,0 +1,108 @@
+---
+title: "Releases and source maps"
+description: "Connect runtime errors to the code and build that produced them."
+icon: "/icons/ui/layers.svg"
+---
+
+A release identifies a version of your code. Source maps let Interfere map compiled stack frames back to the original files and lines.
+
+## Next.js and Vite builds
+
+The framework build plugins register releases and upload source maps. Set `INTERFERE_API_KEY` to a surface secret key with `release:write` in the build environment.
+
+For Next.js, wrap your config with `withInterfere()`. The plugin enables production browser source maps when an API key is present, runs its release pipeline after production compilation, and removes maps after upload.
+
+For Vite, add `interfere()` and set `build.sourcemap: true`. The plugin uploads the generated maps during the build.
+
+Review the Interfere output in the build log. If release preparation fails, fix the reported key, source metadata, or upload error before relying on source-level investigations for that release.
+
+## Use the same commit at build time and runtime
+
+The build plugins derive release identity from your commit SHA. They read CI metadata such as `VERCEL_GIT_COMMIT_SHA` or `GITHUB_SHA`, or use the local git checkout.
+
+If the build or deployed runtime has no git checkout, set `INTERFERE_SOURCE_ID` to the full commit SHA in both environments. A Docker build and its deployed container must identify the same commit.
+
+Redeploying the same commit does not create a new code version. Use [environment labels](/sdk/configuration#environments) to distinguish production and staging traffic.
+
+## Share source maps with other tools
+
+Only delete maps after every tool that needs them has uploaded them. Keep `withInterfere()` outermost when it owns the final cleanup step.
+
+To let a later uploader handle cleanup, disable Interfere's purge:
+
+```ts next.config.ts
+import { withInterfere } from "@interfere/next/config";
+import type { NextConfig } from "next";
+
+const config: NextConfig = {};
+
+export default withInterfere({ sourceMaps: { purge: false } }, config);
+```
+
+When Interfere runs last, configure earlier uploaders to retain their maps. An existing `runAfterProductionCompile` hook runs before Interfere's pipeline.
+
+## Custom build pipelines
+
+For Node.js and NestJS apps compiled with TypeScript, use the [example release publisher](/examples/publish-release.mjs). It discovers adjacent JavaScript and `.map` files, adds matching debug IDs, registers the release, uploads maps in chunks, and finalizes the manifest.
+
+### Install the build dependencies
+
+<CodeGroup>
+
+```bash npm
+npm install --save-dev @interfere/javascript @interfere/build @interfere/types
+```
+
+```bash pnpm
+pnpm add --save-dev @interfere/javascript @interfere/build @interfere/types
+```
+
+```bash Yarn
+yarn add --dev @interfere/javascript @interfere/build @interfere/types
+```
+
+```bash Bun
+bun add --dev @interfere/javascript @interfere/build @interfere/types
+```
+
+</CodeGroup>
+
+### Emit source maps
+
+Merge these compiler options into your app's TypeScript configuration:
+
+```json tsconfig.json
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "inlineSources": true
+  }
+}
+```
+
+The example requires Node.js 20 or later and a Git checkout in CI. It handles flat version 3 maps next to `.js`, `.mjs`, or `.cjs` files, such as `dist/main.js` and `dist/main.js.map`. Use the framework plugins for Next.js and Vite builds.
+
+### Publish before deploying
+
+Save [publish-release.mjs](/examples/publish-release.mjs) as `scripts/publish-release.mjs` in your app. Set `INTERFERE_API_KEY` in your CI secret manager to a surface secret key with `release:write`. Connect the surface to its [GitHub repository](/integrations/github).
+
+Run your existing build, then invoke the script with its output directory:
+
+```bash
+export INTERFERE_SOURCE_ID="$(git rev-parse HEAD)"
+node scripts/publish-release.mjs dist
+```
+
+The script prints `Published N source maps for rel_…` after the complete batch is accepted. A failure exits with a nonzero status; stop the deployment and fix the reported error before trying again.
+
+It adds debug IDs to the compiled JavaScript and maps. **Deploy the modified output**, and run any file hashing or artifact signing afterward. The script retains the maps so other uploaders can use them. Keep `.map` files out of publicly served assets unless you intend to publish your source code.
+
+Set `INTERFERE_SOURCE_ID` to the same commit SHA in the deployed Node.js or NestJS process, alongside `INTERFERE_PUBLIC_KEY` and `INTERFERE_ENVIRONMENT`. Trigger a test error, then open its stack trace to check that frames resolve to your original TypeScript files.
+
+### Other build systems
+
+The [release API reference](/api-reference/releases/create-release) covers registration, upload sessions, ordered file chunks, and finalization. The example uses the [TypeScript Platform SDK](/platform-sdk/typescript) and public build helpers for those operations. Adapt its file discovery and `bundler` value for another build system.
+
+## Missing source code in a stack trace
+
+Check that the build uploaded maps successfully, the release uses the expected commit, and the deployed runtime has the same `INTERFERE_SOURCE_ID`. If another build tool deletes maps, move deletion after all upload steps.
