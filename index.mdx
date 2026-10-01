@@ -1,26 +1,32 @@
 ---
+icon: "/icons/ui/book.svg"
 title: "Welcome to Interfere"
-description: "What Interfere is, how it works, and what it takes to start."
+description: "Find and investigate problems using errors, traces, logs, and session replays."
 ---
 
-Interfere watches everything your app ships and turns the noise into a short list of real problems, each one already investigated and explained. You install one SDK, keep working as normal, and Interfere takes it from there.
+Interfere collects telemetry from your apps, groups related errors into problems, and investigates their causes. Each problem brings together the affected users, releases, sessions, and supporting evidence.
 
-Most tools hand you dashboards, alerts, and raw logs, then leave the thinking to you. Interfere does the thinking.
+## Set up an app
 
-## How it works
+Create a [surface](/product/surfaces) for each app you deploy separately. Install its SDK, set the surface keys, and connect your code repository and deployment platform. The [quickstart](/quickstart) walks through setup and verification.
 
-You install the SDK and connect your infrastructure. After that:
+## Investigate a problem
 
-1. **We capture everything.** Errors, sessions, traces, and logs from every surface, with no sampling and nothing to configure.
-2. **We turn symptoms into problems.** One bug hitting a million users is one problem, not a million alerts. The same issue across five surfaces is one problem, not five tools paging you at once.
-3. **We triage and investigate.** Interfere decides how much a problem matters, forms hypotheses about the cause, tests them, and proposes fixes that range from a code change to a copy or UX tweak.
-4. **Your team decides.** You react to an answer instead of digging through data: add context, discuss inline, or accept a fix.
-5. **We follow through.** If a fix introduces a new problem, Interfere links the two so you keep iterating in one place. It learns your product as you go, so the next problem is easier than the last.
+Open the [Inbox](/product/inbox) to review problems. Filter by environment or surface, check impact, and open a problem to read the investigation. Use its [traces and session replays](/product/problems) to inspect what happened. Assign the work, add context, and subscribe to updates.
 
-## What you need to do
+## Work from your own tools
 
-Setup is a one-time install, and then you forget it. Create a surface for your app, drop in the SDK, and ship as usual. Interfere watches the rest.
-
-<Card title="Quickstart" icon="rocket" href="/quickstart" horizontal>
-  Get Interfere running in about five minutes.
-</Card>
+<CardGroup cols={2}>
+  <Card title="MCP" icon="/icons/ui/link.svg" href="/integrations/mcp">
+    Give your coding agent access to problems, sessions, releases, and workspace operations.
+  </Card>
+  <Card title="AI Agents" icon="/icons/ui/agents.svg" href="/integrations/plugins">
+    Connect Interfere and add an investigation skill to your editor.
+  </Card>
+  <Card title="CLI" icon="/icons/ui/terminal.svg" href="/integrations/cli">
+    Query the API from your terminal or scripts with the Interfere CLI.
+  </Card>
+  <Card title="Terraform" icon="/icons/tech/terraform/original.svg" href="/integrations/terraform">
+    Create, rename, import, and delete surfaces with Terraform.
+  </Card>
+</CardGroup>

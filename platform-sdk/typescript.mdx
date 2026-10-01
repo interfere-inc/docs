@@ -1,0 +1,72 @@
+---
+title: "TypeScript"
+description: "Call the Interfere API from JavaScript and TypeScript."
+icon: "/icons/tech/typescript/original.svg"
+---
+
+`@interfere/javascript` provides a typed client for the Interfere API. Use it for release workflows and other API calls. For capturing errors and sessions inside an app, use the [Next.js](/sdk/next-js), [Vite](/sdk/vite), [NestJS](/sdk/nestjs), or [Node.js](/sdk/node) SDK.
+
+## Install
+
+```bash
+npm install @interfere/javascript
+```
+
+The package includes ESM, CommonJS, and TypeScript declarations. It requires native Fetch and FormData, available in Node.js 18 and later.
+
+## Authenticate
+
+For build operations, use a surface secret key with `release:write`:
+
+```ts
+import { InterfereClient } from "@interfere/javascript";
+
+const token = process.env.INTERFERE_API_KEY;
+
+if (!token) {
+  throw new Error("Set INTERFERE_API_KEY before running the build client.");
+}
+
+const client = new InterfereClient({
+  baseUrl: "https://api.interfere.com",
+  apiKey: { token },
+});
+
+const config = await client.releases.getReleasesConfig();
+```
+
+For endpoints that accept a public key, use `publicKeyHeader`:
+
+```ts
+import { InterfereClient } from "@interfere/javascript";
+
+const client = new InterfereClient({
+  baseUrl: "https://api.interfere.com",
+  publicKeyHeader: { apiKey: "YOUR_SURFACE_PUBLIC_KEY" },
+});
+
+const config = await client.config.getSdkConfig();
+```
+
+`apiKeyHeader: { apiKey: "..." }` sends a secret key through `x-api-key` instead of bearer authentication. Choose a credential accepted by the operation. Keep secret keys out of browser bundles.
+
+## Register releases and upload source maps
+
+The Next.js and Vite plugins handle this workflow during builds. For a custom build pipeline, call the release methods in order:
+
+1. Call `client.releases.createRelease()` with the build ID, source commit, and deployment destination. Use `null` when there is no native destination integration.
+2. Call `client.releases.signSourceMapUploads()` with the release slug and complete file inventory, including each file's build-relative path and declared size.
+3. Call `client.releases.uploadSourceMap()` for each file. Upload bytes in ordered chunks with the correct offset, at most 512 KiB per request, before the upload session expires.
+4. Call `client.releases.finalizeSourceMaps()` with the complete manifest after every chunk is accepted. Keep source maps until finalization succeeds.
+
+Read the [release API reference](/api-reference/releases/create-release) for request fields and response schemas. The SDK's generated types describe the same contract.
+
+For AWS CodeBuild, ECS, EC2, Lambda, Fly, Render, or a container build, run these calls in CI after compiling the app. Supply the secret key through your CI secret manager. When the runtime has no git checkout, set `INTERFERE_SOURCE_ID` to the same commit SHA used during the build.
+
+## Timeouts, retries, and errors
+
+Set `timeoutInSeconds` and `maxRetries` on the client or an individual request. Pass `abortSignal` in request options to cancel a request.
+
+By default, eligible requests retry twice for HTTP `408`, `429`, and `5xx` responses and respect `Retry-After`. Network failures and other HTTP statuses are not retried. Follow each operation's retry contract for writes; use `maxRetries: 0` when you need to inspect the result before retrying.
+
+API failures throw `InterfereError` with `statusCode` and `body`. Handle the error before using the result, and avoid logging credentials or full response bodies from credential-creation operations.

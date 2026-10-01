@@ -1,0 +1,46 @@
+---
+title: "API keys"
+description: "Create scoped credentials for workspace automation and builds."
+icon: "/icons/ui/key.svg"
+---
+
+Interfere uses public surface keys for telemetry and secret API keys for authenticated operations. Secret keys have explicit scopes and an expiration setting. Keep them in your secret manager or CI environment.
+
+## Choose a credential
+
+**Capture telemetry:** use a public surface key in your SDK configuration. It is safe to include in browser code.
+
+**Upload build artifacts:** use a surface secret key with `release:write` to register releases and upload source maps.
+
+**Automate workspace operations:** use a workspace API key with the scopes your workflow needs. This is the credential to use for Terraform.
+
+**Work interactively:** sign in through the MCP or CLI. OAuth gives the tool access within your workspace permissions.
+
+## Create a workspace key
+
+Send `POST /v3/workspaces/{workspaceSlug}/api-keys` as an authenticated workspace user. You need `org:workspace_auth:write` and every permission you grant to the key.
+
+For a Terraform credential:
+
+```json
+{
+  "idempotencyKey": "9e3c0d0e-3bf7-48ae-9271-6ea58e7b970d",
+  "name": "Terraform",
+  "scopes": ["org:surfaces:read", "org:surfaces:write", "org:surfaces:delete"],
+  "secondsUntilExpiration": 2592000
+}
+```
+
+Generate a fresh UUID for each new key. If the response is uncertain, retry with the same UUID and request. The example expires after 30 days. Use a positive number of seconds for an expiring key or `null` for no expiry. Both `scopes` and `secondsUntilExpiration` are required.
+
+Store the returned `apiKey.secret` in your secret manager. Save the key ID for revocation.
+
+## Permission changes
+
+A workspace key's access is limited to its explicit scopes and its creator's current workspace permissions. Removing the creator's membership removes the key's management access. A key does not grant permissions its creator lacks.
+
+## Revoke a key
+
+Send `DELETE /v3/workspaces/{workspaceSlug}/api-keys/{apiKeyId}` to revoke a workspace key. Update any automation using it with a replacement credential before revoking it if that automation must keep running.
+
+For surface credentials, open the surface's key settings. Public ingestion credentials and secret build credentials serve different purposes; copy the credential required by your SDK or tool.

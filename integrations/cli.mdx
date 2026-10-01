@@ -1,152 +1,103 @@
 ---
 title: "CLI"
-description: "Upload source maps and confirm releases from CI with the Interfere CLI."
-icon: "terminal"
+description: "Use the Interfere API from your terminal, scripts, and coding agents."
+icon: "/icons/ui/terminal.svg"
 ---
 
-`@interfere/cli` uploads your source maps and registers each deploy as a release, so production stack traces point back to your real code instead of minified output. You run it as a step in your build or CI.
+The Interfere CLI v1.0.0 provides command-line access to workspace data and API operations. Commands and argument schemas come from the API contract.
 
-You only need it when you're not already using a bundler plugin. The [Next.js](/sdk/next-js) and [Vite](/sdk/vite) plugins do this automatically during the build. Reach for the CLI when there is no plugin for your setup: a Node or NestJS backend, a bundler we do not have a plugin for, or any deploy that is not on Vercel or Cloudflare, such as AWS, Fly, Render, or your own servers.
-
-<Note>
-  The CLI uses your **Interfere API key** (`INTERFERE_API_KEY`, the `interfere_secret_<region>_…` build credential) from [Surfaces](https://interfere.com/~/*/surfaces). It's a server-side secret, so keep it in CI and never in client code.
-</Note>
-
-## Install
-
-Add it as a dev dependency:
-
-<CodeGroup>
-
-```bash npm
-npm install -D @interfere/cli
-```
-
-```bash pnpm
-pnpm add -D @interfere/cli
-```
-
-```bash yarn
-yarn add -D @interfere/cli
-```
-
-```bash bun
-bun add -d @interfere/cli
-```
-
-</CodeGroup>
-
-## Usage
-
-Run it after your build, pointing at the directory that holds your compiled output and `.js.map` files:
+## Install and sign in
 
 ```bash
-interfere sourcemaps upload ./dist
+npm install -g @interfere/cli
+interfere auth login --scheme oauth-production
+export INTERFERE_WORKSPACE=your-workspace
+interfere problems list
 ```
 
-The simplest setup is a `postbuild` script, so it runs on every build:
+Sign-in opens your browser for authentication and workspace selection. The CLI stores credentials in your operating system's credential store, and refreshes expired access tokens. Linux static builds use a credential file restricted to your user.
 
-```json package.json
-{
-  "scripts": {
-    "build": "tsc",
-    "postbuild": "interfere sourcemaps upload ./dist"
-  }
-}
-```
+Native binaries support macOS on Apple Silicon and Intel, Linux on ARM64 and x64, and Windows on x64. Keep npm optional dependencies enabled so installation can select the binary for your platform.
 
-That single command does three things:
+## Discover commands and arguments
 
-- derives the release from your commit (the same release id the SDK uses, so the two line up),
-- uploads every `.js.map` it finds in the directory, and
-- confirms the release so the collector accepts its telemetry and de-minifies stack traces.
-
-Commit SHA, branch, and run details are detected automatically on GitHub Actions, CircleCI, GitLab CI, and Buildkite. The one thing you must provide is `INTERFERE_API_KEY`.
-
-## Environment variables
-
-| Variable | Required | Description |
-| --- | --- | --- |
-| `INTERFERE_API_KEY` | Yes | Your [Interfere API key](https://interfere.com/~/*/surfaces) (`interfere_secret_<region>_…`). Authenticates the upload. |
-| `INTERFERE_API_URL` | No | Override the collector URL for a regional or self-hosted instance. Defaults to `https://in.interfere.com`. |
-| `INTERFERE_SOURCE_ID` | No | Override the commit SHA used to identify the release. Auto-detected from CI or `git` otherwise. |
-
-## In CI
-
-On a supported runner, set the API key and the rest is automatic:
-
-```yaml GitHub Actions
-- run: npm run build
-
-- name: Upload source maps to Interfere
-  run: npx interfere sourcemaps upload ./dist
-  env:
-    INTERFERE_API_KEY: ${{ secrets.INTERFERE_API_KEY }}
-```
-
-<Warning>
-  On `pull_request` events GitHub sets `GITHUB_SHA` to a temporary merge commit that exists on no branch, so a release uploaded from a PR build won't match your real commit. Upload from your `push` or deploy workflow, or pass the head commit explicitly with `--commit-sha`.
-</Warning>
-
-CircleCI, GitLab CI, and Buildkite are detected the same way. Outside a supported CI system the CLI falls back to `git rev-parse HEAD`.
-
-### AWS, Fly, Render, and self-hosted deploys
-
-There's no separate AWS integration — anywhere you build and deploy yourself, the CLI is how releases and source maps reach Interfere. Run it as a step in whatever pipeline produces your build, after the build and before (or alongside) the deploy. That covers AWS CodeBuild and CodePipeline, an EC2 or ECS build runner, Fly's `flyctl deploy`, Render's build command, a self-hosted Jenkins or Drone, and similar setups.
-
-AWS CodeBuild example:
-
-```yaml buildspec.yml
-version: 0.2
-
-env:
-  secrets-manager:
-    INTERFERE_API_KEY: interfere/api-key
-
-phases:
-  build:
-    commands:
-      - npm ci
-      - npm run build
-      - npx interfere sourcemaps upload ./dist
-```
-
-If your build environment has no git checkout (a Docker build, a pre-baked artifact, a Lambda zip), pass the commit explicitly so the release lines up with the SDK:
+Use help to find commands and `--schema` to inspect a command's arguments before calling it:
 
 ```bash
-interfere sourcemaps upload ./dist \
-  --commit-sha "$GIT_SHA" \
-  --environment production
+interfere --help
+interfere problems --help
+interfere problems get --schema
+interfere problems get --args.problem-id PROBLEM_ID
 ```
 
-The same shape works on Fly (run it in your `Dockerfile` or release command), Render (add it to the build command), and any self-hosted runner — set `INTERFERE_API_KEY`, then invoke `interfere sourcemaps upload` against your build output.
-
-## Options
-
-Most runs need none of these. Reach for them when auto-detection can't see what it needs (containers, unusual CI) or you want to label the release.
-
-| Flag | Description |
-| --- | --- |
-| `--source-maps <dir>` | Directory to scan for `.js.map` files. Also accepted as the positional argument shown above. |
-| `--api-key <key>` | API key, instead of `INTERFERE_API_KEY`. |
-| `--commit-sha <sha>` | Set the commit when there's no git checkout, for example a Docker build. |
-| `--build-id <id>` | A build identifier distinct from the commit, if you reuse commits across builds. |
-| `--environment <env>` | Label the release, for example `production` or `preview`. |
-| `--deployment-url <url>` | The URL the build was deployed to. |
-| `--dry-run` | Print what would be sent without uploading. Useful for wiring up CI. |
-| `--json` | Machine-readable output for scripts. |
-
-Run `interfere --help` for the full list.
-
-## Building in Docker
-
-A container build has no git history, so pass the commit in at build time and the CLI will use it for the release:
-
-```dockerfile
-ARG GIT_SHA
-ENV INTERFERE_SOURCE_ID=$GIT_SHA
-```
+Workspace operations use `INTERFERE_WORKSPACE` or an explicit `--workspace` flag:
 
 ```bash
-docker build --build-arg GIT_SHA=$(git rev-parse HEAD) .
+interfere problems list --workspace acme
 ```
+
+## Inspect a problem
+
+Read a problem, its timeline, and related findings in one command:
+
+```bash
+interfere problems inspect PROBLEM_ID --workspace acme
+```
+
+## Preview a request
+
+```bash
+interfere problems get --args.problem-id PROBLEM_ID --dry-run
+```
+
+`--dry-run` shows the request without sending it. It does not check your permissions or validate the request against live data. The API performs those checks when you execute the command.
+
+## Use JSON in scripts
+
+Piped output defaults to JSON. Set `--format json` to request JSON explicitly. Use `--query` for a JMESPath expression that selects fields from the output.
+
+```bash
+interfere problems list --format json
+```
+
+Errors in machine output modes are also JSON on stdout, with a nonzero exit status. Check the exit status before treating output as a successful response.
+
+## Credentials
+
+| Variable                 | Purpose                                                                                    |
+| ------------------------ | ------------------------------------------------------------------------------------------ |
+| `INTERFERE_WORKSPACE`    | Default workspace slug.                                                                    |
+| `INTERFERE_ACCESS_TOKEN` | User access token for noninteractive requests.                                             |
+| `INTERFERE_SECRET_KEY`   | Secret key for API operations that accept key authentication. Its scopes determine access. |
+| `INTERFERE_PUBLIC_KEY`   | Public surface key for ingestion operations.                                               |
+| `INTERFERE_ENVIRONMENT`  | API environment, `production` by default or `preview`.                                     |
+
+Credentials are specific to the operations that accept them. A release-only key cannot manage workspace resources. See [API keys](/integrations/api-keys) for scope and expiry behavior.
+
+The SDK build plugins read `INTERFERE_API_KEY`. The CLI reads `INTERFERE_SECRET_KEY`; use the variable expected by the tool you are running.
+
+## Profiles
+
+Use named profiles to keep workspace defaults and credentials together:
+
+```bash
+interfere profiles --help
+```
+
+Explicit flags override profile values. Profile values override environment variables. Keep separate profiles for separate API environments.
+
+## Preview environment
+
+```bash
+export INTERFERE_ENVIRONMENT=preview
+interfere auth login --scheme oauth-preview
+interfere problems list --workspace your-preview-workspace
+```
+
+Preview uses a separate OAuth client, API endpoint, and stored credential. This setting selects the Interfere API environment; it does not filter your app's production or staging telemetry.
+
+## Build automation
+
+The [Next.js](/sdk/next-js) and [Vite](/sdk/vite) plugins register releases and upload source maps during builds, including builds deployed to AWS, Fly, Render, or your own servers. For other build systems, follow the [TypeScript SDK release workflow](/platform-sdk/typescript#register-releases-and-upload-source-maps). Inspect the CLI's generated command help and schema for the required request fields.
+
+Do not automatically repeat a write after a timeout. Check whether the operation succeeded, and preserve its idempotency key when retrying an operation that supports one.

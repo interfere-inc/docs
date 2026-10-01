@@ -1,6 +1,6 @@
 ---
 title: "Surfaces"
-icon: "layers"
+icon: "/icons/ui/layers.svg"
 description: "Manage the apps Interfere watches, their keys, environments, and releases."
 ---
 
@@ -14,7 +14,7 @@ Once your SDK is installed and sending data, the surface shows events flowing an
 
 ## Keys
 
-Each surface has two keys in [Surfaces](https://interfere.com/~/*/surfaces), and they do different jobs:
+Surface credentials have separate purposes:
 
 - **Public key** (`INTERFERE_PUBLIC_KEY`). Identifies the surface so the SDK can send telemetry. It's safe to ship in the browser; it only authorizes ingestion.
 - **API key** (`INTERFERE_API_KEY`). A server-side secret, sometimes thought of as the private key. It uploads source maps and registers releases from CI. Keep it out of client code.
@@ -25,4 +25,8 @@ An environment labels where traffic came from, such as `production`, `staging`, 
 
 ## Releases
 
-A [release](/concepts#release) is a version of your code, identified by its commit. Surfaces track releases so a problem lines up with the deploy that introduced it, which is also how [regressions](/concepts#regression) are caught. Releases come from the Next.js and Vite build plugins automatically, or from the [CLI](/integrations/cli) on other setups.
+A [release](/concepts#release) is a version of your code, identified by its commit. Surfaces track releases so a problem lines up with the deploy that introduced it, which is also how [regressions](/concepts#regression) are caught. The Next.js and Vite build plugins publish releases during builds. Custom pipelines can use the build API operations through the [CLI](/integrations/cli#build-automation).
+
+## Manage surfaces from other tools
+
+Use the [Terraform provider](/integrations/terraform) to manage a surface's name and framework in infrastructure configuration. The [MCP server](/integrations/mcp) and [CLI](/integrations/cli) also expose workspace operations within your permissions. See [API keys](/integrations/api-keys) for scoped automation credentials.

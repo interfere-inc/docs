@@ -1,6 +1,6 @@
 ---
 title: "Security"
-icon: "shield"
+icon: "/icons/ui/shield.svg"
 description: "How you sign in to Interfere, how team access is controlled, and where we stand on compliance."
 ---
 
@@ -11,11 +11,11 @@ How your team signs in, and who can reach what. For certifications and reports, 
 Email and passkeys work for everyone. Organizations can add single sign-on through their own identity provider.
 
 <CardGroup cols={2}>
-  <Card title="Email one-time passcode (OTP)" icon="mail">
+  <Card title="Email one-time passcode (OTP)" icon="/icons/ui/mail.svg">
     Enter your work email and we send a single-use code. No password to manage, reuse, or leak. This is the default for new accounts.
   </Card>
 
-  <Card title="Passkeys" icon="fingerprint">
+  <Card title="Passkeys" icon="/icons/ui/fingerprint.svg">
     Sign in with your device's biometrics or a hardware security key: Face ID, Touch ID, Windows Hello, or a YubiKey. Phishing-resistant, and you add one from [profile settings](https://interfere.com/~/*/settings/profile) after your first sign-in.
   </Card>
 </CardGroup>
@@ -29,19 +29,21 @@ Our team sets up SSO with you; it isn't self-serve. To turn it on for your organ
 ### How SSO behaves
 
 <AccordionGroup>
-  <Accordion title="Linking existing accounts" icon="link">
+  <Accordion title="Linking existing accounts" icon="/icons/ui/link.svg">
     After SSO is on, current members link their existing Interfere account to your IdP the next time they sign in. It's a one-time step for each person and keeps their history and settings intact.
   </Accordion>
 
-  <Accordion title="New members" icon="user-plus">
-    Someone signing in through SSO for the first time joins with standard member access. An administrator can change their role afterward.
-  </Accordion>
+<Accordion title="New members" icon="/icons/ui/user-plus.svg">
+  Someone signing in through SSO for the first time joins with standard member access. An
+  administrator can change their role afterward.
+</Accordion>
 
-  <Accordion title="Requiring SSO" icon="lock">
-    You can require everyone in your organization to sign in through SSO. While it's required, email and passkey sign-in are turned off, so your identity provider is the only way in.
-  </Accordion>
+<Accordion title="Requiring SSO" icon="/icons/ui/key.svg">
+  You can require everyone in your organization to sign in through SSO. While it's required, email
+  and passkey sign-in are turned off, so your identity provider is the only way in.
+</Accordion>
 
-  <Accordion title="Directory sync (SCIM)" icon="folder-sync">
+  <Accordion title="Directory sync (SCIM)" icon="/icons/ui/sync.svg">
     With SCIM, your identity provider provisions and deprovisions accounts for you. When someone joins or leaves the relevant group in your IdP, their Interfere access follows, so off-boarding isn't a manual step.
   </Accordion>
 </AccordionGroup>
@@ -49,3 +51,15 @@ Our team sets up SSO with you; it isn't self-serve. To turn it on for your organ
 ## Roles and permissions
 
 Interfere uses role-based access control. Every member has a role that sets what they can see and change, from full administration down to read-only access. Manage roles from your workspace's [team settings](https://interfere.com/~/*/settings/team).
+
+## Network access
+
+Enterprise workspaces can restrict dashboard and API access to allowed networks in [Settings → Security](https://interfere.com/~/*/settings/security). Editing rules requires workspace authentication management permission.
+
+Select **Add a network**, enter an IPv4 or IPv6 address, CIDR range, or ASN, and add a description. For example, a CIDR entry can identify an office network and an ASN can identify a network operator. You can keep up to 100 rules.
+
+With no rules, authenticated members can reach the workspace from any network. Once rules are configured, connections must match an allowed network. An ASN allows that operator's entire network, including other customers, so use a narrower IP range when appropriate.
+
+If access is blocked, connect through an allowed company network or VPN. Ask a workspace administrator to review the rules if the expected network is missing. Workspace permissions still apply after a connection passes the network check.
+
+Review administrative changes in the [audit log](/product/audit-log).

@@ -1,0 +1,93 @@
+---
+title: "Terraform"
+description: "Manage Interfere surfaces with the Terraform provider."
+icon: "/icons/tech/terraform/original.svg"
+---
+
+The Interfere Terraform provider manages surfaces with the `interfere_surface` resource. It supports creation, reads, renaming, deletion, import, and drift correction.
+
+## Configure the provider
+
+Add the provider to your Terraform configuration:
+
+```hcl
+terraform {
+  required_providers {
+    interfere = {
+      source = "interfere/interfere"
+    }
+  }
+}
+
+provider "interfere" {}
+```
+
+Set `INTERFERE_TOKEN` through your shell or secret manager to a [workspace API key](/integrations/api-keys) with these scopes:
+
+- `org:surfaces:read`
+- `org:surfaces:write`
+- `org:surfaces:delete`
+
+Use a workspace API key for unattended runs. A release-only surface key cannot manage workspace resources.
+
+## Create a surface
+
+```hcl
+variable "workspace_slug" {
+  type = string
+}
+
+variable "creation_id" {
+  type = string
+}
+
+resource "interfere_surface" "app" {
+  workspace_slug  = var.workspace_slug
+  idempotency_key = var.creation_id
+  name            = "Storefront"
+  type            = "react"
+}
+
+output "surface_slug" {
+  value = interfere_surface.app.slug
+}
+```
+
+Set `workspace_slug` to your workspace's URL slug and `creation_id` to a nonzero UUID. Keep that UUID stable across plans and retries; do not use an expression that generates a new UUID on every run.
+
+```bash
+terraform init
+terraform plan
+terraform apply
+```
+
+The resource returns `id` and `slug`. Surface creation also issues default credentials. The provider discards those credentials and does not store them in Terraform state. Manage SDK and build credentials through the surface's key settings.
+
+## Update or replace a surface
+
+| Field             | Behavior                                                                           |
+| ----------------- | ---------------------------------------------------------------------------------- |
+| `name`            | Updates the existing surface. Use 1 to 48 characters.                              |
+| `type`            | Requires replacement.                                                              |
+| `workspace_slug`  | Requires replacement.                                                              |
+| `idempotency_key` | Identifies the creation attempt. Use a new UUID for a replacement or new creation. |
+
+Review a replacement plan before applying it. Deleting a resource from configuration causes Terraform to request deletion of the managed surface.
+
+Supported framework values are `elysia`, `nest`, `nextjs`, `python`, and `react`.
+
+## Import an existing surface
+
+Add a matching resource block, then import with the workspace and surface slugs:
+
+```bash
+terraform import interfere_surface.app acme/storefront
+```
+
+The creation UUID cannot be recovered during import. Supply a new UUID in your configuration. The next apply records it without recreating the imported surface.
+
+## Recover from an uncertain request
+
+The provider does not automatically retry API requests. After an uncertain create response, keep the original creation UUID and configuration when retrying.
+
+If Interfere explicitly reports that a surface is deleted, the provider removes it from state. An empty response or an HTTP error preserves state and reports an error, because missing permissions can also prevent a read. Check credentials and workspace access before changing state manually.
