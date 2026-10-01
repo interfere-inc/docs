@@ -90,6 +90,37 @@ On a supported runner, set the API key and the rest is automatic:
 
 CircleCI, GitLab CI, and Buildkite are detected the same way. Outside a supported CI system the CLI falls back to `git rev-parse HEAD`.
 
+### AWS, Fly, Render, and self-hosted deploys
+
+There's no separate AWS integration — anywhere you build and deploy yourself, the CLI is how releases and source maps reach Interfere. Run it as a step in whatever pipeline produces your build, after the build and before (or alongside) the deploy. That covers AWS CodeBuild and CodePipeline, an EC2 or ECS build runner, Fly's `flyctl deploy`, Render's build command, a self-hosted Jenkins or Drone, and similar setups.
+
+AWS CodeBuild example:
+
+```yaml buildspec.yml
+version: 0.2
+
+env:
+  secrets-manager:
+    INTERFERE_API_KEY: interfere/api-key
+
+phases:
+  build:
+    commands:
+      - npm ci
+      - npm run build
+      - npx interfere sourcemaps upload ./dist
+```
+
+If your build environment has no git checkout (a Docker build, a pre-baked artifact, a Lambda zip), pass the commit explicitly so the release lines up with the SDK:
+
+```bash
+interfere sourcemaps upload ./dist \
+  --commit-sha "$GIT_SHA" \
+  --environment production
+```
+
+The same shape works on Fly (run it in your `Dockerfile` or release command), Render (add it to the build command), and any self-hosted runner — set `INTERFERE_API_KEY`, then invoke `interfere sourcemaps upload` against your build output.
+
 ## Options
 
 Most runs need none of these. Reach for them when auto-detection can't see what it needs (containers, unusual CI) or you want to label the release.
