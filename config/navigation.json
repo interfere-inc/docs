@@ -10,30 +10,6 @@
           "pages": ["index", "quickstart"]
         },
         {
-          "group": "Product",
-          "pages": [
-            "product/inbox",
-            "product/problems",
-            "product/session-replay",
-            "product/users",
-            "product/companies",
-            "product/surfaces",
-            "product/activity"
-          ]
-        },
-        {
-          "group": "Workspace",
-          "pages": [
-            "product/settings",
-            "product/members",
-            "product/notifications",
-            "integrations/api-keys",
-            "product/security",
-            "product/audit-log",
-            "product/compliance"
-          ]
-        },
-        {
           "group": "SDKs",
           "pages": ["sdk/next-js", "sdk/vite", "sdk/tanstack-start", "sdk/nestjs", "sdk/node"]
         },
@@ -48,6 +24,17 @@
             "sdk/releases",
             "sdk/opentelemetry",
             "sdk/troubleshooting"
+          ]
+        },
+        {
+          "group": "Product",
+          "pages": [
+            "product/inbox",
+            "product/problems",
+            "product/session-replay",
+            "product/users",
+            "product/companies",
+            "product/surfaces"
           ]
         },
         {
@@ -66,6 +53,18 @@
             "integrations/mcp",
             "integrations/cli",
             "integrations/terraform"
+          ]
+        },
+        {
+          "group": "Workspace",
+          "pages": [
+            "product/settings",
+            "product/members",
+            "product/notifications",
+            "integrations/api-keys",
+            "product/security",
+            "product/audit-log",
+            "product/compliance"
           ]
         }
       ]

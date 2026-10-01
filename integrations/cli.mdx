@@ -61,6 +61,12 @@ Read a problem, its timeline, and related findings in one command:
 interfere problems inspect PROBLEM_ID --workspace acme
 ```
 
+The inspect command combines problem details, timeline entries, and related findings. To return only the problem and findings as JSON:
+
+```bash
+interfere problems inspect PROBLEM_ID --workspace acme --query '{problem: problem, findings: findings}' --format json
+```
+
 ## Preview a request
 
 ```bash
@@ -68,12 +74,6 @@ interfere problems get --args.problem-id PROBLEM_ID --dry-run
 ```
 
 `--dry-run` shows the request without sending it. It does not check your permissions or validate the request against live data. The API performs those checks when you execute the command.
-
-The inspect command combines problem details, timeline entries, and related findings. To return only the problem and findings as JSON:
-
-```bash
-interfere problems inspect PROBLEM_ID --workspace acme --query '{problem: problem, findings: findings}' --format json
-```
 
 ## Use JSON in scripts
 

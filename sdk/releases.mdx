@@ -43,16 +43,65 @@ When Interfere runs last, configure earlier uploaders to retain their maps. An e
 
 ## Custom build pipelines
 
-Use the [TypeScript Platform SDK](/platform-sdk/typescript) for builds without a framework plugin. Authenticate with a surface secret key, then complete the following sequence:
+For Node.js and NestJS apps compiled with TypeScript, use the [example release publisher](/examples/publish-release.mjs). It discovers adjacent JavaScript and `.map` files, adds matching debug IDs, registers the release, uploads maps in chunks, and finalizes the manifest.
 
-1. Call `client.releases.createRelease()` with the build ID, source commit, and deployment destination. Use `destination: null` when there is no native deployment integration. The response's `destination.slug` identifies the release for uploads.
-2. Call `client.releases.signSourceMapUploads()` with `releaseSlug` and the complete inventory of paths and byte sizes.
-3. Upload each file with `client.releases.uploadSourceMap()`. Send chunks of at most 512 KiB in byte-offset order. Finish before the returned `expiresAt` time.
-4. Call `client.releases.finalizeSourceMaps()` with `releaseSlug`, the bundler, and the complete file manifest. Keep the maps until the response confirms the batch was accepted.
+### Install the build dependencies
 
-Each final manifest entry includes `path`, `hash`, `debugId`, and `chunkUrl`. Paths must match the signed inventory. The [release API reference](/api-reference/releases/create-release) defines the request and response fields.
+<CodeGroup>
 
-This workflow runs after compilation in CI, regardless of where the app is hosted. Keep the build credential in CI and use the public key for runtime capture.
+```bash npm
+npm install --save-dev @interfere/javascript @interfere/build @interfere/types
+```
+
+```bash pnpm
+pnpm add --save-dev @interfere/javascript @interfere/build @interfere/types
+```
+
+```bash Yarn
+yarn add --dev @interfere/javascript @interfere/build @interfere/types
+```
+
+```bash Bun
+bun add --dev @interfere/javascript @interfere/build @interfere/types
+```
+
+</CodeGroup>
+
+### Emit source maps
+
+Merge these compiler options into your app's TypeScript configuration:
+
+```json tsconfig.json
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "inlineSources": true
+  }
+}
+```
+
+The example requires Node.js 20 or later and a Git checkout in CI. It handles flat version 3 maps next to `.js`, `.mjs`, or `.cjs` files, such as `dist/main.js` and `dist/main.js.map`. Use the framework plugins for Next.js and Vite builds.
+
+### Publish before deploying
+
+Save [publish-release.mjs](/examples/publish-release.mjs) as `scripts/publish-release.mjs` in your app. Set `INTERFERE_API_KEY` in your CI secret manager to a surface secret key with `release:write`. Connect the surface to its [GitHub repository](/integrations/github).
+
+Run your existing build, then invoke the script with its output directory:
+
+```bash
+export INTERFERE_SOURCE_ID="$(git rev-parse HEAD)"
+node scripts/publish-release.mjs dist
+```
+
+The script prints `Published N source maps for rel_…` after the complete batch is accepted. A failure exits with a nonzero status; stop the deployment and fix the reported error before trying again.
+
+It adds debug IDs to the compiled JavaScript and maps. **Deploy the modified output**, and run any file hashing or artifact signing afterward. The script retains the maps so other uploaders can use them. Keep `.map` files out of publicly served assets unless you intend to publish your source code.
+
+Set `INTERFERE_SOURCE_ID` to the same commit SHA in the deployed Node.js or NestJS process, alongside `INTERFERE_PUBLIC_KEY` and `INTERFERE_ENVIRONMENT`. Trigger a test error, then open its stack trace to check that frames resolve to your original TypeScript files.
+
+### Other build systems
+
+The [release API reference](/api-reference/releases/create-release) covers registration, upload sessions, ordered file chunks, and finalization. The example uses the [TypeScript Platform SDK](/platform-sdk/typescript) and public build helpers for those operations. Adapt its file discovery and `bundler` value for another build system.
 
 ## Missing source code in a stack trace
 

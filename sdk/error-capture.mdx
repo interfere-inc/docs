@@ -8,17 +8,33 @@ The SDK captures uncaught errors. Report an error explicitly when your applicati
 
 ## Browser errors
 
-Import `capture` from `@interfere/next/instrument-client` for Next.js or `@interfere/vite/init` for Vite and TanStack Start.
+Choose your framework's browser entry point:
 
-```ts
+<CodeGroup>
+
+```ts Next.js
 import { capture } from "@interfere/next/instrument-client";
 
 try {
   await saveDraft();
 } catch (error) {
   capture(error);
+  throw error;
 }
 ```
+
+```ts Vite / TanStack Start
+import { capture } from "@interfere/vite/init";
+
+try {
+  await saveDraft();
+} catch (error) {
+  capture(error);
+  throw error;
+}
+```
+
+</CodeGroup>
 
 Here, `saveDraft` is your application's operation. Keep its existing error handling after reporting the error.
 

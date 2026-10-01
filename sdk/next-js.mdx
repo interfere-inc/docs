@@ -112,7 +112,17 @@ export function CaptureTest() {
 }
 ```
 
-Build and deploy, open that page, and select **Send test error**. Check the surface's event chart for incoming traffic, then remove the button. If events do not arrive, follow [No events arriving](/sdk/troubleshooting).
+Render the button from a temporary route:
+
+```tsx app/interfere-test/page.tsx
+import { CaptureTest } from "../capture-test";
+
+export default function InterfereTestPage() {
+  return <CaptureTest />;
+}
+```
+
+Build and deploy to staging, open `/interfere-test`, and select **Send test error**. Check the surface's event chart for incoming traffic, then remove the button. If events do not arrive, follow [No events arriving](/sdk/troubleshooting).
 
 ## Next steps
 

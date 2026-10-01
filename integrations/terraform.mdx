@@ -22,7 +22,7 @@ terraform {
 provider "interfere" {}
 ```
 
-Set `INTERFERE_TOKEN` through your shell or secret manager to a [workspace API key](/integrations/api-keys) with these scopes:
+Follow [Create a workspace key](/integrations/api-keys#create-a-workspace-key) to sign in with the CLI and create your first Terraform credential. Configure your shell or CI secret manager to supply the returned secret as `INTERFERE_TOKEN`. Surface management requires these scopes:
 
 - `org:surfaces:read`
 - `org:surfaces:write`

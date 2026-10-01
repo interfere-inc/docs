@@ -4,15 +4,27 @@ description: "Set service names, environments, and browser capture options."
 icon: "/icons/ui/settings.svg"
 ---
 
-Use `init()` for browser initialization and `InterfereProvider` for capture features and consent.
+This page configures browser capture in Next.js, Vite + React, and TanStack Start. For server processes, use the [Node.js options](/sdk/node#configuration) or [NestJS options](/sdk/nestjs#configuration).
 
 ## Service names
 
 Give each process a stable service name, such as `storefront` or `checkout-worker`:
 
-```ts
+<CodeGroup>
+
+```ts Next.js
+import { init } from "@interfere/next/instrument-client";
+
 init({ serviceName: "storefront" });
 ```
+
+```ts Vite / TanStack Start
+import { init } from "@interfere/vite/init";
+
+init({ serviceName: "storefront" });
+```
+
+</CodeGroup>
 
 The surface public key selects the app receiving telemetry. The service name identifies the process within that telemetry.
 
@@ -30,7 +42,7 @@ Interfere filters local-like environments such as `development`, `local`, and `t
 
 ## Capture features
 
-Configure features on `InterfereProvider`. All default to enabled, subject to [consent](/sdk/consent).
+Configure features on the `InterfereProvider` you added during installation. Import it from `@interfere/next/provider` for Next.js or `@interfere/vite/provider` for Vite and TanStack Start. All features default to enabled, subject to [consent](/sdk/consent).
 
 | Plugin       | Capture                                   |
 | ------------ | ----------------------------------------- |

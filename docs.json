@@ -95,6 +95,10 @@
     {
       "source": "/product/compliance",
       "destination": "https://interfere.com/security"
+    },
+    {
+      "source": "/product/activity",
+      "destination": "/product/inbox#workspace-activity"
     }
   ]
 }

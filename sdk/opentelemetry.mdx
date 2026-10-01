@@ -34,19 +34,19 @@ export function register() {
 
 The kit constructs processors, propagators, and resource attributes without registering providers globally. It returns `null` when `INTERFERE_PUBLIC_KEY` is unset.
 
-| Kit field               | Use                                                                                                                                             |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `resourceAttributes`    | Merge with your provider's attributes to preserve SDK, service, environment, and release identity.                                              |
-| `spanProcessors`        | Add baggage stamping and the trace exporter. The exporter is omitted in server trace drain mode.                                                |
-| `logRecordProcessors`   | Add the log exporter. It is omitted in log drain mode.                                                                                          |
-| `propagators`           | Add the freshness stamper and W3C baggage propagation after your trace-context propagator. The kit does not include a trace-context propagator. |
-| `instrumentations`      | Currently empty. Next.js or your host setup supplies outbound HTTP instrumentation.                                                             |
-| `enableConsoleBridge()` | Forward console records after your logger provider is registered. Returns a cleanup function. In log drain mode it does not install a bridge.   |
-| `fetchRemoteConfig()`   | Fetch and cache remote SDK configuration.                                                                                                       |
+| Kit field               | Use                                                                                                                                           |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `resourceAttributes`    | Merge with your provider's attributes to preserve SDK, service, environment, and release identity.                                            |
+| `spanProcessors`        | Add baggage stamping and the trace exporter. The exporter is omitted in server trace drain mode.                                              |
+| `logRecordProcessors`   | Add the log exporter. It is omitted in log drain mode.                                                                                        |
+| `propagators`           | Append after your trace-context propagator to preserve browser-to-server correlation.                                                         |
+| `instrumentations`      | Currently empty. Next.js or your host setup supplies outbound HTTP instrumentation.                                                           |
+| `enableConsoleBridge()` | Forward console records after your logger provider is registered. Returns a cleanup function. In log drain mode it does not install a bridge. |
+| `fetchRemoteConfig()`   | Fetch and cache remote SDK configuration.                                                                                                     |
 
 ## Compose processors and propagators
 
-Keep `kit.propagators` after your trace-context propagator, as in `propagators: ["auto", ...kit.propagators]`. Propagators run in order. The freshness stamper must write `tracestate` after trace context is injected.
+Append `kit.propagators` after your trace-context propagator, as in `propagators: ["auto", ...kit.propagators]`, to preserve browser-to-server correlation.
 
 Merge the kit's resource attributes with your own. Pass the same service name to the kit and your host bootstrap so spans retain consistent service and release attribution.
 
@@ -60,29 +60,9 @@ The kit does not publish releases or upload source maps. Keep the [build plugin]
 
 ## Browser-to-server traces
 
-On a dynamically rendered page, Next.js can inject `traceparent` and `tracestate` metadata into the HTML. `withInterfere()` enables this through `experimental.clientTraceMetadata`. The browser SDK reads the metadata and attaches page activity to the server request trace.
+Keep both the build plugin and browser initialization from the [Next.js guide](/sdk/next-js). On dynamically rendered pages, they connect browser activity to the server request. The composed setup above also needs `kit.propagators` for that connection.
 
-Outgoing same-origin requests carry trace context back to the server. Route handlers and Server Actions can then join that trace.
-
-- Client-side navigation starts a new browser trace for the next page view. The request that caused the navigation belongs to the preceding page's trace.
-- Prefetch requests carry `http.request.prefetch: true` so they can be distinguished from other requests.
-- Build-time static pages have no per-request server trace. Their browser activity starts a browser trace.
-
-## Cached HTML
-
-Cached HTML can contain trace metadata from an earlier render. Reusing it for every visitor would attach unrelated sessions to the same server trace.
-
-The standalone `register()` path avoids injecting trace metadata during static generation and ISR revalidation. For other rendering paths, the server adds an `interfere=<unix seconds>` freshness entry to `tracestate`.
-
-The browser rejects stamped trace context older than two minutes and starts its own trace. A missing stamp is accepted for compatibility. A device clock more than two minutes ahead can reject otherwise valid context; telemetry still records in a browser trace.
-
-Composed OpenTelemetry setups need `kit.propagators` to add the freshness stamp. The kit cannot suppress their host propagator's ISR metadata, but the stamp limits how long cached context can be reused.
-
-## Edge runtime
-
-On the Edge runtime, `@interfere/next/instrumentation` uses an edge-specific build. `register()` creates an edge-compatible trace exporter and supports `onRequestError`, but it does not register a propagator. Edge-rendered pages therefore start browser traces without correlating through server-injected trace metadata.
-
-`buildInterfereOtelKit()` returns `null` on Edge. Optional chaining in the composition example allows the same file to load on Node.js and Edge. Node.js routes keep their Node.js instrumentation.
+Static pages and Edge-rendered pages start separate browser traces. Capture still works, but those pages do not have the same server-to-browser link. On Edge, `buildInterfereOtelKit()` returns `null`; the optional chaining in the example lets it load without registering a Node.js provider.
 
 ## Server telemetry
 

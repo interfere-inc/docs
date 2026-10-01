@@ -65,7 +65,7 @@ Call `init()` in your browser entry point, before React renders.
 import { init } from "@interfere/vite/init";
 import { InterfereProvider } from "@interfere/vite/provider";
 import { createRoot } from "react-dom/client";
-import { App } from "./app";
+import App from "./App";
 
 init();
 
@@ -92,7 +92,17 @@ export function CaptureTest() {
 }
 ```
 
-Build and deploy, then select **Send test error**. Open the surface's event chart to confirm traffic arrives. Remove the button after verification. If the chart stays empty, follow [No events arriving](/sdk/troubleshooting).
+Render `<CaptureTest />` in your app. For a temporary test page, the component in `src/App.tsx` can be:
+
+```tsx src/App.tsx
+import { CaptureTest } from "./capture-test";
+
+export default function App() {
+  return <CaptureTest />;
+}
+```
+
+Preserve your app's existing export style and restore its normal contents after testing. Build and deploy, then select **Send test error**. Open the surface's event chart to confirm traffic arrives. Remove the button after verification. If the chart stays empty, follow [No events arriving](/sdk/troubleshooting).
 
 ## Capture only production builds
 

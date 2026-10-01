@@ -28,13 +28,23 @@ bun add @interfere/vite @interfere/react
 
 </CodeGroup>
 
-Add `interfere()` to your existing Vite plugins and enable `build.sourcemap`. Keep the Start and React plugins already in your app.
+Add the Interfere plugin to `vite.config.ts`. Keep your existing plugins, aliases, and deployment adapter. TanStack Start must precede the React plugin:
 
-```ts
+```ts vite.config.ts
 import { interfere } from "@interfere/vite/plugin";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  build: { sourcemap: true },
+  plugins: [tanstackStart(), react(), interfere()],
+});
 ```
 
-Set the keys from your [surface](/product/surfaces) in the build environment:
+## Set your keys
+
+Copy the keys from your [surface](/product/surfaces) into the build environment:
 
 ```env
 VITE_INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
@@ -43,54 +53,113 @@ INTERFERE_API_KEY=YOUR_SURFACE_SECRET_KEY
 INTERFERE_ENVIRONMENT=staging
 ```
 
-Keep the secret key in the build environment. Provide `INTERFERE_PUBLIC_KEY` and the environment label to the server runtime as well.
+Provide `INTERFERE_PUBLIC_KEY` and `INTERFERE_ENVIRONMENT` to the server runtime too. Use `production` for production deployments. Keep the secret key in the build environment.
 
-## Initialize in the router
+The server integration requires a Node.js runtime. The Cloudflare Workers deployment integration does not provide Node.js server instrumentation.
 
-Initialize the server SDK on the server and the browser SDK in the browser. Add this to your router module, preserving your router options.
+## Initialize browser capture
+
+Add `init()` to your router module, guarded so it runs only in the browser. Preserve your existing router options:
 
 ```tsx src/router.tsx
 import { init } from "@interfere/vite/init";
-import { register } from "@interfere/vite/server";
 import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 
-if (typeof window === "undefined") {
-  register().catch((error) => console.error("Interfere initialization failed", error));
-} else {
+if (typeof window !== "undefined") {
   init();
 }
 
 export const getRouter = () => createRouter({ routeTree, scrollRestoration: true });
 ```
 
+## Capture server requests
+
+Add these request middleware entries to `src/start.ts`. Initialization runs before Interfere opens a span for the request. Keep any existing middleware in the array:
+
+```ts src/start.ts
+import { register } from "@interfere/vite/server";
+import { interfereRequestMiddleware } from "@interfere/vite/tanstack-start";
+import { createMiddleware, createStart } from "@tanstack/react-start";
+
+const initializeInterfere = createMiddleware().server(async ({ next }) => {
+  await register();
+  return next();
+});
+
+export const startInstance = createStart(() => ({
+  requestMiddleware: [initializeInterfere, interfereRequestMiddleware],
+}));
+```
+
 ## Wrap the root route
 
-Wrap your existing root route component with the provider:
+Add the provider around your root route's content and include `traceMeta()` in the head metadata. Preserve your existing document shell, styles, providers, and error boundaries. A minimal root route is:
 
 ```tsx src/routes/__root.tsx
 import { InterfereProvider } from "@interfere/vite/provider";
-import { Outlet } from "@tanstack/react-router";
+import { traceMeta } from "@interfere/vite/tanstack-start";
+import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
+
+export const Route = createRootRoute({
+  head: () => ({
+    meta: [
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      ...traceMeta(),
+    ],
+  }),
+  component: RootComponent,
+});
 
 function RootComponent() {
   return (
-    <InterfereProvider>
-      <Outlet />
-    </InterfereProvider>
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        <InterfereProvider>
+          <Outlet />
+        </InterfereProvider>
+        <Scripts />
+      </body>
+    </html>
   );
 }
 ```
 
-Keep this component connected to your existing root route definition. Configure [consent](/sdk/consent) and [replay masking](/sdk/replay-privacy) on the provider.
+Configure [consent](/sdk/consent) and [replay masking](/sdk/replay-privacy) on the provider before recording customer sessions.
 
-## Verify capture
+## Verify browser and server capture
 
-Deploy to staging and use the [Vite test button](/sdk/vite#verify-capture) to verify browser capture. To check server capture, report a test error from a server function:
+Add a temporary route with separate browser and server test buttons:
 
-```ts
+```tsx src/routes/interfere-test.tsx
+import { capture } from "@interfere/vite/init";
 import { captureError } from "@interfere/vite/server";
+import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 
-captureError(new Error("Interfere server setup test"));
+const testServerCapture = createServerFn({ method: "POST" }).handler(() => {
+  captureError(new Error("Interfere server setup test"));
+  return { captured: true };
+});
+
+export const Route = createFileRoute("/interfere-test")({ component: CaptureTest });
+
+function CaptureTest() {
+  return (
+    <main>
+      <button onClick={() => capture(new Error("Interfere browser setup test"))}>
+        Test browser capture
+      </button>
+      <button onClick={() => testServerCapture()}>Test server capture</button>
+    </main>
+  );
+}
 ```
 
-Open the surface's event chart to check incoming traffic. Remove the test captures after verification. See [No events arriving](/sdk/troubleshooting) if either side is missing.
+Build and deploy to staging, then open `/interfere-test`. Select each button and check the surface's event chart for incoming traffic. Keep the server running long enough to send its telemetry. Remove the test route after verification.
+
+If either side is missing, follow [No events arriving](/sdk/troubleshooting). Once a problem appears, use the [investigation walkthrough](/product/problems) to inspect its evidence.

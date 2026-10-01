@@ -4,13 +4,15 @@ description: "Associate sessions and problems with signed-in users."
 icon: "/icons/ui/users.svg"
 ---
 
-Call `identity.set()` after your app loads its authenticated user. Interfere attaches the identity to the session so you can find the person in [Users](/product/users) and see the problems affecting them.
+For Next.js, Vite + React, and TanStack Start, call `identity.set()` after your app loads its authenticated user. Interfere attaches the identity to the session so you can find the person in [Users](/product/users) and see the problems affecting them.
 
 ## Sync the signed-in user
 
-Render this component inside `InterfereProvider` and pass the user from your authentication system. For Vite and TanStack Start, change the import to `@interfere/vite/provider`.
+Render `SyncIdentity` inside `InterfereProvider` and pass the user from your authentication system. Choose the example for your framework:
 
-```tsx identity.tsx
+<CodeGroup>
+
+```tsx Next.js
 "use client";
 
 import { useInterfere } from "@interfere/next/provider";
@@ -26,7 +28,10 @@ export function SyncIdentity({ user }: { user: User | null }) {
   const { identity } = useInterfere();
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      identity.clear();
+      return;
+    }
     identity.set({
       identifier: user.id,
       name: user.name,
@@ -38,6 +43,38 @@ export function SyncIdentity({ user }: { user: User | null }) {
   return null;
 }
 ```
+
+```tsx Vite / TanStack Start
+import { useInterfere } from "@interfere/vite/provider";
+import { useEffect } from "react";
+
+type User = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+export function SyncIdentity({ user }: { user: User | null }) {
+  const { identity } = useInterfere();
+
+  useEffect(() => {
+    if (!user) {
+      identity.clear();
+      return;
+    }
+    identity.set({
+      identifier: user.id,
+      name: user.name,
+      email: user.email,
+      source: { type: "custom", name: "Acme" },
+    });
+  }, [identity, user]);
+
+  return null;
+}
+```
+
+</CodeGroup>
 
 Use a stable internal user ID for `identifier`. An email can change, so it should not be the identifier.
 
@@ -54,4 +91,4 @@ Use a stable internal user ID for `identifier`. An email can change, so it shoul
 
 Set `source.type` to `clerk`, `auth0`, or `custom`. Set `source.name` to the provider's display name.
 
-Identity calls are deduplicated per session. Identity clears when the session rotates. Read the current session ID with `useSession` from your framework's provider package.
+Wait until your authentication system has loaded before rendering `SyncIdentity`. Pass `null` after sign-out to clear identity and start a new anonymous session. Identity calls are deduplicated per session. Read the current session ID with `useSession` from your framework's provider package.
