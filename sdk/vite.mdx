@@ -245,12 +245,12 @@ function SyncIdentity() {
 
 ## Consent
 
-Without a `consent` option, the SDK runs with its configured defaults. To wait for a visitor's choice before starting analytics or replay, pass `"denied"` to `init()`:
+Without a `consent` option, the SDK runs with its configured defaults. To wait for a visitor's choice before starting analytics or replay, pass `false` to `init()`:
 
 ```ts src/main.tsx
 import { init } from "@interfere/vite/init";
 
-await init({ consent: "denied" });
+await init({ consent: false });
 ```
 
 Set this before React renders. Passing consent only to the provider leaves a gap between initialization and the first render.
@@ -259,8 +259,8 @@ Consent describes what the visitor allows **right now**. The same values work in
 
 | Value                                | What it allows               |
 | ------------------------------------ | ---------------------------- |
-| `"denied"`                           | Neither analytics nor replay |
-| `"granted"`                          | Both analytics and replay    |
+| `false`                              | Neither analytics nor replay |
+| `true`                               | Both analytics and replay    |
 | `{ analytics: true, replay: false }` | Analytics only               |
 
 | Category    | What it covers                        |
@@ -273,10 +273,10 @@ Update the decision when the visitor accepts, declines, or changes their prefere
 ```tsx
 const { consent } = useInterfere();
 
-consent.set("granted");
+consent.set(true);
 ```
 
-Use `consent.set("denied")` to withdraw both permissions, or pass an object for separate choices:
+Use `consent.set(false)` to withdraw both permissions, or pass an object for separate choices:
 
 ```tsx
 consent.set({ analytics: true, replay: false });
