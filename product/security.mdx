@@ -1,10 +1,28 @@
 ---
 title: "Security"
 icon: "/icons/ui/shield.svg"
-description: "How you sign in to Interfere, how team access is controlled, and where we stand on compliance."
+description: "Interfere IP ranges, workspace network restrictions, sign-in options, and team access controls."
 ---
 
-How your team signs in, and who can reach what. For certifications and reports, see [Compliance](/product/compliance).
+Manage network access and sign-in for your workspace. For certifications and reports, see [Compliance](/product/compliance).
+
+## IP ranges
+
+Interfere publishes its owned IPv4 and IPv6 ranges at [interfere.com/ips.json](https://interfere.com/ips.json). The JSON contains a `prefixes` array with `ipv4Prefix` and `ipv6Prefix` entries in CIDR notation. Use this feed when maintaining firewall rules for Interfere-owned networks.
+
+These ranges identify Interfere-owned address space. They do not cover every request from Interfere services, including services running on shared infrastructure. Before restricting an integration to these ranges, confirm its source addresses with [support@interfere.com](mailto:support@interfere.com).
+
+## Network access
+
+Enterprise workspaces can whitelist the networks allowed to reach their dashboard and API in [Settings → Security](https://interfere.com/~/*/settings/security). Editing rules requires workspace authentication management permission.
+
+Select **Add a network**, enter an IPv4 or IPv6 address, CIDR range, or ASN, and add a description. For example, a CIDR entry can identify an office network and an ASN can identify a network operator. You can keep up to 100 rules.
+
+With no rules, authenticated members can reach the workspace from any network. Once rules are configured, connections must match an allowed network. An ASN allows that operator's entire network, including other customers, so use a narrower IP range when appropriate.
+
+If access is blocked, connect through an allowed company network or VPN. Ask a workspace administrator to review the rules if the expected network is missing. Workspace permissions still apply after a connection passes the network check.
+
+Review administrative changes in the [audit log](/product/audit-log).
 
 ## Signing in
 
@@ -51,15 +69,3 @@ Our team sets up SSO with you; it isn't self-serve. To turn it on for your organ
 ## Roles and permissions
 
 Interfere uses role-based access control. Every member has a role that sets what they can see and change, from full administration down to read-only access. Manage roles from your workspace's [team settings](https://interfere.com/~/*/settings/team).
-
-## Network access
-
-Enterprise workspaces can restrict dashboard and API access to allowed networks in [Settings → Security](https://interfere.com/~/*/settings/security). Editing rules requires workspace authentication management permission.
-
-Select **Add a network**, enter an IPv4 or IPv6 address, CIDR range, or ASN, and add a description. For example, a CIDR entry can identify an office network and an ASN can identify a network operator. You can keep up to 100 rules.
-
-With no rules, authenticated members can reach the workspace from any network. Once rules are configured, connections must match an allowed network. An ASN allows that operator's entire network, including other customers, so use a narrower IP range when appropriate.
-
-If access is blocked, connect through an allowed company network or VPN. Ask a workspace administrator to review the rules if the expected network is missing. Workspace permissions still apply after a connection passes the network check.
-
-Review administrative changes in the [audit log](/product/audit-log).
