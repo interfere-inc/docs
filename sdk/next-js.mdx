@@ -335,33 +335,57 @@ function SyncIdentity() {
 
 ## Consent
 
-By default all features are active. To respect a cookie banner or privacy preference, pass `consent` to the provider. Once you do, only essential capture (error tracking and logs) plus the categories you opt into will run:
+Without a `consent` option, the SDK runs with its configured defaults. To wait for a visitor's choice before starting analytics or replay, pass `false` to `init()`:
 
-```tsx app/layout.tsx
-<InterfereProvider consent={{ analytics: true, replay: false }}>{children}</InterfereProvider>
+```ts instrumentation-client.ts
+import { init } from "@interfere/next/instrumentation-client";
+
+await init({ consent: false });
 ```
 
-| Category    | What it covers                        | Gateable  |
-| ----------- | ------------------------------------- | --------- |
-| `necessary` | Error tracking, logs                  | Always on |
-| `analytics` | Page events, rage clicks, device info | Yes       |
-| `replay`    | Session replay                        | Yes       |
+Set this before React renders. Passing consent only to the provider leaves a gap between initialization and the first render.
 
-Update consent at runtime through the same hook:
+Consent describes what the visitor allows **right now**. The same values work in `init()`, the provider's `consent` prop, and `consent.set()`:
+
+| Value                                | What it allows               |
+| ------------------------------------ | ---------------------------- |
+| `false`                              | Neither analytics nor replay |
+| `true`                               | Both analytics and replay    |
+| `{ analytics: true, replay: false }` | Analytics only               |
+
+| Category    | What it covers                        |
+| ----------- | ------------------------------------- |
+| `analytics` | Page events, rage clicks, device info |
+| `replay`    | Session replay                        |
+
+Update the decision when the visitor accepts, declines, or changes their preferences:
 
 ```tsx
 const { consent } = useInterfere();
 
-consent.set({ analytics: true, replay: true }); // selective
-consent.set(); // grant everything
+consent.set(true);
 ```
 
-Interfere works with any consent platform (c15t, CookieYes, OneTrust). Map its booleans to the categories above.
+Use `consent.set(false)` to withdraw both permissions, or pass an object for separate choices:
 
-<Tip>
-  Set the `consent` prop from the provider's first render so a non-consented feature never gets a
-  chance to load. Update it through the hook as the user changes their mind.
-</Tip>
+```tsx
+consent.set({ analytics: true, replay: false });
+```
+
+Each update replaces the previous decision. Omitted categories are allowed, so include both booleans when mapping choices from a consent platform such as c15t, CookieYes, or OneTrust.
+
+You can also keep the decision synchronized through the provider:
+
+```tsx
+<InterfereProvider consent={{ analytics: true, replay: false }}>{children}</InterfereProvider>
+```
+
+Omitting the provider's `consent` prop preserves the decision supplied to `init()` or updated at runtime. Calling `consent.set()` without a value removes consent restrictions; it does not record the visitor's acceptance.
+
+<Note>
+  Consent controls analytics and replay. It does not disable errors, logs, tracing, or session
+  storage, and granting consent does not enable plugins disabled in configuration.
+</Note>
 
 ## Mask replay data
 
