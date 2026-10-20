@@ -86,7 +86,7 @@
     },
     {
       "source": "/concepts",
-      "destination": "/product/problems"
+      "destination": "/product/overview"
     },
     {
       "source": "/interfere",
@@ -100,5 +100,8 @@
       "source": "/product/activity",
       "destination": "/product/inbox#workspace-activity"
     }
-  ]
+  ],
+  "interaction": {
+    "drilldown": false
+  }
 }

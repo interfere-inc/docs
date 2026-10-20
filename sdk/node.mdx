@@ -4,9 +4,12 @@ description: "Capture server errors and custom spans in Node.js services and wor
 icon: "/icons/tech/nodejs/transparent.svg"
 ---
 
-`@interfere/node` captures errors and custom spans from Node.js processes. For NestJS or Next.js, use the [NestJS](/sdk/nestjs) or [Next.js](/sdk/next-js) integration.
+`@interfere/node` captures errors and custom spans from services, background workers, and scripts. Give each process a service name so you can identify its work in a trace. For NestJS or Next.js, use the [NestJS](/sdk/nestjs) or [Next.js](/sdk/next-js) integration.
 
-## Install
+## Setup
+
+<Steps>
+  <Step title="Install and set your public key">
 
 <CodeGroup>
 
@@ -37,7 +40,8 @@ INTERFERE_ENVIRONMENT=staging
 
 Use `production` for production deployments.
 
-## Initialize
+  </Step>
+  <Step title="Initialize before your application work">
 
 Call `init()` before the work you want to capture:
 
@@ -51,6 +55,9 @@ init({
 ```
 
 Without a public key, the SDK logs a warning and stays disabled.
+
+  </Step>
+</Steps>
 
 ## Verify capture
 

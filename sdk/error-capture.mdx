@@ -95,7 +95,7 @@ Replace `NextResponse.next()` with your existing proxy logic.
 
 ## Next.js server actions
 
-Wrap an action's work with `withInterfereServerAction` to record its name and outcome. Its `args` option records argument types, not values. Thrown errors reach the `onRequestError` handler from your [server instrumentation](/sdk/next-js#start-server-instrumentation).
+Wrap an action's work with `withInterfereServerAction` to record its name and outcome. Its `args` option records argument types, not values. Thrown errors reach the `onRequestError` handler from your [server instrumentation](/sdk/next-js#setup).
 
 ```ts
 import { withInterfereServerAction } from "@interfere/next/server";

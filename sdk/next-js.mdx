@@ -4,9 +4,14 @@ description: "Capture browser and server errors in a Next.js App Router app."
 icon: "/icons/tech/nextjs/currentcolor.svg"
 ---
 
-Install `@interfere/next` in a Next.js 16 or later App Router app using React 19 and Node.js 20 or later.
+`@interfere/next` connects browser errors, session replay, and server requests to the same surface. The build plugin uploads source maps so investigations can show your original code.
 
-## Install
+You need a Next.js 16 or later App Router app, React 19, and Node.js 20 or later. Create a [surface](/product/surfaces) before starting; its keys connect this app to your workspace.
+
+## Setup
+
+<Steps>
+  <Step title="Install the package">
 
 <CodeGroup>
 
@@ -28,7 +33,8 @@ bun add @interfere/next
 
 </CodeGroup>
 
-## Set your keys
+  </Step>
+  <Step title="Set your keys">
 
 Copy the keys from your [surface](/product/surfaces) into your deployment's environment variables. Set both for builds; the runtime needs the public key.
 
@@ -40,7 +46,8 @@ INTERFERE_ENVIRONMENT=staging
 
 Use `production` for your production deployment. Keep the secret key out of browser code. These variables do not need a `NEXT_PUBLIC_` prefix.
 
-## Add the build plugin
+  </Step>
+  <Step title="Connect your build">
 
 Wrap your existing Next.js config. The plugin registers releases and uploads source maps during production builds.
 
@@ -55,7 +62,8 @@ export default withInterfere(config);
 
 Keep `withInterfere()` outermost when composing config wrappers. See [Releases and source maps](/sdk/releases) if another tool also uploads source maps.
 
-## Start server instrumentation
+  </Step>
+  <Step title="Start server and browser capture">
 
 Create `instrumentation.ts` in the project root, or inside `src` if your app uses a `src` directory.
 
@@ -65,8 +73,6 @@ export { onRequestError, register } from "@interfere/next/instrumentation";
 
 If you already initialize OpenTelemetry, follow [OpenTelemetry composition](/sdk/opentelemetry) instead of registering a second provider.
 
-## Start browser capture
-
 Create `instrumentation-client.ts` beside `instrumentation.ts`. Next.js loads it before the app becomes interactive.
 
 ```ts instrumentation-client.ts
@@ -75,7 +81,8 @@ import { init } from "@interfere/next/instrument-client";
 init();
 ```
 
-## Add the React provider
+  </Step>
+  <Step title="Wrap your root layout">
 
 Wrap the root layout. The provider exposes identity and consent hooks and reports React render errors. Browser capture still requires the `init()` call above.
 
@@ -94,35 +101,22 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 }
 ```
 
-Configure [consent](/sdk/consent) and [replay masking](/sdk/replay-privacy) before deploying capture to customers.
+Before recording customer sessions, set [consent at initialization](/sdk/consent) and review [replay masking](/sdk/replay-privacy).
+
+  </Step>
+</Steps>
 
 ## Verify capture
 
-Add this temporary button to a page in your staging app:
+After initialization, report a test error from an existing button or event handler in your staging app:
 
-```tsx app/capture-test.tsx
-"use client";
-
+```ts
 import { capture } from "@interfere/next/instrument-client";
 
-export function CaptureTest() {
-  return (
-    <button onClick={() => capture(new Error("Interfere setup test"))}>Send test error</button>
-  );
-}
+capture(new Error("Interfere setup test"));
 ```
 
-Render the button from a temporary route:
-
-```tsx app/interfere-test/page.tsx
-import { CaptureTest } from "../capture-test";
-
-export default function InterfereTestPage() {
-  return <CaptureTest />;
-}
-```
-
-Build and deploy to staging, open `/interfere-test`, and select **Send test error**. Check the surface's event chart for incoming traffic, then remove the button. If events do not arrive, follow [No events arriving](/sdk/troubleshooting).
+Open your surface's event chart to confirm that traffic arrives, then remove the test call. If no events arrive, follow [Troubleshooting](/sdk/troubleshooting).
 
 ## Next steps
 

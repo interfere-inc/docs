@@ -4,9 +4,14 @@ description: "Initialize browser and server capture in a Start app."
 icon: "/icons/tech/tanstack/currentcolor.svg"
 ---
 
-TanStack Start uses the Vite integration for builds and browser capture, with separate server instrumentation.
+Interfere uses TanStack Start's Vite build and request middleware to capture browser sessions and server requests. The React provider connects browser capture to your route tree, while trace metadata connects browser and server work.
 
-## Install and configure the build
+The server integration requires Node.js. Start with a [surface](/product/surfaces) and keep your existing router options and deployment adapter as you follow the steps below.
+
+## Setup
+
+<Steps>
+  <Step title="Install and connect the build">
 
 <CodeGroup>
 
@@ -42,7 +47,8 @@ export default defineConfig({
 });
 ```
 
-## Set your keys
+  </Step>
+  <Step title="Set browser and server keys">
 
 Copy the keys from your [surface](/product/surfaces) into the build environment:
 
@@ -57,7 +63,8 @@ Provide `INTERFERE_PUBLIC_KEY` and `INTERFERE_ENVIRONMENT` to the server runtime
 
 The server integration requires a Node.js runtime. The Cloudflare Workers deployment integration does not provide Node.js server instrumentation.
 
-## Initialize browser capture
+  </Step>
+  <Step title="Initialize browser capture">
 
 Add `init()` to your router module, guarded so it runs only in the browser. Preserve your existing router options:
 
@@ -73,7 +80,8 @@ if (typeof window !== "undefined") {
 export const getRouter = () => createRouter({ routeTree, scrollRestoration: true });
 ```
 
-## Capture server requests
+  </Step>
+  <Step title="Capture server requests">
 
 Add these request middleware entries to `src/start.ts`. Initialization runs before Interfere opens a span for the request. Keep any existing middleware in the array:
 
@@ -92,9 +100,12 @@ export const startInstance = createStart(() => ({
 }));
 ```
 
-## Wrap the root route
+  </Step>
+  <Step title="Connect the root route">
 
-Add the provider around your root route's content and include `traceMeta()` in the head metadata. Preserve your existing document shell, styles, providers, and error boundaries. A minimal root route is:
+Add the provider around your root route's content and include `traceMeta()` in the head metadata. Preserve your existing document shell, styles, providers, and error boundaries. The example below shows where these additions fit.
+
+<Accordion title="Root route example">
 
 ```tsx src/routes/__root.tsx
 import { InterfereProvider } from "@interfere/vite/provider";
@@ -129,37 +140,35 @@ function RootComponent() {
 }
 ```
 
-Configure [consent](/sdk/consent) and [replay masking](/sdk/replay-privacy) on the provider before recording customer sessions.
+</Accordion>
 
-## Verify browser and server capture
+Set [consent at browser initialization](/sdk/consent) and review [replay masking](/sdk/replay-privacy) before recording customer sessions.
 
-Add a temporary route with separate browser and server test buttons:
+  </Step>
+</Steps>
 
-```tsx src/routes/interfere-test.tsx
+## Verify capture
+
+Build and deploy to staging. Report a test error from an existing browser event handler, then from a server handler, to check both sides:
+
+<CodeGroup>
+
+```ts Browser
 import { capture } from "@interfere/vite/init";
-import { captureError } from "@interfere/vite/server";
-import { createFileRoute } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
 
-const testServerCapture = createServerFn({ method: "POST" }).handler(() => {
-  captureError(new Error("Interfere server setup test"));
-  return { captured: true };
-});
-
-export const Route = createFileRoute("/interfere-test")({ component: CaptureTest });
-
-function CaptureTest() {
-  return (
-    <main>
-      <button onClick={() => capture(new Error("Interfere browser setup test"))}>
-        Test browser capture
-      </button>
-      <button onClick={() => testServerCapture()}>Test server capture</button>
-    </main>
-  );
-}
+capture(new Error("Interfere browser setup test"));
 ```
 
-Build and deploy to staging, then open `/interfere-test`. Select each button and check the surface's event chart for incoming traffic. Keep the server running long enough to send its telemetry. Remove the test route after verification.
+```ts Server
+import { captureError } from "@interfere/vite/server";
 
-If either side is missing, follow [No events arriving](/sdk/troubleshooting). Once a problem appears, use the [investigation walkthrough](/product/problems) to inspect its evidence.
+captureError(new Error("Interfere server setup test"));
+```
+
+</CodeGroup>
+
+Check the surface's event chart for incoming traffic. Keep the server running long enough to send its telemetry, then remove the test calls. If either side is missing, follow [Troubleshooting](/sdk/troubleshooting).
+
+## Next steps
+
+[Identify users](/sdk/identity), review [capture configuration](/sdk/configuration), or follow the [investigation walkthrough](/product/problems) once a problem appears.
