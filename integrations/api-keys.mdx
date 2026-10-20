@@ -6,34 +6,47 @@ icon: "/icons/ui/key.svg"
 
 Interfere uses public surface keys for telemetry and secret API keys for authenticated operations. Secret keys have explicit scopes and an expiration setting. Keep them in your secret manager or CI environment.
 
-## Choose a credential
+## Surface keys
 
-**Capture telemetry:** use a public surface key in your SDK configuration. It is safe to include in browser code.
+Open a surface and select **Keys**. Use its public key in the SDK to capture telemetry. It is safe to include in browser code.
 
-**Upload build artifacts:** use a surface secret key with `release:write` to register releases and upload source maps.
+Use its secret key with `release:write` to register releases and upload source maps. Set `INTERFERE_API_KEY` in the build environment for SDK plugins. The CLI uses `INTERFERE_SECRET_KEY` for secret key authentication.
 
-**Automate workspace operations:** use a workspace API key with the scopes your workflow needs. This is the credential to use for Terraform.
+## Workspace keys
 
-**Work interactively:** sign in through the MCP or CLI. OAuth gives the tool access within your workspace permissions.
+Use a workspace API key for unattended workspace operations, including Terraform. Its scopes determine which resources it can read or change.
+
+For interactive work, sign in through [MCP](/integrations/mcp) or the [CLI](/integrations/cli). OAuth uses your existing workspace permissions.
 
 ## Create a workspace key
 
-Send `POST /v3/workspaces/{workspaceSlug}/api-keys` as an authenticated workspace user. You need `org:workspace_auth:write` and every permission you grant to the key.
+[Install the CLI](/integrations/cli#install-and-sign-in), then sign in through your browser:
 
-For a Terraform credential:
-
-```json
-{
-  "idempotencyKey": "9e3c0d0e-3bf7-48ae-9271-6ea58e7b970d",
-  "name": "Terraform",
-  "scopes": ["org:surfaces:read", "org:surfaces:write", "org:surfaces:delete"],
-  "secondsUntilExpiration": 2592000
-}
+```bash
+interfere auth login --scheme oauth-production
 ```
 
-Generate a fresh UUID for each new key. If the response is uncertain, retry with the same UUID and request. The example expires after 30 days. Use a positive number of seconds for an expiring key or `null` for no expiry. Both `scopes` and `secondsUntilExpiration` are required.
+Use an Owner or Admin account with permission to manage workspace authentication. You can only grant permissions your account already has.
 
-Store the returned `apiKey.secret` in your secret manager. Save the key ID for revocation.
+Create a key for Terraform to manage surfaces. Replace `acme` with the workspace slug from your Interfere URL, and replace the example UUID with a new UUID:
+
+```bash
+interfere keys private create \
+  --workspace acme \
+  --name Terraform \
+  --idempotency-key 9e3c0d0e-3bf7-48ae-9271-6ea58e7b970d \
+  --scopes org:surfaces:read \
+  --scopes org:surfaces:write \
+  --scopes org:surfaces:delete \
+  --seconds-until-expiration 2592000 \
+  --format json
+```
+
+The response contains `apiKey.id`, `apiKey.name`, and `apiKey.secret`. Save the ID for revocation and store the secret in your secret manager. Configure your CI environment to supply that secret as `INTERFERE_TOKEN` when it runs Terraform.
+
+This key expires after 30 days. Set the lifetime to the number of seconds your automation needs. Keep the same UUID and arguments if you retry an uncertain creation request; use a new UUID for a different key.
+
+The example grants surface management only. To manage workspace settings or issue additional keys, add the permissions listed for those [Terraform resources](/integrations/terraform). You can inspect all accepted fields with `interfere keys private create --schema`.
 
 ## Permission changes
 
@@ -41,6 +54,12 @@ A workspace key's access is limited to its explicit scopes and its creator's cur
 
 ## Revoke a key
 
-Send `DELETE /v3/workspaces/{workspaceSlug}/api-keys/{apiKeyId}` to revoke a workspace key. Update any automation using it with a replacement credential before revoking it if that automation must keep running.
+Create a replacement and update the automation that uses the old key. Then revoke the old key using its saved ID:
+
+```bash
+interfere keys private delete --workspace acme --api-key-id KEY_ID
+```
+
+Revocation prevents subsequent requests from using that credential.
 
 For surface credentials, open the surface's key settings. Public ingestion credentials and secret build credentials serve different purposes; copy the credential required by your SDK or tool.

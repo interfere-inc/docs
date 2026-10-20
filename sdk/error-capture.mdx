@@ -1,0 +1,117 @@
+---
+title: "Errors and custom spans"
+description: "Report handled errors and trace application work."
+icon: "/icons/ui/code.svg"
+---
+
+The SDK captures uncaught errors. Report an error explicitly when your application catches it and you still need it in Interfere.
+
+## Browser errors
+
+Choose your framework's browser entry point:
+
+<CodeGroup>
+
+```ts Next.js
+import { capture } from "@interfere/next/instrument-client";
+
+try {
+  await saveDraft();
+} catch (error) {
+  capture(error);
+  throw error;
+}
+```
+
+```ts Vite / TanStack Start
+import { capture } from "@interfere/vite/init";
+
+try {
+  await saveDraft();
+} catch (error) {
+  capture(error);
+  throw error;
+}
+```
+
+</CodeGroup>
+
+Here, `saveDraft` is your application's operation. Keep its existing error handling after reporting the error.
+
+## Server errors
+
+Import `captureError` from your framework's server entry point:
+
+| Framework      | Import                   |
+| -------------- | ------------------------ |
+| Next.js        | `@interfere/next/server` |
+| TanStack Start | `@interfere/vite/server` |
+| NestJS         | `@interfere/nest`        |
+| Node.js        | `@interfere/node`        |
+
+```ts
+import { captureError } from "@interfere/node";
+
+try {
+  await fulfillOrder();
+} catch (error) {
+  captureError(error);
+  throw error;
+}
+```
+
+## Custom spans
+
+Wrap application work to record its duration and outcome. In the Next.js browser SDK, use `span`:
+
+```ts
+import { span } from "@interfere/next/instrument-client";
+
+await span("checkout.submit", () => submitOrder());
+```
+
+In Node.js and NestJS, use `withSpan`:
+
+```ts
+import { withSpan } from "@interfere/node";
+
+await withSpan("checkout.fulfill", () => fulfillOrder());
+```
+
+## Next.js proxy
+
+Wrap your existing proxy handler with `withInterfereProxy`. The wrapper reports thrown errors with request context and rethrows them.
+
+```ts proxy.ts
+import { withInterfereProxy } from "@interfere/next/server";
+import { NextResponse } from "next/server";
+
+export default withInterfereProxy(() => NextResponse.next());
+
+export const config = { matcher: ["/((?!_next/static).*)"] };
+```
+
+Replace `NextResponse.next()` with your existing proxy logic.
+
+## Next.js server actions
+
+Wrap an action's work with `withInterfereServerAction` to record its name and outcome. Its `args` option records argument types, not values. Thrown errors reach the `onRequestError` handler from your [server instrumentation](/sdk/next-js#start-server-instrumentation).
+
+```ts
+import { withInterfereServerAction } from "@interfere/next/server";
+
+export async function validateEmail(formData: FormData) {
+  "use server";
+  return withInterfereServerAction(
+    "validateEmail",
+    () => {
+      const email = formData.get("email");
+      if (typeof email !== "string" || !email.includes("@")) {
+        throw new Error("Enter a valid email address");
+      }
+      return email;
+    },
+    { args: [formData] },
+  );
+}
+```

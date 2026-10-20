@@ -4,11 +4,7 @@ icon: "/icons/tech/nestjs/transparent.svg"
 description: "Instrument your NestJS backend so server errors reach Interfere with full stack traces."
 ---
 
-`@interfere/nest` connects your NestJS backend to Interfere. Once it's wired in, unhandled exceptions across your controllers and providers are captured with full server-side stack traces, and you get manual capture and tracing when you want them.
-
-<Note>
-  Set your **surface public key** (`INTERFERE_PUBLIC_KEY`, `interfere_public_<region>_...`) from [Surfaces](https://interfere.com/~/*/surfaces) so telemetry routes to your project. For readable stack traces, publish release metadata and source maps through the build API. See [build automation](/integrations/cli#build-automation).
-</Note>
+`@interfere/nest` captures server errors and traces from your NestJS app.
 
 ## Prerequisites
 
@@ -17,9 +13,36 @@ description: "Instrument your NestJS backend so server errors reach Interfere wi
 
 ## Install
 
-```bash
+<CodeGroup>
+
+```bash npm
 npm install @interfere/nest
 ```
+
+```bash pnpm
+pnpm add @interfere/nest
+```
+
+```bash Yarn
+yarn add @interfere/nest
+```
+
+```bash Bun
+bun add @interfere/nest
+```
+
+</CodeGroup>
+
+## Set your public key
+
+Copy the public key from your [surface](/product/surfaces) into the server environment:
+
+```env
+INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
+INTERFERE_ENVIRONMENT=staging
+```
+
+Use `production` for production deployments.
 
 ## Setup
 
@@ -65,14 +88,21 @@ npm install @interfere/nest
   </Step>
 </Steps>
 
-<Check>
-  Trigger a test error from a deployed route and check your [workspace](https://interfere.com/~/*)
-  for its events.
-</Check>
+## Verify capture
+
+After initialization, report a temporary error in a staging process:
+
+```ts
+import { captureError } from "@interfere/nest";
+
+captureError(new Error("Interfere setup test"));
+```
+
+Check the surface's event chart for incoming traffic. Remove the test capture afterward. If it stays empty, follow [No events arriving](/sdk/troubleshooting).
 
 ## Source maps and releases
 
-Publish release metadata and source maps after compiling the app. Follow the [TypeScript SDK release workflow](/platform-sdk/typescript#register-releases-and-upload-source-maps) for the API calls and upload order.
+Publish release metadata and source maps after compiling the app. Follow the [release workflow](/sdk/releases#custom-build-pipelines) for the API calls and upload order.
 
 Build and runtime must resolve the same release. Set `INTERFERE_SOURCE_ID` to the same commit SHA in both environments when the deployed app has no git checkout. Keep build credentials in CI and use the surface public key for runtime ingestion.
 
@@ -117,12 +147,3 @@ try {
 
 const order = await withSpan("checkout.submit", () => submitOrder(cart));
 ```
-
-## Environment variables
-
-| Variable                | Required     | Description                                                                                                                                                                                                                                                                                 |
-| ----------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `INTERFERE_PUBLIC_KEY`  | Yes          | Your [surface public key](https://interfere.com/~/*/surfaces) (`interfere_public_<region>_...`). Routes telemetry to your project.                                                                                                                                                          |
-| `INTERFERE_API_KEY`     | For releases | Used by SDK build plugins to publish release metadata (`interfere_secret_<region>_…`). A build-time secret; keep it in CI.                                                                                                                                                                  |
-| `INTERFERE_ENVIRONMENT` | No           | Labels this process's telemetry and releases (`production`, `staging`, or a label you choose). Falls back to `VERCEL_ENV`, then `NODE_ENV`, then `development`. Interfere drops the `development`, `local`, and `test` environments before ingestion, so set a real one to capture from it. |
-| `INTERFERE_DEBUG`       | No           | Set to `1` for lifecycle logs while setting up.                                                                                                                                                                                                                                             |

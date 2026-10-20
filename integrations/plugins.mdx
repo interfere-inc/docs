@@ -4,7 +4,7 @@ description: "Install Interfere's MCP connection and investigation skill in your
 icon: "/icons/ui/agents.svg"
 ---
 
-The Interfere plugin connects your editor to the [MCP server](/integrations/mcp) and adds a skill for investigating production problems. You need an Interfere account with access to the workspace you want to inspect.
+The Interfere plugin connects your editor to the [MCP](/integrations/mcp) and adds a skill for investigating production problems. You need an Interfere account with access to the workspace you want to inspect.
 
 ## Claude Code
 
@@ -27,7 +27,7 @@ mkdir -p ~/.cursor/plugins/local
 cp -R interfere-plugins/plugins/interfere ~/.cursor/plugins/local/interfere
 ```
 
-Reload Cursor and open **Customize** to connect the Interfere MCP server. Managed installations may require your administrator to allow local plugin imports. The plugin needs no dependency installation or build step.
+Reload Cursor and open **Customize** to connect the Interfere MCP server. Managed installations may require your administrator to allow local plugin imports.
 
 ## Investigate
 
@@ -38,7 +38,7 @@ Investigate recent checkout errors in my Interfere workspace. Identify the
 release, affected sessions, and evidence supporting the likely cause.
 ```
 
-The skill guides the agent to discover available API operations, establish the workspace, and separate evidence from hypotheses. It does not instruct the agent to change problem status or settings as part of an investigation.
+Include your workspace and surface if you have more than one. Ask for links to the problem, affected sessions, and supporting traces so you can inspect the evidence in Interfere.
 
 ## Connection permissions
 

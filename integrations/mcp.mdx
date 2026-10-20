@@ -11,7 +11,7 @@ The Interfere MCP server gives your agent access to problems, sessions, releases
 | Read and write | `https://mcp.interfere.com/mcp`          |
 | Read-only      | `https://mcp.interfere.com/mcp/readonly` |
 
-Both endpoints use Streamable HTTP and OAuth. Choose read-only when the agent only needs to investigate. The server rejects operations that are not explicitly declared read-only on that endpoint, including mutations sent through `execute`.
+Both endpoints use Streamable HTTP and OAuth. Choose read-only when the agent only needs to investigate. The read-only endpoint rejects changes to workspace data.
 
 ## Connect with a plugin
 
@@ -51,7 +51,7 @@ The [Claude Code and Cursor plugins](/integrations/plugins) configure the server
   </Tab>
 </Tabs>
 
-Keep credentials out of MCP configuration files. Sign-in requests `interfere:access`, `user:org:read`, and `offline_access` so the client can access Interfere, select your workspace, and refresh its connection.
+Sign in through the client. You do not need to put a token in the configuration file.
 
 ## Ask about your workspace
 
@@ -61,7 +61,9 @@ Give the agent a problem link, surface, or time range:
 - "Show the sessions affected by this problem and the release where it began."
 - "Compare the investigation's root cause with the supporting traces."
 
-The server exposes two tools. `search` discovers operations and their schemas. `execute` runs requests against those operations. Agents should inspect the current contract before constructing requests and check each returned HTTP status before using its body.
+## Tool reference
+
+The server exposes `search` to discover operations and their schemas, and `execute` to run them. Custom clients should check each response's HTTP status before using its body.
 
 The write-enabled endpoint can change data within your permissions. Ask for a specific change when you want one. An investigation does not require changing problem status or workspace settings.
 

@@ -1,0 +1,65 @@
+---
+title: "Consent"
+description: "Set browser capture permissions before startup and update them when visitors choose."
+icon: "/icons/ui/shield.svg"
+---
+
+For Next.js, Vite + React, and TanStack Start, consent controls browser analytics and replay. These settings do not control server telemetry.
+
+Without a `consent` option, the SDK runs with its configured defaults. To wait for a visitor's choice before starting analytics or replay, pass `false` to `init()`:
+
+```ts instrumentation-client.ts
+import { init } from "@interfere/next/instrumentation-client";
+
+await init({ consent: false });
+```
+
+For Vite + React and TanStack Start, import `init` from `@interfere/vite/init` in the browser entry point.
+
+Set this before React renders. Passing consent only to the provider leaves a gap between initialization and the first render.
+
+Consent describes what the visitor allows **right now**. The same values work in `init()`, the provider's `consent` prop, and `consent.set()`:
+
+| Value                                | What it allows               |
+| ------------------------------------ | ---------------------------- |
+| `false`                              | Neither analytics nor replay |
+| `true`                               | Both analytics and replay    |
+| `{ analytics: true, replay: false }` | Analytics only               |
+
+| Category    | What it covers                        |
+| ----------- | ------------------------------------- |
+| `analytics` | Page events, rage clicks, device info |
+| `replay`    | Session replay                        |
+
+## Update consent
+
+Import `useInterfere` from `@interfere/next/provider` or `@interfere/vite/provider`. Update the decision when the visitor accepts, declines, or changes their preferences:
+
+```tsx
+const { consent } = useInterfere();
+
+consent.set(true);
+```
+
+Use `consent.set(false)` to withdraw both permissions, or pass an object for separate choices:
+
+```tsx
+consent.set({ analytics: true, replay: false });
+```
+
+Each update replaces the previous decision. Omitted categories are allowed, so include both booleans when mapping choices from a consent platform such as c15t, CookieYes, or OneTrust.
+
+You can also keep the decision synchronized through the provider:
+
+```tsx
+<InterfereProvider consent={{ analytics: true, replay: false }}>{children}</InterfereProvider>
+```
+
+Omitting the provider's `consent` prop preserves the decision supplied to `init()` or updated at runtime. Calling `consent.set()` without a value removes consent restrictions; it does not record the visitor's acceptance.
+
+<Note>
+  Consent controls analytics and replay. It does not disable errors, logs, tracing, or session
+  storage, and granting consent does not enable plugins disabled in configuration.
+</Note>
+
+Configure [masking](/sdk/replay-privacy) separately for content that must not appear in recordings.

@@ -1,40 +1,37 @@
 ---
 title: "Cloudflare Workers"
-description: "Track Worker deployments and their versions."
+description: "Connect Worker deployments to their source commits."
 icon: "/icons/tech/cloudflare-workers/transparent.svg"
 ---
 
-Connecting Cloudflare lets Interfere follow your Worker deployments and tie each version to a release. Connect it from [**Settings → Integrations → Cloudflare**](https://interfere.com/~/*/settings/integrations/cloudflare).
+Connect Cloudflare to track Worker versions and associate deployments with releases.
 
-## What we use it for
+## Connect Cloudflare
 
-- List the Workers in your account.
-- Track new versions as they're deployed, so a problem lines up with the version that shipped it.
+Open [Cloudflare settings](https://interfere.com/~/*/settings/integrations/cloudflare) and authorize the connection. Map the Worker to its Interfere surface.
 
-## Permissions
+If your account can access multiple Cloudflare accounts, the integration connects the first accessible account. Check that the expected Workers appear before mapping a surface.
 
-Interfere authorizes through Cloudflare with read-only scopes:
+## Tag deployments with the commit
 
-| Scope                  | Why                                                                |
-| ---------------------- | ------------------------------------------------------------------ |
-| `memberships.read`     | List the Cloudflare accounts you can access.                       |
-| `workers-scripts.read` | List the Worker scripts in your account.                           |
-| `offline_access`       | Get a refresh token so the connection stays alive without re-auth. |
-
-## Tag your deploys with the commit SHA
-
-To tie each Worker version back to the code that shipped it, pass the commit SHA when you deploy:
+Pass the source commit SHA as the deployment tag:
 
 ```bash
-wrangler deploy --tag $GITHUB_SHA
+wrangler deploy --tag "$GITHUB_SHA"
 ```
 
-GitHub Actions sets `GITHUB_SHA` automatically.
+GitHub Actions provides `GITHUB_SHA`. In another CI system, supply its commit SHA instead.
 
-Interfere reads this tag from each Worker version and links it to its source commit. Use the raw commit SHA (7–40 hex characters); prefixed tags like `release-abc123` or `v1.2.3` are ignored.
+Use a raw commit SHA of 7 to 40 hexadecimal characters. Tags such as `release-abc123` and `v1.2.3` do not identify a source commit for Interfere.
 
-## Gotchas
+## Verify the release
 
-- **One account at a time.** If you belong to more than one Cloudflare account, Interfere connects the first one it can access.
-- **Reconnect if access lapses.** If the connection expires, reconnect it from [**Settings → Integrations**](https://interfere.com/~/*/settings/integrations).
-- **No tag, no source link.** Deploys without a `--tag` commit SHA still show up as releases, but they won't be tied to a commit.
+After deploying, open the surface's releases and check that the Worker version links to the expected commit. Untagged deployments still appear as releases, but have no source commit link.
+
+The deployment connection tracks versions. Install an SDK in your app separately to capture application telemetry.
+
+## Permissions and reconnection
+
+Interfere requests `memberships.read` to list accessible accounts and `workers-scripts.read` to list Workers. `offline_access` keeps the connection authenticated between visits.
+
+If access expires or is revoked, reconnect in [Integrations](https://interfere.com/~/*/settings/integrations).
