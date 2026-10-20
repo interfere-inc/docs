@@ -1,0 +1,9 @@
+---
+title: "IP ranges"
+description: "Use the published address feed when configuring firewall rules."
+icon: "/icons/ui/shield.svg"
+---
+
+Interfere publishes its owned IPv4 and IPv6 ranges at [interfere.com/ips.json](https://interfere.com/ips.json). The JSON contains a `prefixes` array with `ipv4Prefix` and `ipv6Prefix` entries in CIDR notation. Use this feed when maintaining firewall rules for Interfere-owned networks.
+
+These ranges identify Interfere-owned address space. They do not cover every request from Interfere services, including services running on shared infrastructure. Before restricting an integration to these ranges, confirm its source addresses with [support@interfere.com](mailto:support@interfere.com).

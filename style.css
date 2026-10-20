@@ -341,3 +341,7 @@ img[src*="/icons/ui/"] {
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
+
+:is(h2, h3, h4) .enterprise-badge {
+  margin-inline-start: 0.625rem;
+}
