@@ -19,14 +19,6 @@ Interfere publishes its owned address space in the [IP address feed](https://int
 | IPv4           | `76.164.206.0/23`  |
 | IPv6           | `2602:f30e::/40`   |
 
-Use the live feed as the source for automated firewall updates rather than copying this table into a permanent configuration.
-
-<Note>
-  Because services on shared cloud infrastructure can use addresses outside our owned ranges,
-  confirm a connection's source addresses with [support@interfere.com](mailto:support@interfere.com)
-  before restricting it to this list.
-</Note>
-
 ## JSON feed
 
 Fetch [interfere.com/ips.json](https://interfere.com/ips.json) for the current ranges, returned as a `prefixes` array with an `ipv4Prefix` or `ipv6Prefix` in CIDR notation for each entry.
