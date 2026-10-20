@@ -24,6 +24,7 @@
           "group": "Workspace",
           "pages": [
             "product/settings",
+            "product/data-residency",
             "integrations/api-keys",
             "product/audit-log",
             "product/security",
