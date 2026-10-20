@@ -2,3 +2,19 @@ INTERFERE, INC. █
 NEW YORK CITY, USA
 
 USER MANUAL
+
+Enterprise-only sections
+
+Import the shared badge in an MDX page and place it below the section heading:
+
+```mdx
+import { EnterpriseBadge } from "/components/EnterpriseBadge.tsx";
+
+## Network access
+
+<EnterpriseBadge />
+```
+
+The badge follows the app's Enterprise styling and switches with the docs theme.
+Use it only where the feature requires Enterprise. State availability separately
+for features that are not yet available.

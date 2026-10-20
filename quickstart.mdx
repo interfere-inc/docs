@@ -1,105 +1,67 @@
 ---
 title: "Quickstart"
-description: "Get Interfere running and events flowing in about five minutes."
+description: "Connect your first app and verify capture."
+icon: "/icons/ui/rocket.svg"
 ---
 
-Work through this checklist end to end and you'll have problems showing up in your dashboard, investigated for you.
+Create a workspace, install the SDK in your app, and check that Interfere receives events.
 
-<Steps>
-  <Step title="Create a workspace">
-    [Sign up](https://interfere.com/onboarding) and create a workspace. It's the home for your team and everything Interfere finds.
-  </Step>
-  <Step title="Create a surface">
-    A surface is one app you want Interfere to watch: a frontend, a backend, or a marketing site. [Create one](https://interfere.com/~/*/surfaces/create) and copy its keys into your environment:
+## Create a workspace
 
-    - `INTERFERE_PUBLIC_KEY`: used by the SDK to send telemetry. Safe to expose.
-    - `INTERFERE_API_KEY`: used to upload source maps in CI. Keep it server-side.
-  </Step>
-  <Step title="Install the SDK">
-    <Tabs>
-      <Tab title="With an AI agent">
-        Point your coding agent at the Interfere install prompt and it wires everything up. Run the command for your agent:
+Open [setup](https://interfere.com/onboarding). Choose a workspace name, URL slug, and company email domain.
 
-        <CodeGroup>
+The slug identifies your workspace in links and API requests. For `interfere.com/~/acme`, it is `acme`.
 
-        ```bash Claude Code
-        curl -sL https://interfere.com/prompts/onboarding/v8/onboarding-nextjs.md | claude -p "Add Interfere to this codebase"
-        ```
+New workspaces use **Unrestricted** [data residency](/product/data-residency). Storage and processing are not restricted to a specific region. Use your team's email domain so colleagues can join through your [workspace domain settings](/product/settings#workspace-domains).
 
-        ```bash Codex
-        codex -s workspace-write -a on-request "$(curl -sL https://interfere.com/prompts/onboarding/v8/onboarding-nextjs.md) Add Interfere to this codebase"
-        ```
+## Add your app
 
-        ```bash Cursor
-        cursor-agent --print --force "$(curl -sL https://interfere.com/prompts/onboarding/v8/onboarding-nextjs.md) Add Interfere to this codebase"
-        ```
+Create a surface for the app you want to monitor. Give separately deployed apps their own surfaces, such as a storefront and its backend API.
 
-        </CodeGroup>
+Choose the framework and copy the surface's public key. The SDK uses it to send telemetry. Copy the secret API key to your build environment for release registration and source maps.
 
-        On Vite, swap `onboarding-nextjs.md` for `onboarding-vite.md`. Want to read the prompt first? Open it directly:
+## Install the SDK
 
-        <CardGroup cols={2}>
-          <Card title="Next.js install prompt" icon="/icons/tech/nextjs/currentcolor.svg" href="https://interfere.com/prompts/onboarding/v8/onboarding-nextjs.md">
-            Covers Next.js, NestJS, and other Node backends.
-          </Card>
-          <Card title="Vite install prompt" icon="/icons/tech/vite/transparent.svg" href="https://interfere.com/prompts/onboarding/v8/onboarding-vite.md">
-            Covers Vite and React apps.
-          </Card>
-        </CardGroup>
+Follow one guide through its verification step:
 
-        You can also open **Ask AI** at the top of these docs and ask it to install Interfere in your project.
-      </Tab>
-      <Tab title="Manually">
-        Follow the guide for your stack:
+<CardGroup cols={2}>
+  <Card title="Next.js" icon="/icons/tech/nextjs/currentcolor.svg" href="/sdk/next-js">
+    App Router, browser capture, and server instrumentation.
+  </Card>
+  <Card title="Vite + React" icon="/icons/tech/vite/transparent.svg" href="/sdk/vite">
+    React apps built with Vite.
+  </Card>
+  <Card
+    title="TanStack Start"
+    icon="/icons/tech/tanstack/currentcolor.svg"
+    href="/sdk/tanstack-start"
+  >
+    Browser and server capture for Start.
+  </Card>
+  <Card title="NestJS" icon="/icons/tech/nestjs/transparent.svg" href="/sdk/nestjs">
+    Request errors and tracing in NestJS.
+  </Card>
+  <Card title="Node.js" icon="/icons/tech/nodejs/transparent.svg" href="/sdk/node">
+    Services, background workers, and scripts.
+  </Card>
+</CardGroup>
 
-        <CardGroup cols={3}>
-          <Card title="Next.js" icon="/icons/tech/nextjs/currentcolor.svg" href="/sdk/next-js">
-            App Router
-          </Card>
-          <Card title="Vite + React" icon="/icons/tech/vite/transparent.svg" href="/sdk/vite">
-            SPA or SSR
-          </Card>
-          <Card title="NestJS" icon="/icons/tech/nestjs/transparent.svg" href="/sdk/nestjs">
-            Backend
-          </Card>
-        </CardGroup>
-      </Tab>
-    </Tabs>
-  </Step>
-  <Step title="Connect your integrations">
-    Integrations give Interfere the context to investigate and a way to reach your team. From [**Settings → Integrations**](https://interfere.com/~/*/settings/integrations), connect:
+## Connect your code and deployment
 
-    - **GitHub** so a problem ties back to the commit that caused it.
-    - **Your deploy platform** (Vercel or Cloudflare) so problems line up with releases. On AWS, Fly, or your own servers, use the [CLI](/integrations/cli) instead.
-    - **Slack** to get problems where your team already works.
+Connect [GitHub](/integrations/github) and select the repository for your surface. This gives investigations access to the code behind an error.
 
-    See [all integrations](/integrations/overview).
-  </Step>
-  <Step title="Deploy">
-    Ship your app. Once it's running, events start flowing and your first problems appear in your [workspace](https://interfere.com/~/*), already grouped and triaged. Trigger an error to confirm the whole path end to end.
-  </Step>
-</Steps>
+Connect [Vercel](/integrations/vercel) or [Cloudflare Workers](/integrations/cloudflare-workers) if you deploy there, then map the project or Worker to your surface. For other hosts, the SDK build plugins publish [release metadata and source maps](/sdk/releases).
 
-## Not seeing events?
+## Verify events
 
-The SDK tells you what it's doing, so a quick check usually explains it.
+Build and deploy the app with its public key and an environment label such as `staging`. Run the test capture in your SDK guide, then open the surface in [Surfaces](https://interfere.com/~/*/surfaces).
 
-<AccordionGroup>
-  <Accordion title="Turn on debug logging">
-    Set `INTERFERE_DEBUG=1` to print lifecycle events at startup: when the SDK initializes, the release it resolved, and any exporter errors. It's the fastest way to see whether data is leaving your app.
-  </Accordion>
+The event chart should show incoming traffic. Setup's **Events** step completes when the first event arrives. If the chart stays empty, follow [No events arriving](/sdk/troubleshooting).
 
-  <Accordion title="Nothing in development">
-    The Next.js SDK stays quiet outside production so local noise doesn't reach your dashboard. To capture while testing, call `init({ enabled: true })` (on Vite, gate it with `import.meta.env.PROD`). See each SDK's FAQ.
-  </Accordion>
+Finish the remaining setup steps, including selecting a plan. The event chart confirms delivery; problems appear as Interfere detects and investigates issues.
 
-  <Accordion title='A "no release slug" warning'>
-    The collector needs a release to attach telemetry to. The Next.js and Vite plugins upload one during the build automatically. On a backend or a custom platform, run the [CLI](/integrations/cli) as a postbuild step (`interfere sourcemaps upload ./dist`) with `INTERFERE_API_KEY` set.
-  </Accordion>
+## Open your first investigation
 
-  <Accordion title="Telemetry blocked by an ad-blocker">
-    Some ad-blockers drop requests to telemetry endpoints. Set `apiHost` on the SDK to a subdomain of your own site — a CNAME to the target shown in your dashboard — so telemetry posts to your own origin. See the [Next.js](/sdk/next-js#custom-ingest-domain) or [Vite](/sdk/vite#custom-ingest-domain) SDK guides.
-  </Accordion>
-</AccordionGroup>
+Open the [Inbox](/product/inbox), select the surface and environment you just deployed, and open a detected problem. In **Timeline**, read the explanation. In **Findings**, open an occurrence and inspect its error and stack frames. For browser problems, open **Sessions** to replay the actions around the failure.
 
-Still stuck? Reach out at [support@interfere.com](mailto:support@interfere.com).
+Follow [Investigations](/product/problems) for a worked example showing how to check the explanation against a trace, a release, and an affected session.

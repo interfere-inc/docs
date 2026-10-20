@@ -1,0 +1,84 @@
+---
+title: "Capture configuration"
+description: "Set service names, environments, and browser capture options."
+icon: "/icons/ui/settings.svg"
+---
+
+This page configures browser capture in Next.js, Vite + React, and TanStack Start. For server processes, use the [Node.js options](/sdk/node#configuration) or [NestJS options](/sdk/nestjs#configuration).
+
+## Service names
+
+Give each process a stable service name, such as `storefront` or `checkout-worker`:
+
+<CodeGroup>
+
+```ts Next.js
+import { init } from "@interfere/next/instrument-client";
+
+init({ serviceName: "storefront" });
+```
+
+```ts Vite / TanStack Start
+import { init } from "@interfere/vite/init";
+
+init({ serviceName: "storefront" });
+```
+
+</CodeGroup>
+
+The surface public key selects the app receiving telemetry. The service name identifies the process within that telemetry.
+
+## Environments
+
+Set `INTERFERE_ENVIRONMENT` to your deployment label:
+
+```env
+INTERFERE_ENVIRONMENT=production
+```
+
+Next.js and Vite stamp the value into the build. It does not need a `NEXT_PUBLIC_` or `VITE_` prefix. Without an explicit value, the SDK falls back to `VERCEL_ENV`, then `NODE_ENV`, then `development`.
+
+Interfere filters local-like environments such as `development`, `local`, and `test` before ingestion. Use a deployment label such as `staging` for verification, or change environment filtering for the surface. See [No events arriving](/sdk/troubleshooting).
+
+## Capture features
+
+Configure features on the `InterfereProvider` you added during installation. Import it from `@interfere/next/provider` for Next.js or `@interfere/vite/provider` for Vite and TanStack Start. All features default to enabled, subject to [consent](/sdk/consent).
+
+| Plugin       | Capture                                   |
+| ------------ | ----------------------------------------- |
+| `errors`     | Uncaught browser errors                   |
+| `logs`       | Console output                            |
+| `device`     | Browser and device information            |
+| `pageEvents` | Page views and clicks                     |
+| `rageClick`  | Repeated clicks that indicate frustration |
+| `replay`     | Session recordings                        |
+
+For example, disable replay and page events:
+
+```tsx
+<InterfereProvider plugins={{ replay: false, pageEvents: false }}>{children}</InterfereProvider>
+```
+
+Set `init({ tracing: false })` to omit browser tracing. Set `errorBoundary={false}` on the provider if you already report React render errors through another boundary.
+
+## Custom ingest domain
+
+Configure a subdomain for telemetry if requests to the default endpoint are blocked by browser extensions. Add the CNAME using the target shown in your dashboard, then set `apiHost`.
+
+For Next.js:
+
+```ts next.config.ts
+import { withInterfere } from "@interfere/next/config";
+
+export default withInterfere({
+  interfere: { apiHost: "https://in.acme.com" },
+});
+```
+
+For Vite, pass `apiHost` to the build plugin:
+
+```ts
+interfere({ apiHost: "https://in.acme.com" });
+```
+
+Interfere provisions TLS for the domain. Telemetry requests do not send cookies.

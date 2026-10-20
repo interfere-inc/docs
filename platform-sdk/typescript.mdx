@@ -1,0 +1,89 @@
+---
+title: "TypeScript"
+description: "Call the public Interfere API from JavaScript or TypeScript."
+icon: "/icons/tech/typescript/original.svg"
+---
+
+`@interfere/javascript` is the typed client for the Interfere API. Use it to register releases, upload source maps, and build custom API workflows.
+
+To capture errors and sessions from an app, install its [framework SDK](/quickstart#install-the-sdk).
+
+## Install
+
+<CodeGroup>
+
+```bash npm
+npm install @interfere/javascript
+```
+
+```bash pnpm
+pnpm add @interfere/javascript
+```
+
+```bash Yarn
+yarn add @interfere/javascript
+```
+
+```bash Bun
+bun add @interfere/javascript
+```
+
+</CodeGroup>
+
+The package supports ESM and CommonJS and includes TypeScript declarations. Use a runtime with native Fetch and FormData, such as Node.js 18 or later.
+
+## Make a request
+
+Set `INTERFERE_API_KEY` to a surface secret key with `release:write`, then run this from your server or build environment:
+
+```ts
+import { InterfereClient } from "@interfere/javascript";
+
+const token = process.env.INTERFERE_API_KEY;
+if (!token) throw new Error("Set INTERFERE_API_KEY");
+
+const client = new InterfereClient({
+  baseUrl: "https://api.interfere.com",
+  apiKey: { token },
+});
+
+const config = await client.releases.getReleasesConfig();
+console.log(config);
+```
+
+The response identifies the release configuration associated with the credential. Keep secret keys out of browser bundles.
+
+## Authentication options
+
+Use `apiKey: { token }` for bearer authentication or `apiKeyHeader: { apiKey }` to send a secret key through `x-api-key`.
+
+For an operation accepting a public ingestion key, use `publicKeyHeader: { apiKey }`. Check the operation's authentication requirements in the API reference. See [API keys](/integrations/api-keys) for the different credential types.
+
+## Register releases and upload source maps
+
+Next.js and Vite build plugins handle releases automatically. For another build system, follow [Releases and source maps](/sdk/releases#custom-build-pipelines).
+
+## Handle errors
+
+API failures throw `InterfereError`. Inspect the status before deciding whether to retry:
+
+```ts
+import { InterfereError } from "@interfere/javascript";
+
+try {
+  await client.releases.getReleasesConfig();
+} catch (error) {
+  if (error instanceof InterfereError) {
+    console.error("Interfere request failed", error.statusCode);
+  }
+  throw error;
+}
+```
+
+## Timeouts and retries
+
+Set `timeoutInSeconds` and `maxRetries` on the client or an individual request. Pass `abortSignal` in request options to cancel it.
+
+Eligible requests retry twice by default for HTTP `408`, `429`, and `5xx` responses and respect `Retry-After`. Network failures and other HTTP statuses are not retried.
+
+For a write whose result is uncertain, inspect the resource before trying again. Set `maxRetries: 0` when your workflow needs to make that decision itself.

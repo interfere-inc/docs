@@ -1,0 +1,33 @@
+---
+title: "Data residency"
+description: "Understand where workspace data can be stored and processed."
+icon: "/icons/ui/shield.svg"
+---
+
+import { EnterpriseBadge } from "/components/EnterpriseBadge.tsx";
+
+Data residency determines whether your workspace's data is restricted to a geographic region. Check **Data residency** in [Workspace settings](https://interfere.com/~/*/settings/workspace) to see your workspace's policy.
+
+## Unrestricted
+
+All workspaces currently use **Unrestricted** residency. Interfere may store and process your workspace's data in different regions, and those locations may change. Unrestricted does not guarantee that data stays in the United States or the European Union.
+
+Pro workspaces use unrestricted residency. An Enterprise subscription alone does not restrict your workspace to a region.
+
+## Regional residency
+
+<EnterpriseBadge />
+
+US and EU region locking is planned for Enterprise workspaces. It is not currently available, and you cannot select or change a residency region during setup or in workspace settings.
+
+If your team needs regional residency, contact [support@interfere.com](mailto:support@interfere.com) with the required region and the data you need covered. Confirm availability and scope with us before sending data that must remain in a specific region.
+
+## Storage and processing
+
+A residency requirement can apply to stored data, the processing of that data, or both. For Interfere, that can include telemetry, session replay, source maps, and investigation data, including AI processing. The unrestricted policy does not provide a geographic restriction for these activities.
+
+The region in an API key identifies where requests are routed. It does not establish a residency guarantee. Keep using the keys and SDK configuration provided for your workspace; changing a key prefix does not move data or enable region locking.
+
+## Related settings
+
+[Network access](/product/security#network-access) controls which networks can reach your workspace. It does not control where Interfere stores or processes data. For security documentation and reports, see [Compliance](/product/compliance).

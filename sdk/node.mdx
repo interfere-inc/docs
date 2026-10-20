@@ -1,0 +1,105 @@
+---
+title: "Node.js"
+description: "Capture server errors and custom spans in Node.js services and workers."
+icon: "/icons/tech/nodejs/transparent.svg"
+---
+
+`@interfere/node` captures errors and custom spans from Node.js processes. For NestJS or Next.js, use the [NestJS](/sdk/nestjs) or [Next.js](/sdk/next-js) integration.
+
+## Install
+
+<CodeGroup>
+
+```bash npm
+npm install @interfere/node
+```
+
+```bash pnpm
+pnpm add @interfere/node
+```
+
+```bash Yarn
+yarn add @interfere/node
+```
+
+```bash Bun
+bun add @interfere/node
+```
+
+</CodeGroup>
+
+Set the public key from your [surface](/product/surfaces) and the deployment environment:
+
+```env
+INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
+INTERFERE_ENVIRONMENT=staging
+```
+
+Use `production` for production deployments.
+
+## Initialize
+
+Call `init()` before the work you want to capture:
+
+```ts
+import { init } from "@interfere/node";
+
+init({
+  serviceName: "checkout-worker",
+  environment: process.env.INTERFERE_ENVIRONMENT,
+});
+```
+
+Without a public key, the SDK logs a warning and stays disabled.
+
+## Verify capture
+
+Run this after `init()` in a staging process:
+
+```ts
+import { captureError, flush } from "@interfere/node";
+
+captureError(new Error("Interfere setup test"));
+await flush();
+```
+
+Check the surface's event chart for incoming traffic, then remove the test capture. See [No events arriving](/sdk/troubleshooting) if the chart stays empty.
+
+## Capture handled errors and spans
+
+```ts
+import { captureError, withSpan } from "@interfere/node";
+
+try {
+  await withSpan("checkout.fulfill", () => fulfill(order));
+} catch (error) {
+  captureError(error);
+  throw error;
+}
+```
+
+The SDK installs handlers for uncaught exceptions and unhandled rejections by default. Set `captureUncaughtException: false` or `captureUnhandledRejection: false` when your application owns those handlers. The uncaught-exception handler flushes telemetry and exits the process.
+
+## Configuration
+
+| Option             | Purpose                                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------------------------------- |
+| `serviceName`      | Identify the process. Defaults to `OTEL_SERVICE_NAME`, then `node-app`.                                 |
+| `serviceNamespace` | Group related services.                                                                                 |
+| `environment`      | Set the deployment environment. Otherwise reads `INTERFERE_ENVIRONMENT`, `VERCEL_ENV`, then `NODE_ENV`. |
+| `debug`            | Print initialization and exporter diagnostics. Also enabled with `INTERFERE_DEBUG=1`.                   |
+
+## Releases
+
+Use the [release workflow](/sdk/releases#custom-build-pipelines) to publish release metadata and source maps from a custom build pipeline. Build and runtime must use the same commit SHA. Set `INTERFERE_SOURCE_ID` in both when git metadata is unavailable.
+
+## Shutdown
+
+For a short-lived process, await `flush()` before it exits. Use `close()` when shutting down the SDK and its provider:
+
+```ts
+import { close, flush } from "@interfere/node";
+
+await flush();
+await close();
+```

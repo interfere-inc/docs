@@ -5,61 +5,86 @@
       "tab": "Documentation",
       "groups": [
         {
-          "group": "Getting Started",
+          "group": "Getting started",
           "expanded": true,
+          "pages": ["index", "quickstart"]
+        },
+        {
+          "group": "SDKs",
+          "pages": ["sdk/next-js", "sdk/vite", "sdk/tanstack-start", "sdk/nestjs", "sdk/node"]
+        },
+        {
+          "group": "SDK configuration",
           "pages": [
-            "index",
-            "quickstart",
-            "onboarding",
-            "concepts",
-            "power-user"
+            "sdk/configuration",
+            "sdk/identity",
+            "sdk/consent",
+            "sdk/replay-privacy",
+            "sdk/error-capture",
+            "sdk/releases",
+            "sdk/opentelemetry",
+            "sdk/troubleshooting"
           ]
         },
         {
           "group": "Product",
           "pages": [
-            "product/activity",
             "product/inbox",
             "product/problems",
+            "product/session-replay",
             "product/users",
-            "product/surfaces",
-            "product/settings",
-            "product/security",
-            "product/compliance"
-          ]
-        },
-        {
-          "group": "SDKs",
-          "pages": [
-            "sdk/next-js",
-            "sdk/vite",
-            "sdk/nestjs"
+            "product/companies",
+            "product/surfaces"
           ]
         },
         {
           "group": "Integrations",
           "pages": [
-            "integrations/overview",
             "integrations/github",
             "integrations/vercel",
             "integrations/cloudflare-workers",
-            "integrations/slack",
-            "integrations/cli"
+            "integrations/slack"
+          ]
+        },
+        {
+          "group": "Developer tools",
+          "pages": [
+            "integrations/plugins",
+            "integrations/mcp",
+            "integrations/cli",
+            "integrations/terraform"
+          ]
+        },
+        {
+          "group": "Workspace",
+          "pages": [
+            "product/settings",
+            "product/data-residency",
+            "product/members",
+            "product/notifications",
+            "integrations/api-keys",
+            "product/security",
+            "product/audit-log",
+            "product/compliance"
           ]
         }
       ]
     },
     {
-      "tab": "Reference",
-      "versions": [
+      "tab": "API",
+      "icon": "/icons/ui/code.svg",
+      "groups": [
         {
-          "version": "Version 3",
-          "groups": [
-            {
-              "group": "Platform API",
-              "openapi": "https://api.interfere.com/openapi.json"
-            }
-          ]
+          "group": "Platform SDK",
+          "pages": ["platform-sdk/typescript"]
+        },
+        {
+          "group": "Using the API",
+          "pages": ["api-reference/authentication"]
+        },
+        {
+          "group": "Public API",
+          "openapi": "https://api.interfere.com/openapi.json"
         }
       ]
     }

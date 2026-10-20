@@ -1,22 +1,59 @@
 ---
 title: "Inbox"
-icon: "inbox"
-description: "Every problem in your product, in one place to triage and work."
+description: "Triage problems by impact, environment, and owner."
+icon: "/icons/ui/inbox.svg"
 ---
 
-Interfere fills your [Inbox](https://interfere.com/~/*) for you. You never open a ticket here. Every [problem](/concepts#problem) surfaces on its own as Interfere processes your events, already grouped across your users and surfaces and already investigated. Your work starts at triage, not at filing. Because problems are de-duplicated, the Inbox stays a short list of real issues instead of a wall of alerts.
+The [Inbox](https://interfere.com/~/*) groups related occurrences into problems. Use it to decide what needs attention and who should work on it.
 
-![Inbox board showing problems grouped by status](/images/inbox.png)
+<Frame caption="Review related occurrences as problems, then assign and prioritize the work.">
+  <div className="screenshot-stage">
+    <div className="screenshot-crop screenshot-crop--inbox">
+      <img
+        src="/images/inbox-list.png"
+        alt="Two problems grouped under Investigating in the Inbox list."
+        noZoom
+      />
+    </div>
+  </div>
+</Frame>
 
-## Board and list
+## Find the problems to work on
 
-- **Board.** A column per status, so you can see what's under investigation, what's active, and what's resolved at a glance, and move a problem along as it changes.
-- **List.** A denser, sortable view for scanning and filtering a lot of problems at once.
+Start with an environment filter, such as **production**, then narrow by surface, status, priority, or assignee. Use the problem ID filter to return to specific problems.
 
-## Statuses
+For example, filter to your checkout surface and production environment, then sort by affected users to review the problems with the widest impact first.
 
-Every problem has a status that tells you where it is and whether it needs you, from "under investigation" while Interfere works out the cause, to "needs attention" when it wants you to confirm a likely regression. See [Statuses](/concepts#statuses) for the full set and your move on each.
+Open **Display** to switch between board and list views and sort by priority, affected users, first detected, or last detected. You can also show or hide failed investigations.
 
-## Act in bulk
+Press <kbd>Alt</kbd> <kbd>Shift</kbd> <kbd>F</kbd> to clear filters. On macOS, use <kbd>Option</kbd> for Alt.
 
-Select several problems from the list to handle them together. You can assign them, set their priority, or subscribe in one action instead of opening each one.
+## Assign and prioritize
+
+Select a problem and press <kbd>A</kbd> to assign it or <kbd>P</kbd> to set its priority. Select several problems to apply the same change together.
+
+| Shortcut           | Action                         |
+| ------------------ | ------------------------------ |
+| Arrow keys         | Move through problems          |
+| Shift + arrow keys | Extend or reduce the selection |
+| ⌘ A or Ctrl A      | Select all filtered problems   |
+| Escape             | Clear the selection            |
+| A                  | Assign the selection           |
+| P                  | Set priority                   |
+| S                  | Change your subscription       |
+
+These shortcuts apply outside text fields.
+
+## Open an investigation
+
+Open a problem to read its explanation and inspect the [supporting evidence](/product/problems). A **Failed** investigation needs review; it does not mean the issue is fixed.
+
+Subscribe with <kbd>S</kbd> to follow comments and status changes. Choose how you receive those updates in [Notifications](/product/notifications).
+
+## Workspace activity
+
+Open **Activity** for a chronological view of new problems, regressions, recoveries, surfaces coming online, and teammates joining. Select a problem event to open its investigation.
+
+For example, after deploying a fix, check for a recovery event and open the problem to review subsequent occurrences. Use the Inbox when you need to filter or assign several problems.
+
+Administrative changes, such as a role or credential change, appear in the [Audit log](/product/audit-log). Choose how updates reach you in [Notifications](/product/notifications).

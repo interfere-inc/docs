@@ -1,0 +1,14 @@
+{
+  "inbox-list.png": {
+    "source": "https://www.figma.com/design/1dyn8DqWkjxeXPtBtS0Wxi/Dashboard",
+    "frame": "List view",
+    "exported": "2026-10-01",
+    "crop": [248, 48, 780, 116]
+  },
+  "session-events.png": {
+    "source": "https://www.figma.com/design/1dyn8DqWkjxeXPtBtS0Wxi/Dashboard?node-id=8374-499368",
+    "frame": "Session replay",
+    "exported": "2026-10-01",
+    "crop": [60, 204, 400, 142]
+  }
+}

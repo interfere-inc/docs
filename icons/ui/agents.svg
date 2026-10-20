@@ -1,0 +1,31 @@
+<svg
+      aria-hidden="true"
+      
+      fill="none"
+      height="16"
+      viewBox="0 0 24 24"
+      width="16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M11.9995 10.5C11.9995 10.7761 11.7748 11.0029 11.5004 10.9726C9.24999 10.7243 7.49955 8.81656 7.49955 6.5C7.49955 4.18345 9.24999 2.27574 11.5004 2.02738C11.7748 1.99709 11.9995 2.22386 11.9995 2.5V10.5Z"
+        fill="currentColor"
+      />
+      <path
+        d="M11.9995 20.5C11.9995 20.7761 11.7757 21 11.4995 21H6.54955C5.03077 21 3.75676 19.7412 4.20397 18.2898C5.17136 15.1501 7.81555 12.7162 11.4994 12.5137C11.7751 12.4985 11.9995 12.7239 11.9995 13V20.5Z"
+        fill="currentColor"
+      />
+      <circle cx="14.0016" cy="3.24961" fill="currentColor" r="0.9" />
+      <circle cx="14.0016" cy="6.49961" fill="currentColor" r="0.9" />
+      <circle cx="17" cy="5" fill="currentColor" r="0.75" />
+      <circle cx="17" cy="8" fill="currentColor" r="0.75" />
+      <circle cx="14.0016" cy="9.74961" fill="currentColor" r="0.9" />
+      <circle cx="14.0016" cy="12.9996" fill="currentColor" r="0.9" />
+      <circle cx="17" cy="13" fill="currentColor" r="0.75" />
+      <circle cx="20" cy="16.5" fill="currentColor" r="0.75" />
+      <circle cx="14.0016" cy="16.4996" fill="currentColor" r="0.9" />
+      <circle cx="17.0016" cy="16.4996" fill="currentColor" r="0.9" />
+      <circle cx="14.0016" cy="19.9996" fill="currentColor" r="0.9" />
+      <circle cx="17.0016" cy="19.9996" fill="currentColor" r="0.9" />
+      <circle cx="20" cy="20" fill="currentColor" r="0.75" />
+    </svg>
