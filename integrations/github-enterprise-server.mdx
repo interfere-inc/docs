@@ -1,0 +1,38 @@
+---
+title: "GitHub Enterprise Server"
+description: "Connect your enterprise GitHub host to investigations and releases."
+icon: "/icons/tech/github/currentcolor.svg"
+---
+
+<Frame>
+  <img
+    src="/images/connections/github-1-light.webp"
+    alt="A GitHub pull request referenced in an Interfere investigation."
+    className="block dark:hidden"
+    width="1280"
+    height="672"
+    noZoom
+  />
+  <img
+    src="/images/connections/github-1-dark.webp"
+    alt="A GitHub pull request referenced in an Interfere investigation."
+    className="hidden dark:block"
+    width="1280"
+    height="672"
+    noZoom
+  />
+</Frame>
+
+Connect your self-hosted GitHub Enterprise Server to give investigations access to source code and release context.
+
+## Register the connection
+
+A site administrator registers Interfere on your instance once, then installs it as a GitHub App. Open [Enterprise Server settings](https://interfere.com/~/*/settings/integrations/ghe_server) and enter your server host. Each server needs its own app registration.
+
+The server's API must be reachable by Interfere at `https://your-host/api/v3`. If your server is network-restricted, arrange access before completing the connection. See [Infrastructure](/product/infrastructure) for published network information and its scope.
+
+## Connect repositories
+
+Install the app and choose the repositories it can read. Link each repository to the corresponding [surface](/product/surfaces), selecting the app's subdirectory for a monorepo.
+
+After deploying with the SDK build plugin, check the surface's [release](/product/surfaces/releases) for the expected commit.

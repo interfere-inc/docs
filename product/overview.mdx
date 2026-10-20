@@ -5,15 +5,40 @@ description: "Understand what a problem contains and how your team investigates 
 
 Interfere collects errors, traces, logs, and session replays from your apps and uses them to investigate problems. A problem brings the investigation and its supporting evidence into one place, alongside the users, companies, and releases involved.
 
+<div className="diagram-scroll diagram-scroll--linear">
+
 ```mermaid actions={true}
-flowchart LR
+---
+config:
+  fontFamily: BerkeleyMono, monospace
+  themeVariables:
+    fontSize: 12px
+  themeCSS: |
+    .label { font-family: BerkeleyMono, monospace; font-size: 12px; font-weight: 500; }
+    .diagram-node { display: inline-flex; align-items: center; gap: 12px; box-sizing: border-box; width: 240px; min-height: 40px; padding-inline-end: 8px; }
+    .diagram-icon { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; width: 40px; height: 40px; flex: 0 0 40px; }
+    .diagram-icon img { display: block; width: 20px !important; height: 20px !important; margin: 0; }
+    .diagram-name { max-width: 160px; white-space: normal; text-align: start; line-height: 18px; }
+    .edgeLabel p { padding: 3px 7px; border: 1px solid transparent; }
+  flowchart:
+    curve: linear
+    wrappingWidth: 240
+    useMaxWidth: false
+    padding: 5
+    nodeSpacing: 48
+    rankSpacing: 72
+    diagramPadding: 24
+---
+flowchart TB
   accTitle: From application evidence to a problem
   accDescr: Application errors, traces, logs, and sessions provide evidence for findings and investigations. Your team reviews the problem and follows recovery.
-  App[Your app] --> Evidence[Errors, traces, logs and sessions]
-  Evidence --> Investigation[Findings and investigation]
-  Investigation --> Problem[Problem in Inbox]
-  Problem --> Team[Review, fix and follow recovery]
+  App["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/layers.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Your app</span></span>"] --> Evidence["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/observability.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Errors, traces, logs and sessions</span></span>"]
+  Evidence --> Investigation["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/agents.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Findings and investigation</span></span>"]
+  Investigation --> Problem["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/inbox.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Problem in Inbox</span></span>"]
+  Problem --> Team["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/shield-check.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Review, fix and follow recovery</span></span>"]
 ```
+
+</div>
 
 ## From events to a problem
 

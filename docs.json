@@ -77,10 +77,6 @@
       "destination": "/product/inbox"
     },
     {
-      "source": "/integrations/overview",
-      "destination": "/product/settings"
-    },
-    {
       "source": "/onboarding",
       "destination": "/quickstart"
     },
@@ -95,6 +91,10 @@
     {
       "source": "/product/compliance",
       "destination": "https://interfere.com/security"
+    },
+    {
+      "source": "/product/ip-ranges",
+      "destination": "/product/infrastructure"
     }
   ],
   "interaction": {

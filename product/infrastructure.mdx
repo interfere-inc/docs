@@ -1,0 +1,30 @@
+---
+title: "Infrastructure"
+description: "Find Interfere's ASN, public IP ranges, and machine-readable network information."
+---
+
+Use this information when reviewing traffic from Interfere or configuring your network's firewall rules. To restrict who can access your Interfere workspace, see [Network access](/product/network-access).
+
+## Autonomous system
+
+Interfere operates [AS402940](https://radar.cloudflare.com/as402940), the autonomous system number that identifies our network in Internet routing. Use an ASN to identify the operator, or an IP address or CIDR range to identify specific addresses within its network.
+
+## Public IP addresses
+
+Interfere publishes its owned address space in the [IP address feed](https://interfere.com/ips.json).
+
+| Address family | CIDR range         |
+| -------------- | ------------------ |
+| IPv4           | `198.183.192.0/23` |
+| IPv4           | `76.164.206.0/23`  |
+| IPv6           | `2602:f30e::/40`   |
+
+## JSON feed
+
+Fetch [interfere.com/ips.json](https://interfere.com/ips.json) for the current ranges, returned as a `prefixes` array with an `ipv4Prefix` or `ipv6Prefix` in CIDR notation for each entry.
+
+Use `/ips.json` for new integrations; the older [interfere.com/ip.json](https://interfere.com/ip.json) URL redirects there.
+
+## Automated requests
+
+[interfere.com/bot](https://interfere.com/bot) publishes Interfere's automated monitoring and investigation agent identity, including its user agent and links to the IP feed and request-signature directory.

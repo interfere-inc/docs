@@ -1,7 +1,27 @@
 ---
 title: "GitHub"
 description: "Connect source code to investigations and releases."
+icon: "/icons/tech/github/currentcolor.svg"
 ---
+
+<Frame>
+  <img
+    src="/images/connections/github-1-light.webp"
+    alt="A GitHub pull request referenced in an Interfere investigation."
+    className="block dark:hidden"
+    width="1280"
+    height="672"
+    noZoom
+  />
+  <img
+    src="/images/connections/github-1-dark.webp"
+    alt="A GitHub pull request referenced in an Interfere investigation."
+    className="hidden dark:block"
+    width="1280"
+    height="672"
+    noZoom
+  />
+</Frame>
 
 Connect GitHub so Interfere can reference the files and commit behind an error. The integration supports GitHub.com, Enterprise Cloud, and Enterprise Server.
 
@@ -21,13 +41,11 @@ The connection cannot push code or open pull requests. To include another reposi
 
 ## GitHub Enterprise Cloud
 
-For a `*.ghe.com` host, open [Enterprise Cloud settings](https://interfere.com/~/*/settings/integrations/ghe_cloud) and enter your host, such as `acme.ghe.com`. Complete app registration, then install it and select repositories.
+For a `*.ghe.com` host, follow [GitHub Enterprise Cloud](/integrations/github-enterprise-cloud). Enterprises hosted on `github.com` use the GitHub connection described above.
 
 ## GitHub Enterprise Server
 
-Open [Enterprise Server settings](https://interfere.com/~/*/settings/integrations/ghe_server) and enter the server host. Each server needs its own app registration.
-
-The server's API must be reachable by Interfere at `https://your-host/api/v3`. If it is network-restricted, arrange access before completing the connection.
+For a self-hosted instance, follow [GitHub Enterprise Server](/integrations/github-enterprise-server).
 
 ## A repository is missing
 

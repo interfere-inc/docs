@@ -20,22 +20,42 @@ Manage who can sign in, how teammates join, and which networks can reach your wo
 
 ## Authentication and provisioning
 
-SSO authenticates a person through your identity provider. Directory sync keeps workspace membership and groups aligned with that provider. Configure each for the job you need it to do.
+SSO lets members sign in through your identity provider, while directory sync keeps their workspace membership and groups aligned with it. You can configure either or both, depending on how your team manages access.
+
+<div className="diagram-scroll">
 
 ```mermaid actions={true}
-flowchart LR
+---
+config:
+  fontFamily: BerkeleyMono, monospace
+  themeVariables:
+    fontSize: 12px
+  themeCSS: |
+    .label { font-family: BerkeleyMono, monospace; font-size: 12px; font-weight: 500; }
+    .diagram-node { display: inline-flex; align-items: center; gap: 12px; box-sizing: border-box; width: 240px; min-height: 40px; padding-inline-end: 8px; }
+    .diagram-icon { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; width: 40px; height: 40px; flex: 0 0 40px; }
+    .diagram-icon img { display: block; width: 20px !important; height: 20px !important; margin: 0; }
+    .diagram-name { max-width: 160px; white-space: normal; text-align: start; line-height: 18px; }
+    .edgeLabel p { padding: 3px 7px; border: 1px solid transparent; }
+  flowchart:
+    curve: linear
+    wrappingWidth: 240
+    useMaxWidth: false
+    padding: 5
+    nodeSpacing: 48
+    rankSpacing: 72
+    diagramPadding: 24
+---
+flowchart TB
   accTitle: Authentication and provisioning
   accDescr: The identity provider authenticates sign-ins through SSO and synchronizes members and groups through SCIM.
-  IdP[Identity provider] -->|SSO| SignIn[Member sign-in]
-  IdP -->|SCIM| Directory[Members and groups]
-  SignIn --> Workspace[Workspace access]
+  IdP["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/shield.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Identity provider</span></span>"] -->|SSO| SignIn["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/key.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Member sign-in</span></span>"]
+  IdP -->|SCIM| Directory["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/users.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Members and groups</span></span>"]
+  SignIn --> Workspace["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/workspace.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Workspace access</span></span>"]
   Directory --> Workspace
 ```
 
-<Info>
-  Single sign-on, directory sync, verified domains, and network allowlisting require Enterprise.
-  Members also need the relevant workspace permissions to change these settings.
-</Info>
+</div>
 
 ## Sign in
 
@@ -53,8 +73,8 @@ Assign Owner, Admin, or Member access in [Members and roles](/product/members). 
 
 Allow only approved networks to reach the dashboard and API. Follow [Network access](/product/network-access) for IP, CIDR, and ASN rules.
 
-## IP ranges
+## Infrastructure
 
-[Published IP ranges](/product/ip-ranges) describe Interfere-owned address space for your firewall configuration. They are separate from the Enterprise allowlist that controls access to your workspace.
+[Infrastructure](/product/infrastructure) describes Interfere-owned address space for your firewall configuration. These addresses are separate from the Enterprise allowlist that controls access to your workspace.
 
 For reports and certifications, visit [Interfere security](https://interfere.com/security).
