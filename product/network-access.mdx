@@ -17,16 +17,43 @@ If a connection is blocked, connect through an allowed company network or VPN. A
 
 ## How rules affect access
 
+<div className="diagram-scroll">
+
 ```mermaid actions={true}
-flowchart LR
+---
+config:
+  fontFamily: BerkeleyMono, monospace
+  themeVariables:
+    fontSize: 12px
+  themeCSS: |
+    .label { font-family: BerkeleyMono, monospace; font-size: 12px; font-weight: 500; }
+    .diagram-node { display: inline-flex; align-items: center; gap: 12px; box-sizing: border-box; width: 240px; min-height: 40px; padding-inline-end: 8px; }
+    .diagram-icon { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; width: 40px; height: 40px; flex: 0 0 40px; }
+    .diagram-icon img { display: block; width: 20px !important; height: 20px !important; margin: 0; }
+    .diagram-name { max-width: 160px; white-space: normal; text-align: start; line-height: 18px; }
+    .edgeLabel p { padding: 3px 7px; border: 1px solid transparent; }
+  flowchart:
+    curve: linear
+    wrappingWidth: 240
+    useMaxWidth: false
+    padding: 5
+    nodeSpacing: 48
+    rankSpacing: 72
+    diagramPadding: 24
+---
+flowchart TB
   accTitle: Network allowlist decision
   accDescr: Without rules there is no network restriction. With rules, a request must match an allowed network. Member authentication and permissions still apply.
-  Request[Incoming request] --> Rules{Rules configured?}
-  Rules -->|No| Auth[Check member access]
-  Rules -->|Yes| Match{Allowed network?}
-  Match -->|Yes| Auth
-  Match -->|No| Block[Access blocked]
+  Request["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/connections.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Incoming request</span></span>"]
+  Allowed["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/list.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>No rules or<br/>a matching rule?</span></span>"]
+  Auth["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/key.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Check member access</span></span>"]
+  Block["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/shield.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Access blocked</span></span>"]
+  Request --> Allowed
+  Allowed -->|Yes| Auth
+  Allowed -->|No| Block
 ```
+
+</div>
 
 <Warning>
   If you don't manage the autonomous system (AS) associated with your IP addresses, use a specific

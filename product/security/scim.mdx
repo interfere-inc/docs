@@ -15,14 +15,39 @@ Contact [support@interfere.com](mailto:support@interfere.com) with your workspac
 
 With permission to manage workspace authentication, you can enable or disable each directory here and see how many groups an enabled directory maps to the workspace.
 
+<div className="diagram-scroll">
+
 ```mermaid actions={true}
-flowchart LR
+---
+config:
+  fontFamily: BerkeleyMono, monospace
+  themeVariables:
+    fontSize: 12px
+  themeCSS: |
+    .label { font-family: BerkeleyMono, monospace; font-size: 12px; font-weight: 500; }
+    .diagram-node { display: inline-flex; align-items: center; gap: 12px; box-sizing: border-box; width: 240px; min-height: 40px; padding-inline-end: 8px; }
+    .diagram-icon { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; width: 40px; height: 40px; flex: 0 0 40px; }
+    .diagram-icon img { display: block; width: 20px !important; height: 20px !important; margin: 0; }
+    .diagram-name { max-width: 160px; white-space: normal; text-align: start; line-height: 18px; }
+    .edgeLabel p { padding: 3px 7px; border: 1px solid transparent; }
+  flowchart:
+    curve: linear
+    wrappingWidth: 240
+    useMaxWidth: false
+    padding: 5
+    nodeSpacing: 48
+    rankSpacing: 72
+    diagramPadding: 24
+---
+flowchart TB
   accTitle: Directory synchronization
   accDescr: Your identity provider sends user and group changes through SCIM to update workspace membership and mapped groups.
-  Provider[Provider users and groups] -->|SCIM changes| Directory[Connected directory]
-  Directory --> Members[Workspace members]
-  Directory --> Groups[Mapped groups]
+  Provider["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/users.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Provider users and groups</span></span>"] -->|SCIM changes| Directory["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/sync.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Connected directory</span></span>"]
+  Directory --> Members["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/team.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Workspace members</span></span>"]
+  Directory --> Groups["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/users.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Mapped groups</span></span>"]
 ```
+
+</div>
 
 ## Check provisioning
 

@@ -359,7 +359,8 @@ img[src*="/icons/ui/"] {
 }
 
 [data-component-name="mermaid-container"] [data-component-name="mermaid-controls-wrapper"] {
-  position: static;
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
@@ -370,4 +371,163 @@ img[src*="/icons/ui/"] {
 
 [data-component-name="mermaid-controls-wrapper"] > [aria-hidden="true"] {
   display: none;
+}
+
+[data-component-name="mermaid-container"] {
+  --diagram-card: #f9f9f9;
+  --diagram-border: #d9d9d9;
+  --diagram-line: #d9d9d9;
+  --diagram-text: #202020;
+  --diagram-muted: #646464;
+  --diagram-page: #ffffff;
+  box-sizing: border-box;
+  overflow-x: auto;
+  padding: 16px;
+  border: 1px solid var(--diagram-border);
+  border-radius: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--diagram-border) transparent;
+}
+
+.dark [data-component-name="mermaid-container"] {
+  --diagram-card: #191919;
+  --diagram-border: #333333;
+  --diagram-line: #3a3a3a;
+  --diagram-text: #eeeeee;
+  --diagram-muted: #b4b4b4;
+  --diagram-page: #111111;
+}
+
+[data-component-name="mermaid-container"] .mermaid .label,
+[data-component-name="mermaid-container"] .mermaid text {
+  font-family: "BerkeleyMono", ui-monospace, monospace !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}
+
+[data-component-name="mermaid-container"] .mermaid .label,
+[data-component-name="mermaid-container"] .mermaid .label span,
+[data-component-name="mermaid-container"] .mermaid text {
+  color: var(--diagram-text) !important;
+  fill: var(--diagram-text) !important;
+}
+
+[data-component-name="mermaid-container"]
+  .mermaid
+  .node
+  > :is(rect, circle, ellipse, polygon, path),
+[data-component-name="mermaid-container"] .mermaid .cluster > rect {
+  fill: var(--diagram-card) !important;
+  stroke: var(--diagram-border) !important;
+  stroke-width: 1px !important;
+}
+
+[data-component-name="mermaid-container"] .mermaid .node > rect,
+[data-component-name="mermaid-container"] .mermaid .cluster > rect {
+  rx: 12px;
+  ry: 12px;
+}
+
+[data-component-name="mermaid-container"] .mermaid .flowchart-link {
+  stroke: var(--diagram-line) !important;
+}
+
+[data-component-name="mermaid-container"] .mermaid .marker {
+  fill: var(--diagram-muted) !important;
+  stroke: var(--diagram-muted) !important;
+}
+
+[data-component-name="mermaid-container"] .mermaid .edgeLabel,
+[data-component-name="mermaid-container"] .mermaid .edgeLabel p,
+[data-component-name="mermaid-container"] .mermaid .labelBkg {
+  background-color: var(--diagram-page) !important;
+}
+
+[data-component-name="mermaid-container"] .mermaid .edgeLabel span {
+  color: var(--diagram-muted) !important;
+}
+
+[data-component-name="mermaid-container"] .mermaid .edgeLabel p {
+  border-radius: 6px;
+  border: 1px solid var(--diagram-border) !important;
+  padding: 3px 7px;
+}
+
+[data-component-name="mermaid-container"] .diagram-node {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 12px;
+  padding-inline-end: 8px;
+}
+
+[data-component-name="mermaid-container"] .diagram-icon {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border: 1px solid var(--diagram-border);
+  border-radius: 6px;
+  background: var(--diagram-page);
+}
+
+[data-component-name="mermaid-container"] .diagram-icon img {
+  display: block;
+  width: 20px !important;
+  height: 20px !important;
+  margin: 0 !important;
+  border-radius: 0;
+}
+
+.dark [data-component-name="mermaid-container"] .diagram-icon img {
+  filter: invert(1);
+}
+
+[data-component-name="mermaid-container"] .diagram-name {
+  max-width: 160px;
+  white-space: normal;
+  text-align: start;
+  line-height: 18px;
+}
+
+[data-component-name="mermaid-container"] .mermaid {
+  width: max-content;
+  min-width: 100%;
+  transform-origin: top left !important;
+}
+
+[data-component-name="mermaid-container"] .mermaid > svg {
+  display: block;
+  margin-inline: auto;
+}
+
+.diagram-scroll {
+  container-type: inline-size;
+}
+
+.diagram-scroll::after {
+  display: block;
+  margin-block-start: 8px;
+  color: #646464;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+}
+
+.dark .diagram-scroll::after {
+  color: #b4b4b4;
+}
+
+@container (max-width: 660px) {
+  .diagram-scroll:not(.diagram-scroll--linear)::after {
+    content: "Scroll horizontally to explore the diagram";
+  }
+}
+
+@container (max-width: 360px) {
+  .diagram-scroll--linear::after {
+    content: "Scroll horizontally to explore the diagram";
+  }
 }

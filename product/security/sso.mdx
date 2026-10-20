@@ -17,19 +17,42 @@ After activating a connection, sign in with a member account to check that it re
 
 ## Understand the sign-in flow
 
+<div className="diagram-scroll diagram-scroll--linear">
+
 ```mermaid actions={true}
-sequenceDiagram
+---
+config:
+  fontFamily: BerkeleyMono, monospace
+  themeVariables:
+    fontSize: 12px
+  themeCSS: |
+    .label { font-family: BerkeleyMono, monospace; font-size: 12px; font-weight: 500; }
+    .diagram-node { display: inline-flex; align-items: center; gap: 12px; box-sizing: border-box; width: 240px; min-height: 40px; padding-inline-end: 8px; }
+    .diagram-icon { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; width: 40px; height: 40px; flex: 0 0 40px; }
+    .diagram-icon img { display: block; width: 20px !important; height: 20px !important; margin: 0; }
+    .diagram-name { max-width: 160px; white-space: normal; text-align: start; line-height: 18px; }
+    .edgeLabel p { padding: 3px 7px; border: 1px solid transparent; }
+  flowchart:
+    curve: linear
+    wrappingWidth: 240
+    useMaxWidth: false
+    padding: 5
+    nodeSpacing: 48
+    rankSpacing: 72
+    diagramPadding: 24
+---
+flowchart TB
   accTitle: Enterprise sign-in
-  accDescr: A member signs in through the identity provider and returns to Interfere, where workspace access is checked.
-  participant Member
-  participant Interfere
-  participant Provider as Identity provider
-  Member->>Interfere: Start enterprise sign-in
-  Interfere->>Provider: Request authentication
-  Provider->>Member: Apply provider sign-in policy
-  Provider-->>Interfere: Return authentication result
-  Interfere-->>Member: Check workspace access
+  accDescr: A member starts enterprise sign-in. Interfere requests authentication, the identity provider applies its sign-in policy and returns the result, and Interfere checks workspace access.
+  Start["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/users.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Member starts sign-in</span></span>"]
+  Request["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/key.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Interfere requests authentication</span></span>"]
+  Policy["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/shield.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Provider applies sign-in policy</span></span>"]
+  Result["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/fingerprint.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Provider returns authentication result</span></span>"]
+  Access["<span class='diagram-node'><span class='diagram-icon'><img src='/icons/ui/workspace.svg' width='20' height='20' alt='' /></span><span class='diagram-name'>Interfere checks workspace access</span></span>"]
+  Start --> Request --> Policy --> Result --> Access
 ```
+
+</div>
 
 <Note>
   Activating SSO does not automatically turn off email codes or passkeys. Review [Identity
