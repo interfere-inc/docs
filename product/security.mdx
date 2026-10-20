@@ -4,6 +4,8 @@ icon: "/icons/ui/shield.svg"
 description: "Interfere IP ranges, workspace network restrictions, sign-in options, and team access controls."
 ---
 
+import { EnterpriseBadge } from "/components/EnterpriseBadge.tsx";
+
 Manage network access and sign-in for your workspace. For certifications and reports, see [Compliance](/product/compliance).
 
 ## IP ranges
@@ -13,6 +15,8 @@ Interfere publishes its owned IPv4 and IPv6 ranges at [interfere.com/ips.json](h
 These ranges identify Interfere-owned address space. They do not cover every request from Interfere services, including services running on shared infrastructure. Before restricting an integration to these ranges, confirm its source addresses with [support@interfere.com](mailto:support@interfere.com).
 
 ## Network access
+
+<EnterpriseBadge />
 
 Enterprise workspaces can whitelist the networks allowed to reach their dashboard and API in [Settings → Security](https://interfere.com/~/*/settings/security). Editing rules requires workspace authentication management permission.
 
