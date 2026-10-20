@@ -5,6 +5,16 @@ description: "Understand what a problem contains and how your team investigates 
 
 Interfere collects errors, traces, logs, and session replays from your apps and uses them to investigate problems. A problem brings the investigation and its supporting evidence into one place, alongside the users, companies, and releases involved.
 
+```mermaid actions={true}
+flowchart LR
+  accTitle: From application evidence to a problem
+  accDescr: Application errors, traces, logs, and sessions provide evidence for findings and investigations. Your team reviews the problem and follows recovery.
+  App[Your app] --> Evidence[Errors, traces, logs and sessions]
+  Evidence --> Investigation[Findings and investigation]
+  Investigation --> Problem[Problem in Inbox]
+  Problem --> Team[Review, fix and follow recovery]
+```
+
 ## From events to a problem
 
 An error describes one failure. A trace shows the work around it, and a session replay can show what someone did before the failure. Interfere groups related occurrences into findings and uses that evidence to investigate the underlying problem.

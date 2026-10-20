@@ -1,16 +1,52 @@
 ---
-title: "Workspace domains"
-description: "Control how teammates with your email domain join the workspace."
+title: "Verified domains"
+description: "Verify your company email domain and control how teammates join."
 ---
 
-A workspace domain is your team's email domain, such as `acme.com`. It controls who can join your workspace: people with a verified email at that domain can be invited automatically or can request access, so you don't have to add colleagues one by one.
+import { EnterpriseBadge } from "/components/EnterpriseBadge.tsx";
 
-This is your company email domain, not the web address your product runs on. Free email providers (like gmail.com) and IP addresses aren't allowed.
+## Verify a domain <EnterpriseBadge />
 
-You add one domain when you create the workspace, and you can add more later. Each domain has its own join setting:
+<Info>Verified domains and automatic domain enrollment require Enterprise.</Info>
 
-- **Manual**. Invite people yourself.
-- **Automatic invitation**. Invite anyone with a matching email automatically.
-- **Suggested**. Show people with a matching email a prompt to request access.
+Open [Settings → Security → Domains](https://interfere.com/~/*/settings/security). Use your team's email domain, such as `acme.com`, rather than the address your monitored app runs on. Free email-provider domains and IP addresses are not accepted.
 
-Remove a domain in [workspace settings](https://interfere.com/~/*/settings/workspace) and joining returns to manual invites.
+<Steps>
+  <Step title="Add your company domain">
+    Select **Add a domain** and enter the domain. Managing domains requires permission to manage
+    workspace domains.
+  </Step>
+  <Step title="Verify an email at that domain">
+    Select **Verify domain**, enter an email address at the domain, and select **Send code**. Enter
+    the code sent to that mailbox.
+  </Step>
+  <Step title="Choose how teammates join">
+    Once the domain is verified, select its enrollment mode from the domain row.
+  </Step>
+</Steps>
+
+```mermaid actions={true}
+flowchart LR
+  accTitle: Domain verification and enrollment
+  accDescr: Add a domain, verify an email address at that domain, then choose an enrollment mode for teammates.
+  Add[Add domain] --> Verify[Verify email code] --> Choose[Choose enrollment]
+```
+
+## Enrollment modes
+
+| Mode                    | What happens                                                                   |
+| ----------------------- | ------------------------------------------------------------------------------ |
+| No automatic enrollment | Invite teammates manually.                                                     |
+| Automatic invitations   | People with a verified email at the domain receive an invitation.              |
+| Automatic suggestions   | People with a verified email at the domain see a suggestion to request access. |
+
+Automatic enrollment options remain unavailable until verification succeeds. Removing a domain stops its automatic invitations and access suggestions.
+
+## Provider-managed domains
+
+A domain labeled **Enterprise SSO** is managed by your identity provider. Its enrollment is not changed through the ordinary domain menu. Review [SSO](/product/security/sso) and [Directory sync](/product/security/scim) for that connection.
+
+<Note>
+  Your workspace domain describes your own team. [Companies](/product/companies) describe the
+  customer accounts using your monitored app.
+</Note>

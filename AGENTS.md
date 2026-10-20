@@ -29,3 +29,7 @@ Run `bun run format`, `bun run lint`, `bun run typecheck`, `bun run validate`, a
 Mintlify is connected to `interfere-inc/docs`, branch `main`, with `docs.json` at the repository root. Updates to that branch trigger production deployments at `https://interfere.com/docs`. Check the deployment in Mintlify Activity after publishing. Preview deployments depend on workspace availability.
 
 The API reference reads `https://api.interfere.com/openapi.json`. Keep the build validation enabled for OpenAPI so a broken specification fails the check. Scraped files under `sources/` are reference material, excluded through `.mintignore`.
+
+## Visual explanations
+
+Use Mermaid for relationships and flows, with an accessible title and description. Use framed screenshots when readers need to recognize a specific UI control; exclude outdated navigation and unrelated settings. Add callouts for plan availability, prerequisites, and concrete footguns. Verify diagrams, captions, and callouts against the product, and inspect their rendered output.

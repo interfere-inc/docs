@@ -345,3 +345,29 @@ img[src*="/icons/ui/"] {
 :is(h2, h3, h4) .enterprise-badge {
   margin-inline-start: 0.625rem;
 }
+
+.screenshot-crop--surface-events {
+  aspect-ratio: 1364 / 415;
+}
+
+.screenshot-crop--surface-events img {
+  position: absolute;
+  max-width: none;
+  width: 150.146628%;
+  left: -50.146628%;
+  top: -11.566265%;
+}
+
+[data-component-name="mermaid-container"] [data-component-name="mermaid-controls-wrapper"] {
+  position: static;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  width: fit-content;
+  margin-inline-start: auto;
+  margin-block-end: 0.5rem;
+}
+
+[data-component-name="mermaid-controls-wrapper"] > [aria-hidden="true"] {
+  display: none;
+}

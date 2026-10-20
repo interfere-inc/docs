@@ -17,6 +17,15 @@ An environment distinguishes traffic such as production and staging. A release i
 
 When checking a reported failure, compare its time and environment with the release's deployment time. A nearby deployment is context for the investigation, not proof that it caused the failure.
 
+```mermaid actions={true}
+flowchart LR
+  accTitle: Code version and deployment
+  accDescr: A commit identifies a release. The same release can be deployed to staging and production.
+  Commit[Code commit] --> Release[Release]
+  Release --> Staging[Staging deployment]
+  Release --> Production[Production deployment]
+```
+
 ## Read original code in a stack trace
 
 Source maps connect compiled JavaScript in a stack trace to the original source files and lines. With the matching maps, a failure in a bundled file can point back to the TypeScript or application code your team maintains.

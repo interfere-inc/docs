@@ -5,14 +5,41 @@ description: "Restrict workspace access to approved IP addresses, ranges, or net
 
 import { EnterpriseBadge } from "/components/EnterpriseBadge.tsx";
 
+<Info>
+  IP allowlisting, CIDR ranges, and ASN restrictions are Enterprise-only. Pro workspaces cannot
+  create or edit these rules.
+</Info>
+
 ## Allow trusted networks <EnterpriseBadge />
 
 Enterprise workspaces can restrict dashboard and API access in [Security settings](https://interfere.com/~/*/settings/security). Changing rules requires workspace authentication management permission.
 
 Select **Add a network**, enter an IPv4 or IPv6 address, CIDR range, or ASN, and add a description. You can configure up to 100 rules.
 
-With no rules, authenticated members can access the workspace from any network. Once rules exist, connections must match an allowed network. An ASN permits the network operator's entire network, including other customers. Use a narrower IP range when you need access limited to your own network.
+With no rules, authenticated members can access the workspace from any network. Once rules exist, connections must match an allowed network.
 
 If a connection is blocked, connect through an allowed company network or VPN. Ask an administrator to review the rules if your expected network is missing. Members still need workspace permissions after passing the network check.
+
+## How rules affect access
+
+```mermaid actions={true}
+flowchart LR
+  accTitle: Network allowlist decision
+  accDescr: Without rules there is no network restriction. With rules, a request must match an allowed network. Member authentication and permissions still apply.
+  Request[Incoming request] --> Rules{Rules configured?}
+  Rules -->|No| Auth[Check member access]
+  Rules -->|Yes| Match{Allowed network?}
+  Match -->|Yes| Auth
+  Match -->|No| Block[Access blocked]
+```
+
+<Warning>
+  An ASN permits the operator's entire network, including other customers. Prefer a specific IP
+  address or CIDR range when you need a narrower allowlist.
+</Warning>
+
+## If your plan changes
+
+Existing restrictions remain enforced if the Enterprise entitlement ends. An administrator can remove all restrictions to recover access, but creating or editing a nonempty allowlist requires Enterprise.
 
 Review changes in the [Audit log](/product/audit-log).

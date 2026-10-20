@@ -38,7 +38,7 @@
             {
               "group": "Workspace",
               "root": "product/settings",
-              "pages": ["product/workspace-domains", "product/data-residency"],
+              "pages": ["product/data-residency"],
               "icon": "/icons/ui/workspace.svg",
               "expanded": false
             },
@@ -55,11 +55,17 @@
               ],
               "expanded": false
             },
-            "integrations/api-keys",
             {
               "group": "Security",
               "root": "product/security",
-              "pages": ["product/network-access", "product/ip-ranges"],
+              "pages": [
+                "product/security/identity-providers",
+                "product/security/sso",
+                "product/security/scim",
+                "product/workspace-domains",
+                "product/network-access",
+                "product/ip-ranges"
+              ],
               "icon": "/icons/ui/shield.svg",
               "expanded": false
             },
@@ -97,6 +103,7 @@
         {
           "group": "Developer tools",
           "pages": [
+            "integrations/api-keys",
             "integrations/plugins",
             "integrations/mcp",
             "integrations/cli",
