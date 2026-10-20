@@ -59,6 +59,7 @@
           "group": "Workspace",
           "pages": [
             "product/settings",
+            "product/data-residency",
             "product/members",
             "product/notifications",
             "integrations/api-keys",

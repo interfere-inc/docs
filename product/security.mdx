@@ -4,7 +4,15 @@ icon: "/icons/ui/shield.svg"
 description: "Configure sign-in requirements and network access."
 ---
 
+import { EnterpriseBadge } from "/components/EnterpriseBadge.tsx";
+
 Manage how members sign in and which networks can access your workspace. For security reports and certifications, visit [Interfere security](https://interfere.com/security).
+
+## IP ranges
+
+Interfere publishes its owned IPv4 and IPv6 ranges at [interfere.com/ips.json](https://interfere.com/ips.json). The JSON contains a `prefixes` array with `ipv4Prefix` and `ipv6Prefix` entries in CIDR notation. Use this feed when maintaining firewall rules for Interfere-owned networks.
+
+These ranges identify Interfere-owned address space. They do not cover every request from Interfere services, including services running on shared infrastructure. Before restricting an integration to these ranges, confirm its source addresses with [support@interfere.com](mailto:support@interfere.com).
 
 ## Sign in
 
@@ -23,6 +31,8 @@ When SSO is required, members must use the identity provider. Email and passkey 
 Assign Owner, Admin, or Member access in [Members and roles](/product/members).
 
 ## Network access
+
+<EnterpriseBadge />
 
 Enterprise workspaces can restrict dashboard and API access in [Security settings](https://interfere.com/~/*/settings/security). Changing rules requires workspace authentication management permission.
 
