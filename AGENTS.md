@@ -14,7 +14,9 @@ Use active voice, sentence case, and concrete instructions. Describe what a feat
 
 Use bold for UI labels and code formatting for commands, paths, variables, and API fields. Keep secrets out of examples. Do not add source-code comments to examples.
 
-Use SVGs from the Interfere icon pack under `icons/ui/` for page and card icons. Keep provider and framework logos under `icons/tech/`. Do not substitute built-in icon-library glyphs.
+Use sidebar icons only for destinations that have icons in the product navigation, and match the product icon. Task pages, subsections, SDK guides, and reference pages have no sidebar icon. Use SVGs from the Interfere icon pack under `icons/ui/`; do not substitute generic glyphs.
+
+Product pages explain the UI and how to use it. Keep SDK APIs, build configuration, and upload scripts in the SDK section, linked from product pages when needed.
 
 ## Validation
 

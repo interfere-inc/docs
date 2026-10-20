@@ -23,17 +23,11 @@
             {
               "group": "Surfaces",
               "root": "product/surfaces",
-              "pages": ["product/surfaces/create", "sdk/releases"],
+              "pages": ["product/surfaces/create", "product/surfaces/releases"],
               "icon": "/icons/ui/layers.svg",
               "expanded": false
             },
-            {
-              "group": "Users",
-              "root": "product/users",
-              "pages": ["sdk/identity"],
-              "icon": "/icons/ui/users.svg",
-              "expanded": false
-            },
+            "product/users",
             "product/companies",
             "product/knowledge"
           ]
@@ -45,14 +39,14 @@
               "group": "Workspace",
               "root": "product/settings",
               "pages": ["product/workspace-domains", "product/data-residency"],
-              "icon": "/icons/ui/settings.svg",
+              "icon": "/icons/ui/workspace.svg",
               "expanded": false
             },
             "product/members",
             "product/notifications",
             {
               "group": "Connections",
-              "icon": "/icons/ui/link.svg",
+              "icon": "/icons/ui/connections.svg",
               "pages": [
                 "integrations/github",
                 "integrations/vercel",
@@ -84,7 +78,13 @@
             {
               "group": "Configuration",
               "expanded": false,
-              "pages": ["sdk/configuration", "sdk/error-capture", "sdk/opentelemetry"]
+              "pages": [
+                "sdk/configuration",
+                "sdk/identity",
+                "sdk/error-capture",
+                "sdk/releases",
+                "sdk/opentelemetry"
+              ]
             },
             {
               "group": "Privacy and consent",
@@ -107,7 +107,6 @@
     },
     {
       "tab": "API",
-      "icon": "/icons/ui/code.svg",
       "groups": [
         {
           "group": "Platform SDK",
