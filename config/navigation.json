@@ -10,31 +10,43 @@
           "pages": ["index", "quickstart"]
         },
         {
-          "group": "SDKs",
-          "pages": ["sdk/next-js", "sdk/vite", "sdk/tanstack-start", "sdk/nestjs", "sdk/node"]
-        },
-        {
-          "group": "SDK configuration",
-          "pages": [
-            "sdk/configuration",
-            "sdk/identity",
-            "sdk/consent",
-            "sdk/replay-privacy",
-            "sdk/error-capture",
-            "sdk/releases",
-            "sdk/opentelemetry",
-            "sdk/troubleshooting"
-          ]
-        },
-        {
           "group": "Product",
           "pages": [
+            "product/overview",
             "product/inbox",
             "product/problems",
             "product/session-replay",
             "product/users",
             "product/companies",
             "product/surfaces"
+          ],
+          "expanded": true
+        },
+        {
+          "group": "SDKs",
+          "pages": [
+            {
+              "group": "Install an SDK",
+              "expanded": false,
+              "pages": ["sdk/next-js", "sdk/vite", "sdk/tanstack-start", "sdk/nestjs", "sdk/node"]
+            },
+            {
+              "group": "Configuration",
+              "expanded": false,
+              "pages": [
+                "sdk/configuration",
+                "sdk/identity",
+                "sdk/error-capture",
+                "sdk/releases",
+                "sdk/opentelemetry"
+              ]
+            },
+            {
+              "group": "Privacy and consent",
+              "expanded": false,
+              "pages": ["sdk/consent", "sdk/replay-privacy"]
+            },
+            "sdk/troubleshooting"
           ]
         },
         {

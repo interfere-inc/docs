@@ -58,19 +58,12 @@ Use `production` for production deployments.
 
   </Step>
   <Step title="Import it first in your entry file">
-    Make `instrument` the very first import in `main.ts`, ahead of everything else.
+    Make `instrument` the first import in your existing `main.ts`, ahead of Nest. Keep the rest of your bootstrap function as it is.
 
     ```ts src/main.ts
     import "./instrument";
 
     import { NestFactory } from "@nestjs/core";
-    import { AppModule } from "./app.module";
-
-    async function bootstrap() {
-      const app = await NestFactory.create(AppModule);
-      await app.listen(3000);
-    }
-    bootstrap();
     ```
 
   </Step>
