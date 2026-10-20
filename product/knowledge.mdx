@@ -1,0 +1,21 @@
+---
+title: "Knowledge"
+description: "Find the data sources available to your workspace."
+icon: "/icons/ui/book.svg"
+---
+
+Open [Knowledge](https://interfere.com/~/*/knowledge) to review your workspace's data sources. This inventory helps you check which sources are available when an investigation needs more context.
+
+## Find a data source
+
+Search by name, then filter by **Source** or **Availability** to narrow the list. Viewing this inventory requires permission to read integration settings.
+
+## Add a source
+
+Select **Add data source** to open **Settings → Connections**. Follow the guide for your provider:
+
+- [GitHub](/integrations/github) connects repositories for code context.
+- [Vercel](/integrations/vercel) connects deployment projects.
+- [Cloudflare Workers](/integrations/cloudflare-workers) connects Worker telemetry.
+
+Members with permission to manage integrations can also select **Set up OpenTelemetry** from Knowledge. If your app already initializes an OpenTelemetry provider, review [OpenTelemetry composition](/sdk/opentelemetry) before adding SDK instrumentation.

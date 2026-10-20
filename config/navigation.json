@@ -6,21 +6,72 @@
       "groups": [
         {
           "group": "Getting started",
-          "expanded": true,
-          "pages": ["index", "quickstart"]
+          "pages": ["index", "product/overview", "quickstart"]
         },
         {
           "group": "Product",
           "pages": [
-            "product/overview",
-            "product/inbox",
-            "product/problems",
-            "product/session-replay",
-            "product/users",
+            {
+              "group": "Inbox",
+              "root": "product/inbox",
+              "pages": ["product/problems", "product/session-replay"],
+              "icon": "/icons/ui/inbox.svg",
+              "expanded": false
+            },
+            "product/activity",
+            "product/observability",
+            {
+              "group": "Surfaces",
+              "root": "product/surfaces",
+              "pages": ["product/surfaces/create", "sdk/releases"],
+              "icon": "/icons/ui/layers.svg",
+              "expanded": false
+            },
+            {
+              "group": "Users",
+              "root": "product/users",
+              "pages": ["sdk/identity"],
+              "icon": "/icons/ui/users.svg",
+              "expanded": false
+            },
             "product/companies",
-            "product/surfaces"
-          ],
-          "expanded": true
+            "product/knowledge"
+          ]
+        },
+        {
+          "group": "Settings",
+          "pages": [
+            {
+              "group": "Workspace",
+              "root": "product/settings",
+              "pages": ["product/workspace-domains", "product/data-residency"],
+              "icon": "/icons/ui/settings.svg",
+              "expanded": false
+            },
+            "product/members",
+            "product/notifications",
+            {
+              "group": "Connections",
+              "icon": "/icons/ui/link.svg",
+              "pages": [
+                "integrations/github",
+                "integrations/vercel",
+                "integrations/cloudflare-workers",
+                "integrations/slack"
+              ],
+              "expanded": false
+            },
+            "integrations/api-keys",
+            {
+              "group": "Security",
+              "root": "product/security",
+              "pages": ["product/network-access", "product/ip-ranges"],
+              "icon": "/icons/ui/shield.svg",
+              "expanded": false
+            },
+            "product/audit-log",
+            "product/compliance"
+          ]
         },
         {
           "group": "SDKs",
@@ -33,13 +84,7 @@
             {
               "group": "Configuration",
               "expanded": false,
-              "pages": [
-                "sdk/configuration",
-                "sdk/identity",
-                "sdk/error-capture",
-                "sdk/releases",
-                "sdk/opentelemetry"
-              ]
+              "pages": ["sdk/configuration", "sdk/error-capture", "sdk/opentelemetry"]
             },
             {
               "group": "Privacy and consent",
@@ -50,34 +95,12 @@
           ]
         },
         {
-          "group": "Integrations",
-          "pages": [
-            "integrations/github",
-            "integrations/vercel",
-            "integrations/cloudflare-workers",
-            "integrations/slack"
-          ]
-        },
-        {
           "group": "Developer tools",
           "pages": [
             "integrations/plugins",
             "integrations/mcp",
             "integrations/cli",
             "integrations/terraform"
-          ]
-        },
-        {
-          "group": "Workspace",
-          "pages": [
-            "product/settings",
-            "product/data-residency",
-            "product/members",
-            "product/notifications",
-            "integrations/api-keys",
-            "product/security",
-            "product/audit-log",
-            "product/compliance"
           ]
         }
       ]

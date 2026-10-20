@@ -1,0 +1,19 @@
+---
+title: "Network access"
+description: "Restrict workspace access to approved IP addresses, ranges, or network operators."
+icon: "/icons/ui/shield.svg"
+---
+
+import { EnterpriseBadge } from "/components/EnterpriseBadge.tsx";
+
+## Allow trusted networks <EnterpriseBadge />
+
+Enterprise workspaces can restrict dashboard and API access in [Security settings](https://interfere.com/~/*/settings/security). Changing rules requires workspace authentication management permission.
+
+Select **Add a network**, enter an IPv4 or IPv6 address, CIDR range, or ASN, and add a description. You can configure up to 100 rules.
+
+With no rules, authenticated members can access the workspace from any network. Once rules exist, connections must match an allowed network. An ASN permits the network operator's entire network, including other customers. Use a narrower IP range when you need access limited to your own network.
+
+If a connection is blocked, connect through an allowed company network or VPN. Ask an administrator to review the rules if your expected network is missing. Members still need workspace permissions after passing the network check.
+
+Review changes in the [Audit log](/product/audit-log).

@@ -10,9 +10,7 @@ Manage how members sign in and which networks can access your workspace. For sec
 
 ## IP ranges
 
-Interfere publishes its owned IPv4 and IPv6 ranges at [interfere.com/ips.json](https://interfere.com/ips.json). The JSON contains a `prefixes` array with `ipv4Prefix` and `ipv6Prefix` entries in CIDR notation. Use this feed when maintaining firewall rules for Interfere-owned networks.
-
-These ranges identify Interfere-owned address space. They do not cover every request from Interfere services, including services running on shared infrastructure. Before restricting an integration to these ranges, confirm its source addresses with [support@interfere.com](mailto:support@interfere.com).
+See [IP ranges](/product/ip-ranges) for the published address feed and its coverage.
 
 ## Sign in
 
@@ -30,16 +28,6 @@ When SSO is required, members must use the identity provider. Email and passkey 
 
 Assign Owner, Admin, or Member access in [Members and roles](/product/members).
 
-## Network access
+## Network access <EnterpriseBadge />
 
-<EnterpriseBadge />
-
-Enterprise workspaces can restrict dashboard and API access in [Security settings](https://interfere.com/~/*/settings/security). Changing rules requires workspace authentication management permission.
-
-Select **Add a network**, enter an IPv4 or IPv6 address, CIDR range, or ASN, and add a description. You can configure up to 100 rules.
-
-With no rules, authenticated members can access the workspace from any network. Once rules exist, connections must match an allowed network. An ASN permits the network operator's entire network, including other customers. Use a narrower IP range when you need access limited to your own network.
-
-If a connection is blocked, connect through an allowed company network or VPN. Ask an administrator to review the rules if your expected network is missing. Members still need workspace permissions after passing the network check.
-
-Review changes in the [Audit log](/product/audit-log).
+Restrict dashboard and API access to approved networks. Follow [Network access](/product/network-access) to configure IP, CIDR, or ASN rules.
