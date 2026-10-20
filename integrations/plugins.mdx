@@ -1,13 +1,14 @@
 ---
 title: "AI Agents"
 description: "Install Interfere's MCP connection and investigation skill in your editor."
+icon: "/icons/ui/agents.svg"
 ---
 
 The Interfere plugin connects your editor to the [MCP](/integrations/mcp) and adds a skill for investigating production problems. You need an Interfere account with access to the workspace you want to inspect.
 
 ## Claude Code
 
-Run these commands inside Claude Code:
+Install from [Interfere's Claude plugin marketplace](https://github.com/interfere-inc/plugins/blob/main/.claude-plugin/marketplace.json) by running these commands inside Claude Code:
 
 ```text
 /plugin marketplace add interfere-inc/plugins
@@ -30,7 +31,7 @@ Reload Cursor and open **Customize** to connect the Interfere MCP server. Manage
 
 ## Investigate
 
-Ask the agent to investigate a problem, then give it a link or a time range. For example:
+Give the agent a problem link or a time range and ask it to investigate. For example:
 
 ```text
 Investigate recent checkout errors in my Interfere workspace. Identify the
@@ -43,4 +44,4 @@ Include your workspace and surface if you have more than one. Ask for links to t
 
 The plugin uses `https://mcp.interfere.com/mcp`. This connection permits reads and writes within your existing permissions. For enforced read-only access, configure the [read-only MCP endpoint](/integrations/mcp) directly and disable the plugin's write-enabled connection in your client.
 
-If authentication expires, reconnect through the client. If access is denied, check your workspace permissions. Do not paste passwords or tokens into chat or plugin files.
+Reconnect through your client if authentication expires, or check your workspace permissions if access is denied. Keep passwords and tokens out of chat and plugin files.

@@ -1,0 +1,36 @@
+---
+title: "GitHub Enterprise Cloud"
+description: "Connect your enterprise GitHub host to investigations and releases."
+icon: "/icons/tech/github/currentcolor.svg"
+---
+
+<Frame>
+  <img
+    src="/images/connections/github-1-light.webp"
+    alt="A GitHub pull request referenced in an Interfere investigation."
+    className="block dark:hidden"
+    width="1280"
+    height="672"
+    noZoom
+  />
+  <img
+    src="/images/connections/github-1-dark.webp"
+    alt="A GitHub pull request referenced in an Interfere investigation."
+    className="hidden dark:block"
+    width="1280"
+    height="672"
+    noZoom
+  />
+</Frame>
+
+Use this connection for a GitHub Enterprise Cloud organization on a `*.ghe.com` host. If your enterprise uses `github.com`, use the [GitHub connection](/integrations/github).
+
+## Connect your enterprise
+
+Open [Enterprise Cloud settings](https://interfere.com/~/*/settings/integrations/ghe_cloud) and enter your host, such as `acme.ghe.com`. Complete app registration, then install the dedicated GitHub App and select the repositories it can read.
+
+Link each repository to its [surface](/product/surfaces). For a monorepo, choose the app's subdirectory.
+
+## Check release context
+
+After deploying with the SDK build plugin, open the surface's [Releases](/product/surfaces/releases) and check the commit. See [SDK release configuration](/sdk/releases) for build setup.

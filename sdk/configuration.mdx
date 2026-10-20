@@ -1,5 +1,5 @@
 ---
-title: "Capture configuration"
+title: "Configuration"
 description: "Set service names, environments, and browser capture options."
 ---
 
@@ -37,7 +37,7 @@ INTERFERE_ENVIRONMENT=production
 
 Next.js and Vite stamp the value into the build. It does not need a `NEXT_PUBLIC_` or `VITE_` prefix. Without an explicit value, the SDK falls back to `VERCEL_ENV`, then `NODE_ENV`, then `development`.
 
-Interfere filters local-like environments such as `development`, `local`, and `test` before ingestion. Use a deployment label such as `staging` for verification, or change environment filtering for the surface. See [No events arriving](/sdk/troubleshooting).
+Interfere filters local-like environments such as `development`, `local`, and `test` before ingestion. Use a deployment label such as `staging` for verification, or change environment filtering for the surface.
 
 ## Capture features
 

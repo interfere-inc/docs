@@ -98,7 +98,7 @@ import { capture } from "@interfere/vite/init";
 capture(new Error("Interfere setup test"));
 ```
 
-Open your surface's event chart to confirm that traffic arrives, then remove the test call. If no events arrive, follow [Troubleshooting](/sdk/troubleshooting).
+Open your surface's event chart to confirm that traffic arrives, then remove the test call.
 
 <Accordion title="Run capture only in production">
 
@@ -112,4 +112,4 @@ init({ enabled: import.meta.env.PROD });
 
 ## Next steps
 
-[Identify users](/sdk/identity), configure [capture and environments](/sdk/configuration), or [report handled errors](/sdk/error-capture).
+[User tracking](/sdk/identity), configure [capture and environments](/sdk/configuration), or [report handled errors](/sdk/error-capture).

@@ -12,13 +12,13 @@ import { EnterpriseBadge } from "/components/EnterpriseBadge.tsx";
   workspace.
 </Info>
 
-Contact [support@interfere.com](mailto:support@interfere.com) with your workspace, identity provider, and company email domain to arrange setup. Interfere supports enterprise SAML and OIDC connections. Keep provider credentials and client secrets out of email; support will coordinate any required configuration securely.
+To connect a SAML or OIDC provider, contact [support@interfere.com](mailto:support@interfere.com) with your workspace, provider, and company email domain. We'll coordinate the configuration with you, including a secure way to exchange any credentials.
 
 ## Manage a connection
 
-Open [Settings → Security](https://interfere.com/~/*/settings/security). The **Single sign-on** row shows configured connections and their active switches. Changing a connection requires permission to manage workspace authentication.
+You can activate or deactivate configured connections in the **Single sign-on** row of [Settings → Security](https://interfere.com/~/*/settings/security), provided you have permission to manage workspace authentication.
 
-After activating the connection, test sign-in with an intended member account. Check that the member reaches the correct workspace and has the expected role in [Team](/product/members).
+After activating a connection, sign in with a member account to check that it reaches the correct workspace with the expected role in [Team](/product/members).
 
 ## Understand the sign-in flow
 
@@ -43,4 +43,4 @@ sequenceDiagram
 
 ## Provision members
 
-SSO handles sign-in. Use [Directory sync](/product/security/scim) when you also need provider-managed membership and groups. Domains managed by your provider show **Enterprise SSO** in the [Domains](/product/workspace-domains) section.
+To have your provider manage membership and groups as well as sign-in, set up [Directory sync](/product/security/scim). Domains managed by your provider show **Enterprise SSO** in the [Domains](/product/workspace-domains) section.

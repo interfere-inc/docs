@@ -35,13 +35,7 @@
         {
           "group": "Settings",
           "pages": [
-            {
-              "group": "Workspace",
-              "root": "product/settings",
-              "pages": ["product/data-residency"],
-              "icon": "/icons/ui/workspace.svg",
-              "expanded": false
-            },
+            "product/settings",
             "product/members",
             "product/notifications",
             {
@@ -49,11 +43,15 @@
               "icon": "/icons/ui/connections.svg",
               "pages": [
                 "integrations/github",
+                "integrations/github-enterprise-cloud",
+                "integrations/github-enterprise-server",
                 "integrations/vercel",
                 "integrations/cloudflare-workers",
-                "integrations/slack"
+                "integrations/slack",
+                "integrations/linear"
               ],
-              "expanded": false
+              "expanded": false,
+              "root": "integrations/overview"
             },
             {
               "group": "Security",
@@ -64,40 +62,39 @@
                 "product/security/scim",
                 "product/workspace-domains",
                 "product/network-access",
-                "product/ip-ranges"
+                "product/infrastructure"
               ],
               "icon": "/icons/ui/shield.svg",
               "expanded": false
             },
-            "product/audit-log",
-            "product/compliance"
+            "product/audit-log"
           ]
+        },
+        {
+          "group": "Compliance",
+          "pages": ["product/compliance", "product/data-residency"]
         },
         {
           "group": "SDKs",
           "pages": [
             {
-              "group": "Install an SDK",
+              "group": "Installation",
               "expanded": false,
               "pages": ["sdk/next-js", "sdk/vite", "sdk/tanstack-start", "sdk/nestjs", "sdk/node"]
             },
             {
-              "group": "Configuration",
+              "group": "Customization",
               "expanded": false,
               "pages": [
                 "sdk/configuration",
                 "sdk/identity",
                 "sdk/error-capture",
                 "sdk/releases",
-                "sdk/opentelemetry"
+                "sdk/opentelemetry",
+                "sdk/consent",
+                "sdk/replay-privacy"
               ]
-            },
-            {
-              "group": "Privacy and consent",
-              "expanded": false,
-              "pages": ["sdk/consent", "sdk/replay-privacy"]
-            },
-            "sdk/troubleshooting"
+            }
           ]
         },
         {

@@ -34,8 +34,9 @@ flowchart LR
 ```
 
 <Warning>
-  An ASN permits the operator's entire network, including other customers. Prefer a specific IP
-  address or CIDR range when you need a narrower allowlist.
+  If you don't manage the autonomous system (AS) associated with your IP addresses, use a specific
+  IP address or CIDR range where possible. Allowing the entire ASN can also allow other customers of
+  the same network operator, such as other users of a VPN service.
 </Warning>
 
 ## If your plan changes

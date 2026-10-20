@@ -10,11 +10,11 @@ A workspace belongs to the team using Interfere. A surface is an app that team m
 
 ## Writing
 
-Use active voice, sentence case, and concrete instructions. Describe what a feature does and how to use it. Avoid promotional claims, generic introductions, em dashes, guaranteed investigation timing, and unsupported promises to capture everything.
+Use active voice, sentence case, and concrete instructions. Connect related ideas naturally and vary sentence length; avoid strings of short, disconnected statements. Keep explanations concise without making them choppy. Describe what a feature does and how to use it. Avoid promotional claims, generic introductions, em dashes, guaranteed investigation timing, and unsupported promises to capture everything.
 
 Use bold for UI labels and code formatting for commands, paths, variables, and API fields. Keep secrets out of examples. Do not add source-code comments to examples.
 
-Use sidebar icons only for destinations that have icons in the product navigation, and match the product icon. Task pages, subsections, SDK guides, and reference pages have no sidebar icon. Use SVGs from the Interfere icon pack under `icons/ui/`; do not substitute generic glyphs.
+Use sidebar icons for destinations that have icons in the product navigation, and match the product icon. Connections and Developer tools also use their provider or tool icons. Task pages, subsections, SDK guides, and reference pages have no sidebar icon. Use SVGs from the Interfere icon pack under `icons/ui/`; do not substitute generic glyphs.
 
 Product pages explain the UI and how to use it. Keep SDK APIs, build configuration, and upload scripts in the SDK section, linked from product pages when needed.
 
