@@ -1,154 +1,48 @@
 ---
-title: "Vite (React)"
+title: "Vite"
+description: "Capture errors and sessions in a React app built with Vite."
 icon: "/icons/tech/vite/transparent.svg"
-description: "Install the Interfere SDK in your Vite app. Configure browser capture, releases, and source maps."
-sidebarTitle: "Vite"
 ---
 
-`@interfere/vite` publishes release metadata and source maps during your build. The browser SDK captures errors, sessions, traces, and logs. This guide covers React single-page apps and server-rendered setups such as TanStack Start.
+Use `@interfere/vite` with Vite 5 or later, React 19 or later, and Node.js 20 or later. For a server-rendered Start app, follow [TanStack Start](/sdk/tanstack-start).
 
-<Note>
-  You'll need a **surface public key** (`interfere_public_<region>_...`) from [Surfaces](https://interfere.com/~/*/surfaces). For source-map upload and release tracking you'll also want an **Interfere API key** (`interfere_secret_<region>_…`). See [Environment variables](#environment-variables).
-</Note>
+## Install
 
-## Prerequisites
+<CodeGroup>
 
-- A Vite app using React `>= 19`
-- Node.js `>= 20`
-
-## Quick start
-
-These four steps cover a single-page app. If you server-render (TanStack Start, for example), do these first, then [Server-side rendering](#server-side-rendering).
-
-<Steps>
-  <Step title="Install the packages">
-    <CodeGroup>
-
-    ```bash npm
-    npm install @interfere/vite @interfere/react
-    ```
-
-    ```bash pnpm
-    pnpm add @interfere/vite @interfere/react
-    ```
-
-    ```bash yarn
-    yarn add @interfere/vite @interfere/react
-    ```
-
-    ```bash bun
-    bun add @interfere/vite @interfere/react
-    ```
-
-    </CodeGroup>
-
-  </Step>
-  <Step title="Add the plugin to your Vite config">
-    The plugin stamps your public key into the build and, with `build.sourcemap` on, uploads source maps so a production stack trace points back to your original code instead of minified output.
-
-    ```ts vite.config.ts
-    import { interfere } from "@interfere/vite/plugin";
-    import react from "@vitejs/plugin-react";
-    import { defineConfig } from "vite";
-
-    export default defineConfig({
-      build: { sourcemap: true },
-      plugins: [react(), interfere()],
-    });
-    ```
-
-  </Step>
-  <Step title="Start the SDK before render">
-    Call `init()` before you mount React, so the SDK is capturing the moment your app loads.
-
-    ```tsx src/main.tsx
-    import { init } from "@interfere/vite/init";
-    import { StrictMode } from "react";
-    import { createRoot } from "react-dom/client";
-
-    import { App } from "./app";
-
-    init();
-
-    createRoot(document.getElementById("root")!).render(
-      <StrictMode>
-        <App />
-      </StrictMode>
-    );
-    ```
-
-  </Step>
-  <Step title="Add the provider">
-    Wrap your app once so components can reach the SDK through hooks.
-
-    ```tsx src/app.tsx
-    import { InterfereProvider } from "@interfere/vite/provider";
-
-    export function App() {
-      return <InterfereProvider>{/* your routes */}</InterfereProvider>;
-    }
-    ```
-
-  </Step>
-</Steps>
-
-<Check>
-  Deploy the app, trigger a test error, and check your [workspace](https://interfere.com/~/*) for
-  incoming events. See [the FAQ](#faq) to enable capture during development.
-</Check>
-
-## Environment variables
-
-| Variable                    | Required     | Description                                                                                                                                                                                                                                                                   |
-| --------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `VITE_INTERFERE_PUBLIC_KEY` | Yes          | Your [surface public key](https://interfere.com/~/*/surfaces) (`interfere_public_<region>_...`, where `<region>` is `us` or `eu`). Safe to expose; the plugin stamps it into your build.                                                                                      |
-| `INTERFERE_API_KEY`         | For releases | Interfere API key (`interfere_secret_<region>_…`). A **build-time credential** for source-map upload and release metadata.                                                                                                                                                    |
-| `INTERFERE_ENVIRONMENT`     | No           | Labels this build's telemetry and releases (`production`, `staging`, `preview`, or a label you choose). The plugin stamps it into the build, so it needs no `VITE_` prefix. Defaults to `VERCEL_ENV`, then `NODE_ENV`, then `development`. See [Environments](#environments). |
-
-<Warning>
-  Only `VITE_`-prefixed variables reach the browser. Keep `INTERFERE_API_KEY` out of any `VITE_`
-  name so your secret never ships in the client bundle.
-</Warning>
-
-## Configuration
-
-Set `serviceName` on the `init()` call and configure capture through the provider.
-
-### Name your app
-
-Running more than one app on Interfere, like a storefront and an admin panel? Give each one a `serviceName` so its problems, sessions, and metrics stay attributed to it.
-
-```ts src/main.tsx
-init({ serviceName: "@acme/storefront" });
+```bash npm
+npm install @interfere/vite @interfere/react
 ```
 
-<ParamField path="serviceName" default="interfere-sdk" type="string">
-  A stable name for this app. Interfere uses it to keep each surface's data separate, and to
-  correlate the same issue across surfaces into one problem.
-</ParamField>
+```bash pnpm
+pnpm add @interfere/vite @interfere/react
+```
 
-### Environments
+```bash Yarn
+yarn add @interfere/vite @interfere/react
+```
 
-Interfere tags telemetry with the environment it ran in, and labels each release the same way. In the dashboard, releases carry an environment badge and you can filter by environment, so production data and preview data stay apart.
+```bash Bun
+bun add @interfere/vite @interfere/react
+```
 
-Set it with `INTERFERE_ENVIRONMENT`:
+</CodeGroup>
+
+## Set your keys
+
+Copy the keys from your [surface](/product/surfaces) into the build environment:
 
 ```env
-INTERFERE_ENVIRONMENT=production
+VITE_INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
+INTERFERE_API_KEY=YOUR_SURFACE_SECRET_KEY
+INTERFERE_ENVIRONMENT=staging
 ```
 
-The label is free-form: `production`, `staging`, `preview`, `canary`, or whatever you name it. If you don't set it, Interfere falls back to `VERCEL_ENV`, then `NODE_ENV`, then `development`. The plugin stamps the value into your build, so it needs no `VITE_` prefix.
+Use `production` for production builds. Only the public key gets a `VITE_` prefix. Prefixing the secret key would expose it in the browser bundle.
 
-<Warning>
-  Interfere drops local-like environments (`development`, `local`, `test`) before ingestion, so
-  everyday local traffic never reaches your dashboard. A build with no environment set defaults to
-  `development` and is filtered out. Set a real environment, or turn off environment filtering for
-  the surface, to capture from one.
-</Warning>
+## Add the build plugin
 
-### Custom ingest domain
-
-Point the browser SDK at a subdomain of your own site to survive ad-blocker deny-lists (no server component involved), or at a regional endpoint. Set `apiHost` on the plugin:
+Enable source maps and add `interfere()` to your Vite plugins. Keep your other plugins and app configuration.
 
 ```ts vite.config.ts
 import { interfere } from "@interfere/vite/plugin";
@@ -157,263 +51,67 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   build: { sourcemap: true },
-  plugins: [react(), interfere({ apiHost: "https://in.yourapp.com" })],
+  plugins: [react(), interfere()],
 });
 ```
 
-Add a CNAME pointing your subdomain at the target shown in your dashboard; Interfere provisions TLS automatically. To target a regional endpoint instead, set `apiHost` (or `VITE_INTERFERE_API_URL`) to that URL. Ingest requests never carry cookies.
+The plugin uploads source maps and registers the build's release. See [Releases and source maps](/sdk/releases) for custom build environments.
 
-### Choose what's captured
+## Initialize before rendering
 
-Interfere captures every signal below unless you say otherwise. Switch any of them off with the provider's `plugins` prop, for instance to drop session replay when recordings aren't welcome:
+Call `init()` in your browser entry point, before React renders.
 
-```tsx src/app.tsx
-<InterfereProvider plugins={{ replay: false }}>{/* your routes */}</InterfereProvider>
+```tsx src/main.tsx
+import { init } from "@interfere/vite/init";
+import { InterfereProvider } from "@interfere/vite/provider";
+import { createRoot } from "react-dom/client";
+import App from "./App";
+
+init();
+
+createRoot(document.getElementById("root")!).render(
+  <InterfereProvider>
+    <App />
+  </InterfereProvider>,
+);
 ```
 
-<ParamField path="plugins" type="object">
-  Each signal can be toggled on or off. All default to on.
+Configure [consent](/sdk/consent) and [replay masking](/sdk/replay-privacy) on the provider before deploying capture to customers.
 
-  <ul>
-    <li><code>errors</code>: uncaught exceptions</li>
-    <li><code>logs</code>: console output</li>
-    <li><code>device</code>: device and browser info</li>
-    <li><code>pageEvents</code>: pageviews and clicks</li>
-    <li><code>rageClick</code>: rage-click detection</li>
-    <li><code>replay</code>: session replay</li>
-  </ul>
-</ParamField>
+## Verify capture
 
-## Identity
+Add a temporary button to a page in your staging app:
 
-Sessions start out anonymous. Attach the signed-in user and a problem will show you exactly who ran into it in [Users](https://interfere.com/~/*/users), by name and email instead of a random id. Call `identity.set()` from the `useInterfere` hook once you have a user:
-
-```tsx
-import { useInterfere } from "@interfere/vite/provider";
-
-function SyncIdentity() {
-  const { identity } = useInterfere();
-  const { user } = useAuthProvider(); // Clerk, Auth0, etc.
-
-  useEffect(() => {
-    if (!user) return;
-    identity.set({
-      identifier: user.id,
-      name: user.name,
-      email: user.email,
-      source: { type: "clerk", name: "Clerk" },
-    });
-  }, [user]);
-
-  return null;
-}
-```
-
-<ParamField path="identifier" type="string" required>
-  Your internal, stable user ID. Use this rather than the email.
-</ParamField>
-
-<ParamField path="source" type="object" required>
-  Where the identity came from.
-
-  <ul>
-    <li><code>type</code>: one of <code>clerk</code>, <code>auth0</code>, or <code>custom</code></li>
-    <li><code>name</code>: the provider's display name, for example <code>"Clerk"</code></li>
-  </ul>
-</ParamField>
-
-<ParamField path="name" type="string">
-  Display name.
-</ParamField>
-
-<ParamField path="email" type="string">
-  Email address.
-</ParamField>
-
-<ParamField path="avatar" type="string">
-  Avatar URL.
-</ParamField>
-
-<ParamField path="traits" type="object">
-  Any extra metadata you want attached to the user (`Record<string, unknown>`).
-</ParamField>
-
-<Note>
-  `identity.set()` is deduplicated per session, so calling it on every render is fine. Identity
-  clears automatically when the session rotates.
-</Note>
-
-## Consent
-
-Everything captures out of the box. To tie that to a cookie banner or a privacy choice, hand the provider a `consent` object. From then on only essential capture (error tracking and logs) runs, plus whichever categories you switch on:
-
-```tsx
-<InterfereProvider consent={{ analytics: true, replay: false }}>
-  {/* your routes */}
-</InterfereProvider>
-```
-
-| Category    | What it covers                        | Gateable  |
-| ----------- | ------------------------------------- | --------- |
-| `necessary` | Error tracking, logs                  | Always on |
-| `analytics` | Page events, rage clicks, device info | Yes       |
-| `replay`    | Session replay                        | Yes       |
-
-Update consent at runtime through the same hook:
-
-```tsx
-const { consent } = useInterfere();
-
-consent.set({ analytics: true, replay: true }); // selective
-consent.set(); // grant everything
-```
-
-Interfere works with any consent platform (c15t, CookieYes, OneTrust). Map its booleans to the categories above.
-
-<Tip>
-  Set the `consent` prop from the provider's first render so a non-consented feature never gets a
-  chance to load. Update it through the hook as the user changes their mind.
-</Tip>
-
-## Mask replay data
-
-Session replay records the DOM. Password inputs are masked by default. The following privacy classes always apply; add them to elements whose content or input events you need to exclude.
-
-| Class              | Effect                                                                                                     |
-| ------------------ | ---------------------------------------------------------------------------------------------------------- |
-| `interfere-block`  | The element isn't recorded. It replays as a same-size placeholder. Drops a whole input, widget, or region. |
-| `interfere-ignore` | The element still renders. Its keystrokes and input changes are not recorded.                              |
-| `interfere-mask`   | The element's text and its children's text is masked. Applies to rendered text, not input values.          |
-
-```tsx
-<input className="interfere-block" />                {/* whole element dropped */}
-<input className="interfere-ignore" />               {/* input events not recorded */}
-<span className="interfere-mask">$128,400.00</span>  {/* text + children masked */}
-```
-
-To mask input values by type, pass a `replay` config to the provider's `plugins`. Only passwords are masked by default; set `maskAllInputs: true` for a stricter baseline that redacts every input.
-
-```tsx src/app.tsx
-<InterfereProvider
-  plugins={{
-    replay: {
-      maskInputOptions: { email: true }, // mask specific input types
-      // maskAllInputs: true,            // or mask every input value
-    },
-  }}
->
-  {/* your routes */}
-</InterfereProvider>
-```
-
-<Note>
-  For finer control, `plugins.replay` also forwards raw [rrweb](https://github.com/rrweb-io/rrweb)
-  options, including `maskTextSelector` / `blockSelector` / `ignoreSelector` to target elements by
-  CSS selector, `maskInputFn` / `maskTextFn` to transform masked values, and `recordCanvas`. These
-  are additive; the `interfere-*` classes still apply.
-</Note>
-
-## Report a handled error
-
-Uncaught errors are already covered. For one you catch and handle yourself but still want on the record, call `capture`:
-
-```tsx
+```tsx src/capture-test.tsx
 import { capture } from "@interfere/vite/init";
 
-try {
-  await saveDraft();
-} catch (error) {
-  capture(error);
+export function CaptureTest() {
+  return (
+    <button onClick={() => capture(new Error("Interfere setup test"))}>Send test error</button>
+  );
 }
 ```
 
-## Server-side rendering
+Render `<CaptureTest />` in your app. For a temporary test page, the component in `src/App.tsx` can be:
 
-If you server-render with TanStack Start (or another Nitro-based setup), do the [Quick start](#quick-start) steps, then boot server instrumentation and split the browser `init()` behind a runtime guard. Telemetry posts directly from the browser. Set [`apiHost`](#custom-ingest-domain) on the plugin for an ad-blocker-resistant subdomain.
+```tsx src/App.tsx
+import { CaptureTest } from "./capture-test";
 
-<Steps>
-  <Step title="Boot server instrumentation and browser init from the router">
-    Call `register()` on the server (OTel bootstrap) and `init()` in the browser. Guard on `typeof window` so each half only runs where it should.
+export default function App() {
+  return <CaptureTest />;
+}
+```
 
-    ```tsx src/router.tsx
-    import { init } from "@interfere/vite/init";
-    import { register } from "@interfere/vite/server";
-    import { createRouter } from "@tanstack/react-router";
-    import { routeTree } from "./routeTree.gen";
+Preserve your app's existing export style and restore its normal contents after testing. Build and deploy, then select **Send test error**. Open the surface's event chart to confirm traffic arrives. Remove the button after verification. If the chart stays empty, follow [No events arriving](/sdk/troubleshooting).
 
-    if (typeof window === "undefined") {
-      register().catch(() => {});
-    } else {
-      init();
-    }
+## Capture only production builds
 
-    export const getRouter = () =>
-      createRouter({ routeTree, scrollRestoration: true });
-    ```
-
-    You can drop step 3 (`init()` in `main.tsx`) from the Quick start because the router initializes the browser SDK.
-
-  </Step>
-  <Step title="Wrap the root route with the provider">
-    ```tsx src/routes/__root.tsx
-    import { InterfereProvider } from "@interfere/vite/provider";
-    import { Outlet } from "@tanstack/react-router";
-
-    function RootComponent() {
-      return (
-        <InterfereProvider>
-          <Outlet />
-        </InterfereProvider>
-      );
-    }
-    ```
-
-  </Step>
-</Steps>
-
-Report handled errors from the server (route handlers, server functions) with `captureError`:
+The Vite browser SDK runs whenever it is initialized. To disable it during local development, use:
 
 ```ts
-import { captureError } from "@interfere/vite/server";
-
-try {
-  await chargeCard();
-} catch (error) {
-  captureError(error);
-  throw error;
-}
+init({ enabled: import.meta.env.PROD });
 ```
 
-## Other frameworks
+## Next steps
 
-<CardGroup cols={2}>
-  <Card title="Next.js" icon="/icons/tech/nextjs/currentcolor.svg" href="/sdk/next-js">
-    `@interfere/next`: a build plugin, server instrumentation, and a provider for the App Router.
-  </Card>
-
-  <Card title="NestJS" icon="/icons/tech/nestjs/transparent.svg" href="/sdk/nestjs">
-    `@interfere/nest`: a backend module plus `instrument.ts` for server error capture.
-  </Card>
-</CardGroup>
-
-## FAQ
-
-<AccordionGroup>
-  <Accordion title="Should I keep development data out of my dashboard?">
-    The Vite SDK runs whenever it's loaded, including locally. To capture only in production builds, gate it: `init({ enabled: import.meta.env.PROD })`.
-  </Accordion>
-
-<Accordion title="Some telemetry is blocked by ad-blockers on my SPA.">
-  Set [`apiHost`](#custom-ingest-domain) on the plugin to a subdomain of your own site with a CNAME
-  to the target shown in your dashboard. Telemetry posts to that subdomain without a server route.
-</Accordion>
-
-<Accordion title="Do you handle the same issue across multiple apps?">
-  Yes. Give each app its own `serviceName`. When the same issue hits more than one surface,
-  Interfere correlates it into a single problem instead of a separate alert per app.
-</Accordion>
-
-  <Accordion title="Can I ship errors only, without analytics or replay?">
-    Yes. Disable the signals you don't want with the provider's `plugins` prop, for example `<InterfereProvider plugins={{ replay: false, pageEvents: false }}>`. To drop browser tracing from the bundle entirely, pass `init({ tracing: false })`.
-  </Accordion>
-</AccordionGroup>
+[Identify users](/sdk/identity), configure [capture and environments](/sdk/configuration), or [report handled errors](/sdk/error-capture).

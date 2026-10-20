@@ -1,32 +1,33 @@
 ---
 title: "Surfaces"
+description: "Connect an app, check incoming events, and review its releases."
 icon: "/icons/ui/layers.svg"
-description: "Manage the apps Interfere watches, their keys, environments, and releases."
 ---
 
-A [surface](/concepts#surface) is one of your apps. This is where you [create one](https://interfere.com/~/*/surfaces/create), manage existing [surfaces](https://interfere.com/~/*/surfaces), and check they're healthy.
+A surface is an app you monitor, such as a web frontend or backend service. Give separately deployed apps their own surfaces.
 
-![Surface dashboard showing event volume, integrations, keys, environments, and releases](/images/surface.png)
+## Create a surface
 
-## Events flowing
+Open [Create a surface](https://interfere.com/~/*/surfaces/create), enter a name, and choose the framework. Copy the public key for SDK ingestion and the secret API key for your build environment.
 
-Once your SDK is installed and sending data, the surface shows events flowing and the chart fills in with the volume of events over time. Before the first event arrives, the surface waits. If you've deployed but still see nothing, open [Surfaces](https://interfere.com/~/*/surfaces) and check that the SDK is installed and your keys are set.
+Follow the matching [SDK installation guide](/quickstart#install-the-sdk), then link the surface to its repository and deployment project.
+
+## Check incoming events
+
+Open the surface in [Surfaces](https://interfere.com/~/*/surfaces) and inspect its event chart. New surfaces wait for their first event; after capture starts, the chart shows event volume over time.
+
+If you have deployed but the chart is empty, check [No events arriving](/sdk/troubleshooting).
 
 ## Keys
 
-Surface credentials have separate purposes:
+The public key identifies the surface receiving telemetry and can ship in browser code. The secret API key registers releases and uploads source maps from your build pipeline. Keep it in your server or CI environment.
 
-- **Public key** (`INTERFERE_PUBLIC_KEY`). Identifies the surface so the SDK can send telemetry. It's safe to ship in the browser; it only authorizes ingestion.
-- **API key** (`INTERFERE_API_KEY`). A server-side secret, sometimes thought of as the private key. It uploads source maps and registers releases from CI. Keep it out of client code.
+Open the surface's key settings to manage these credentials. See [API keys](/integrations/api-keys) for workspace automation keys.
 
-## Environments
+## Environments and releases
 
-An environment labels where traffic came from, such as `production`, `staging`, or `preview`. Interfere keeps them separate so development noise doesn't mix in with real problems.
+An environment labels traffic from a deployment, such as `production` or `staging`. Use environment filters when reviewing problems so you can focus on the deployment you are investigating.
 
-## Releases
+A release identifies a version of your code. Next.js and Vite build plugins register releases using your commit SHA. See [Releases and source maps](/sdk/releases) for build configuration and custom pipelines.
 
-A [release](/concepts#release) is a version of your code, identified by its commit. Surfaces track releases so a problem lines up with the deploy that introduced it, which is also how [regressions](/concepts#regression) are caught. The Next.js and Vite build plugins publish releases during builds. Custom pipelines can use the build API operations through the [CLI](/integrations/cli#build-automation).
-
-## Manage surfaces from other tools
-
-Use the [Terraform provider](/integrations/terraform) to manage a surface's name and framework in infrastructure configuration. The [MCP server](/integrations/mcp) and [CLI](/integrations/cli) also expose workspace operations within your permissions. See [API keys](/integrations/api-keys) for scoped automation credentials.
+Use [Terraform](/integrations/terraform) to manage surface names and framework types in infrastructure configuration.

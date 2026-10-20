@@ -1,55 +1,35 @@
 ---
 title: "GitHub"
-description: "Connect your repositories so Interfere can tie problems to the code that caused them."
+description: "Connect source code to investigations and releases."
 icon: "/icons/tech/github/currentcolor.svg"
 ---
 
-Connecting GitHub lets Interfere read your repositories, so it can map a problem back to the commit that introduced it and ground a proposed fix in your real source. It works with GitHub.com, GitHub Enterprise Cloud, and GitHub Enterprise Server.
+Connect GitHub so Interfere can reference the files and commit behind an error. The integration supports GitHub.com, Enterprise Cloud, and Enterprise Server.
 
-## What we use it for
+## Connect repositories
 
-- Detect the frameworks and apps in a repository.
-- Tie a problem to the commit, branch, and release behind it.
-- Reference your actual files and lines when proposing a fix.
-- Receive webhook events for repository and deployment activity.
+Open [GitHub settings](https://interfere.com/~/*/settings/integrations/github), install the Interfere GitHub App, and choose the repositories it can read.
 
-## Permissions
+Link the repository to the corresponding [surface](/product/surfaces). For a monorepo, select the app that belongs to that surface.
 
-Interfere connects as a GitHub App, so access is limited to the repositories you choose and is **read-only**. The app requests two permissions:
+After deploying with the SDK build plugin, check the surface's release for the expected commit. Investigations can then use that source when explaining errors.
 
-| Permission | Access | Why                                                                                |
-| ---------- | ------ | ---------------------------------------------------------------------------------- |
-| `contents` | Read   | Read repository files to detect frameworks and ground fixes in your source.        |
-| `metadata` | Read   | Read basic repository information such as names, branches, and the default branch. |
+## Repository access
 
-Interfere never requests write access. It can't push code, open pull requests, or change your settings.
+The GitHub App requests read access to repository contents and metadata. It uses that access to detect apps and frameworks, read source files, and associate problems with commits and releases.
 
-## Connecting
+The connection cannot push code or open pull requests. To include another repository, update the app's repository access in GitHub.
 
-Connect [GitHub](https://interfere.com/~/*/settings/integrations/github) from **Settings → Integrations** and install the Interfere app on the repositories you choose. Then pick the host type that matches your setup:
+## GitHub Enterprise Cloud
 
-<Tabs>
-  <Tab title="GitHub.com">
-    The default. Install the Interfere app from GitHub and choose the repositories to grant. Nothing
-    else to configure.
-  </Tab>
-  <Tab title="Enterprise Cloud">
-    For organizations on GitHub Enterprise Cloud with a `*.ghe.com` host. Enter your enterprise
-    host, for example `acme.ghe.com`, from the [Enterprise Cloud
-    integration](https://interfere.com/~/*/settings/integrations/ghe_cloud). Interfere registers an
-    app for your enterprise, then you install it and pick repositories.
-  </Tab>
-  <Tab title="Enterprise Server">
-    For self-hosted GitHub. Enter your server URL, for example `github.acme.com`, from the
-    [Enterprise Server integration](https://interfere.com/~/*/settings/integrations/ghe_server).
-    Interfere calls your server's API at `https://your-host/api/v3`, so the server must be reachable
-    from Interfere. Each server gets its own app registration.
-  </Tab>
-</Tabs>
+For a `*.ghe.com` host, open [Enterprise Cloud settings](https://interfere.com/~/*/settings/integrations/ghe_cloud) and enter your host, such as `acme.ghe.com`. Complete app registration, then install it and select repositories.
 
-## Gotchas
+## GitHub Enterprise Server
 
-- **Enterprise Server needs its own app per server.** A single app can't span multiple self-hosted instances, so connect each one separately.
-- **Self-hosted must be reachable.** Interfere calls `https://your-host/api/v3`, so the server has to accept inbound requests from Interfere. Allowlist us if it's network-restricted.
-- **Coverage follows what you grant.** Interfere only sees the repositories you grant the app. To add or remove repositories later, change the app's access in GitHub.
-- **Tokens refresh automatically.** GitHub App installation tokens are short-lived, and Interfere renews them for you, so there's nothing to rotate.
+Open [Enterprise Server settings](https://interfere.com/~/*/settings/integrations/ghe_server) and enter the server host. Each server needs its own app registration.
+
+The server's API must be reachable by Interfere at `https://your-host/api/v3`. If it is network-restricted, arrange access before completing the connection.
+
+## A repository is missing
+
+Check that the GitHub App installation includes the repository and belongs to the expected account or enterprise host. Then review the surface's repository mapping.

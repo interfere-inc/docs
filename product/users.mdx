@@ -1,25 +1,21 @@
 ---
 title: "Users"
+description: "Find a customer’s activity, affected problems, and sessions."
 icon: "/icons/ui/users.svg"
-description: "The people using your product, and session replays of what they did."
 ---
 
-[Users](https://interfere.com/~/*/users) shows user profiles, activity, and recorded sessions. Open a profile to review the active problems affecting that user, then inspect a session for context.
+Open [Users](https://interfere.com/~/*/users) to find someone using your app. Their profile brings together user traits, recent activity, surfaces they have used, and active problems affecting them.
 
-![User profile showing traits, active problems, and session replay events](/images/user.png)
+## Find an affected user
 
-## Your users
+Open a profile, review its active problems, and select a problem to read the investigation. Resolved problems no longer appear in the active-problems panel.
 
-Each user shows their traits, when they were last active, and which [surfaces](https://interfere.com/~/*/surfaces) they've used. You populate this by identifying users from your app, which attaches a name and email to a session instead of an anonymous id. See Identity in your SDK guide ([Next.js](/sdk/next-js#identity), [Vite](/sdk/vite#identity)). Until you identify them, sessions stay anonymous.
+If you are investigating a customer report, open a session from the profile and use its event timeline to find the reported action. See [Session replay](/product/session-replay).
 
-## Session replays
+## Identify signed-in users
 
-Interfere records sessions so you can watch them back: the pages a user visited, the actions they took, and the problems they ran into along the way. From a problem, jump to the replays where it happened to see it in real context rather than from a stack trace alone.
+Sessions start anonymously. Call `identity.set()` after your app loads the signed-in user to attach a stable user ID, name, email, and other traits. Follow [Identify users](/sdk/identity) for the React integration.
 
-Session replay is part of the SDK's capture and respects consent: it only runs when the `replay` category is allowed. Gate it from the Consent section on your [Next.js](/sdk/next-js#consent) or [Vite](/sdk/vite#consent) SDK page.
+Use a stable internal ID for `identifier` so changes to someone's email do not change their identity.
 
-## Review an error
-
-Open a session from a user or problem to inspect its event timeline. Jumping to an error starts replay seven seconds before it when recording data is available. Filter problem sessions by visited URL to narrow the investigation. Resolved problems no longer appear in the user's active-problems panel.
-
-For account-level context, open the associated [company](/product/companies) when available.
+For account-wide impact, open the associated [company](/product/companies).

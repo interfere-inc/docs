@@ -1,45 +1,35 @@
 ---
 title: "Slack"
-description: "Route workspace notifications and collaboration updates to Slack."
+description: "Send workspace updates to channels and personal notifications to teammates."
 icon: "/icons/tech/slack/transparent.svg"
 ---
 
-Connect Slack to receive workspace notifications and collaboration updates. Connect it from [**Settings → Integrations → Slack**](https://interfere.com/~/*/settings/integrations/slack).
+Connect Slack to send problem updates to a team channel and mentions or assignments to the people involved.
 
-## What we use it for
+## Connect a workspace
 
-- Send notifications, routed to the channel you choose per category.
-- Deliver mentions and assignments as a direct message.
+Open [Slack settings](https://interfere.com/~/*/settings/integrations/slack) and authorize Interfere in the Slack workspace you want to use.
 
-## Notifications by channel
+## Route notifications to channels
 
-Route each category to its own channel:
+Choose a channel for each category:
 
-- **Problems**: new problems, regressions, and recoveries raised by the agent.
-- **Team activity**: new surfaces, installs, and members joining.
-- **Collaboration**: mentions, assignments, reactions, and subscription updates.
+| Category      | Updates                                                    |
+| ------------- | ---------------------------------------------------------- |
+| Problems      | New problems, regressions, and recoveries                  |
+| Team activity | New surfaces, installs, and members                        |
+| Collaboration | Mentions, assignments, reactions, and subscription updates |
 
-## Personal direct messages
+For example, send problems to your engineering alerts channel and team activity to a separate workspace channel.
 
-Mentions and problem assignments can arrive as direct messages. Connect your Slack identity so Interfere can route these notifications to you.
+## Receive personal messages
+
+Connect your Slack identity so Interfere can send mentions and assignments to you as direct messages. Choose personal delivery preferences in [Notifications](/product/notifications).
 
 ## Permissions
 
-Interfere requests the scopes it needs to post, route, and DM. The main ones:
+The connection requests permission to send messages, open direct messages, list channels, and match teammates by Slack identity and email. It also uses assistant and canvas permissions for its Slack views and problem previews.
 
-| Scope                             | Why                                                  |
-| --------------------------------- | ---------------------------------------------------- |
-| `chat:write`                      | Post messages to channels and direct messages.       |
-| `chat:write.public`               | Post to public channels without being invited first. |
-| `im:write`                        | Open and send direct messages.                       |
-| `channels:read`, `groups:read`    | List channels so you can route each category to one. |
-| `users:read`, `users:read.email`  | Resolve teammates for mentions and assignments.      |
-| `assistant:write`                 | Power the assistant view in Slack.                   |
-| `canvases:read`, `canvases:write` | Render rich previews for problems and tasks.         |
+## Reconnect
 
-Alongside these, Interfere requests standard read scopes for users and channels so routing and previews work.
-
-## Gotchas
-
-- **Reconnect if access is revoked.** Slack tokens don't expire on their own, but if the app is removed or its access is revoked, Interfere marks the connection for reconnection.
-- **Routing is kept on reconnect.** If you reinstall Slack, your existing channel routing is restored.
+If the app is removed or access is revoked, reconnect from Slack settings. Existing channel routing is restored when you reconnect. Check that those channels still exist and are the destinations you want to use.

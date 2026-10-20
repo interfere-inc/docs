@@ -8,11 +8,34 @@ icon: "/icons/tech/nodejs/transparent.svg"
 
 ## Install
 
-```bash
+<CodeGroup>
+
+```bash npm
 npm install @interfere/node
 ```
 
-Set `INTERFERE_PUBLIC_KEY` to the public key from your [surface](/product/surfaces).
+```bash pnpm
+pnpm add @interfere/node
+```
+
+```bash Yarn
+yarn add @interfere/node
+```
+
+```bash Bun
+bun add @interfere/node
+```
+
+</CodeGroup>
+
+Set the public key from your [surface](/product/surfaces) and the deployment environment:
+
+```env
+INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
+INTERFERE_ENVIRONMENT=staging
+```
+
+Use `production` for production deployments.
 
 ## Initialize
 
@@ -23,11 +46,24 @@ import { init } from "@interfere/node";
 
 init({
   serviceName: "checkout-worker",
-  environment: "production",
+  environment: process.env.INTERFERE_ENVIRONMENT,
 });
 ```
 
-Repeated initialization does not create additional providers. Without a public key, the SDK logs a warning and stays disabled.
+Without a public key, the SDK logs a warning and stays disabled.
+
+## Verify capture
+
+Run this after `init()` in a staging process:
+
+```ts
+import { captureError, flush } from "@interfere/node";
+
+captureError(new Error("Interfere setup test"));
+await flush();
+```
+
+Check the surface's event chart for incoming traffic, then remove the test capture. See [No events arriving](/sdk/troubleshooting) if the chart stays empty.
 
 ## Capture handled errors and spans
 
@@ -53,9 +89,11 @@ The SDK installs handlers for uncaught exceptions and unhandled rejections by de
 | `environment`      | Set the deployment environment. Otherwise reads `INTERFERE_ENVIRONMENT`, `VERCEL_ENV`, then `NODE_ENV`. |
 | `debug`            | Print initialization and exporter diagnostics. Also enabled with `INTERFERE_DEBUG=1`.                   |
 
-## Releases and shutdown
+## Releases
 
-Use the [TypeScript SDK](/platform-sdk/typescript#register-releases-and-upload-source-maps) to publish release metadata and source maps from a custom build pipeline. Build and runtime must use the same commit SHA. Set `INTERFERE_SOURCE_ID` in both when git metadata is unavailable.
+Use the [release workflow](/sdk/releases#custom-build-pipelines) to publish release metadata and source maps from a custom build pipeline. Build and runtime must use the same commit SHA. Set `INTERFERE_SOURCE_ID` in both when git metadata is unavailable.
+
+## Shutdown
 
 For a short-lived process, await `flush()` before it exits. Use `close()` when shutting down the SDK and its provider:
 

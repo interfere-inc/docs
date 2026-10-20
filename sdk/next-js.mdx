@@ -1,233 +1,48 @@
 ---
 title: "Next.js"
+description: "Capture browser and server errors in a Next.js App Router app."
 icon: "/icons/tech/nextjs/currentcolor.svg"
-mode: "default"
-description: "Add error tracking, session replay, and product analytics to your Next.js app with a single provider."
 ---
 
-`@interfere/next` captures errors, sessions, traces, and logs from your Next.js app. The build plugin publishes release metadata and source maps. Browser initialization starts capture, and the provider exposes identity and consent controls to React.
+Install `@interfere/next` in a Next.js 16 or later App Router app using React 19 and Node.js 20 or later.
 
-<Note>
-  You'll need a **surface public key** (`interfere_public_<region>_...`) from [Surfaces](https://interfere.com/~/*/surfaces). For source-map upload and release tracking you'll also want an **Interfere API key** (`interfere_secret_<region>_…`). See [Environment variables](#environment-variables).
-</Note>
+## Install
 
-## Prerequisites
+<CodeGroup>
 
-- Next.js `>= 16` (App Router)
-- React `>= 19`
-- Node.js `>= 20`
-
-## Quick start
-
-Complete the server and browser setup, then verify events after deployment.
-
-<Steps>
-  <Step title="Install the package">
-    <CodeGroup>
-
-    ```bash npm
-    npm install @interfere/next
-    ```
-
-    ```bash pnpm
-    pnpm add @interfere/next
-    ```
-
-    ```bash yarn
-    yarn add @interfere/next
-    ```
-
-    ```bash bun
-    bun add @interfere/next
-    ```
-
-    </CodeGroup>
-
-  </Step>
-  <Step title="Wrap your Next.js config">
-    This lets Interfere upload source maps at build time, so a production stack trace points back to your original code instead of minified output. It also tags each build as a release.
-
-    ```ts next.config.ts
-    import { withInterfere } from "@interfere/next/config";
-    import type { NextConfig } from "next";
-
-    const config: NextConfig = {};
-
-    export default withInterfere(config);
-    ```
-
-  </Step>
-  <Step title="Wire server instrumentation">
-    So server-side errors get captured and OTel bootstraps for Server Components, route handlers, and server actions. Next.js calls the exported `register()` on server start.
-
-    ```ts instrumentation.ts
-    export { onRequestError, register } from "@interfere/next/instrumentation";
-    ```
-
-  </Step>
-  <Step title="Boot the client SDK">
-    Next.js auto-loads `instrumentation-client.ts` in the browser on every page load. `init()` starts browser capture. The provider connects React to that instance and does not start capture by itself. When `INTERFERE_PUBLIC_KEY` is set, the build fails if this file is missing.
-
-    ```ts instrumentation-client.ts
-    import { init } from "@interfere/next/instrument-client";
-
-    init();
-    ```
-
-  </Step>
-  <Step title="Add the provider">
-    Connects React to the running SDK: the `useInterfere` hook, consent controls, and an error boundary that reports render errors. Wrap your app once, at the root layout.
-
-    ```tsx app/layout.tsx
-    import { InterfereProvider } from "@interfere/next/provider";
-
-    export default function RootLayout({
-      children,
-    }: {
-      children: React.ReactNode;
-    }) {
-      return (
-        <html lang="en">
-          <body>
-            <InterfereProvider>{children}</InterfereProvider>
-          </body>
-        </html>
-      );
-    }
-    ```
-
-  </Step>
-</Steps>
-
-<Check>
-  Deploy your app, trigger a test error, and open your [workspace](https://interfere.com/~/*) to
-  confirm it was captured. To test outside production, see [the FAQ](#faq).
-</Check>
-
-## Environment variables
-
-| Variable                | Required     | Description                                                                                                                                                                                                                                                                                          |
-| ----------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `INTERFERE_PUBLIC_KEY`  | Yes          | Your [surface public key](https://interfere.com/~/*/surfaces) (`interfere_public_<region>_...`, where `<region>` is `us` or `eu`). Safe to expose; it only authorizes ingestion.                                                                                                                     |
-| `INTERFERE_API_KEY`     | For releases | Interfere API key (`interfere_secret_<region>_…`). A **server-side build credential** for source-map upload and release metadata. Never expose it in browser code.                                                                                                                                   |
-| `INTERFERE_ENVIRONMENT` | No           | Labels this deployment's telemetry and releases (`production`, `staging`, `preview`, or a label you choose). Read at build time and stamped into the bundle, so it needs no `NEXT_PUBLIC_` prefix. Defaults to `VERCEL_ENV`, then `NODE_ENV`, then `development`. See [Environments](#environments). |
-| `INTERFERE_API_URL`     | No           | Override the ingest endpoint (for example, to target a regional endpoint). Defaults to Interfere's endpoint. See [Custom ingest domain](#custom-ingest-domain).                                                                                                                                      |
-| `INTERFERE_SOURCE_ID`   | No           | Commit SHA used to derive the release identity, so the client bundle and server spans share one release slug. Defaults to your CI's git SHA (`VERCEL_GIT_COMMIT_SHA`, `GITHUB_SHA`) or the local git checkout. Set it when building outside git. See [Build plugin](#build-plugin).                  |
-
-<Warning>
-  `INTERFERE_API_KEY` is a secret. Keep it in server and CI environments only. The public key
-  (`INTERFERE_PUBLIC_KEY`) is the only key that reaches the browser.
-</Warning>
-
-## Build plugin
-
-At production build time, `withInterfere()` uses Next.js's `runAfterProductionCompile` to upload source maps, publish release metadata, and then delete the maps from the build output to keep source maps out of the deployed output. It also adjusts a few Next settings so symbolication and trace propagation work:
-
-- **Forces `productionBrowserSourceMaps: true`** whenever an API key is present. If you set it to `false`, Interfere overrides it with a warning because source maps are required for symbolication.
-- **Sets `experimental.clientTraceMetadata`** (`traceparent`, `baggage`) so a server trace continues into the browser, and **`experimental.instrumentationHook`** on Next.js ≤ 14, which needs the flag to load `instrumentation.ts`.
-- **Chains your hooks.** An existing `runAfterProductionCompile` runs first; Interfere's pipeline runs after it. A release-pipeline failure produces a warning without failing the build. The release's data is ingested but excluded from insight generation.
-- **Guards your setup.** The build fails fast if `INTERFERE_PUBLIC_KEY` is set but no `instrumentation-client.ts` exists, and warns if `instrumentation.ts` is missing. Setting `interfere.buildId` is rejected. Override the commit SHA with [`INTERFERE_SOURCE_ID`](#environment-variables) instead.
-
-<Warning>
-  Keep `withInterfere()` the **outermost** wrapper. Its cleanup step runs last so other build
-  plugins finish uploading before Interfere purges source maps.
-</Warning>
-
-### Coexisting with other build tools
-
-Sentry (`@sentry/nextjs`) and PostHog (`@posthog/nextjs-config`) read the same `.next` output and also delete maps after upload by default. When more than one tool uploads maps, the first to delete starves every later one. The rule: only the **last** tool to run deletes; every earlier one keeps its maps.
-
-| Tool      | Deletion flag                            | Default | Keep maps for a later tool |
-| --------- | ---------------------------------------- | ------- | -------------------------- |
-| Interfere | `sourceMaps.purge`                       | `true`  | `false`                    |
-| Sentry    | `sourcemaps.deleteSourcemapsAfterUpload` | `true`  | `false`                    |
-| PostHog   | `sourcemaps.deleteAfterUpload`           | `true`  | `false`                    |
-
-Make Interfere the last tool to run, so it purges while Sentry keeps its maps:
-
-```ts next.config.ts
-import { withInterfere } from "@interfere/next/config";
-import { withSentryConfig } from "@sentry/nextjs";
-
-export default withInterfere(
-  { sourceMaps: { purge: true } }, // Interfere runs last → it cleans up
-  withSentryConfig(nextConfig, {
-    org: "your-org",
-    project: "your-project",
-    sourcemaps: { deleteSourcemapsAfterUpload: false }, // keep maps for Interfere
-  }),
-);
+```bash npm
+npm install @interfere/next
 ```
 
-If another tool runs last instead, invert it: set `sourceMaps: { purge: false }` on Interfere and leave that tool's deletion flag on. If source maps are missing after a deploy, check which tool deletes them and make that tool run last.
-
-<ParamField path="sourceMaps.purge" default="true" type="boolean">
-  Passed as the first argument to `withInterfere(settings, config)`. Deletes source maps from the
-  build output after upload. Set to `false` when another tool shares the same `.next` build and runs
-  its own upload afterward.
-</ParamField>
-
-### Release identity
-
-Interfere derives each release from your commit SHA, so the client bundle and server spans resolve to the same release. It reads the SHA from your CI's git env vars (`VERCEL_GIT_COMMIT_SHA`, `GITHUB_SHA`, …) or the local git checkout. If no commit is available, such as in a Docker build without git context, set [`INTERFERE_SOURCE_ID`](#environment-variables) to the SHA on both the build and runtime environments.
-
-## Server telemetry
-
-The SDK exports server traces and logs directly by default. If your platform sends the same telemetry through drains, configure the corresponding SDK exporter to avoid duplicate data:
-
-| Setting                          | Behavior                                                                                               |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `INTERFERE_SERVER_TRACING=drain` | Disable the SDK's server trace exporter. Receive traces through the platform trace drain.              |
-| `INTERFERE_LOG_SOURCING=drain`   | Disable the SDK's server log exporter and console bridge. Receive logs through the platform log drain. |
-
-Configure [Vercel drains](/integrations/vercel#trace-and-log-drains) separately. Changing an SDK setting does not create a drain.
-
-## Configuration
-
-Interfere is built to run without tuning, so most apps install it and stop here. Reach for these only when you have a specific reason.
-
-### Name your app
-
-If you run more than one app against Interfere (a storefront and an admin panel, say), give each a `serviceName` so problems, sessions, and metrics are attributed to the right one. Pass it to `init()` in your `instrumentation-client.ts`:
-
-```ts instrumentation-client.ts
-import { init } from "@interfere/next/instrument-client";
-
-init({ serviceName: "@acme/storefront" });
+```bash pnpm
+pnpm add @interfere/next
 ```
 
-<ParamField path="serviceName" default="interfere-sdk" type="string">
-  A stable name for this app. Interfere uses it to keep each surface's data separate, and to
-  correlate the same issue across surfaces into one problem.
-</ParamField>
+```bash Yarn
+yarn add @interfere/next
+```
 
-### Environments
+```bash Bun
+bun add @interfere/next
+```
 
-Interfere tags telemetry with the environment it ran in, and labels each release the same way. In the dashboard, releases carry an environment badge and you can filter by environment, so production data and preview data stay apart.
+</CodeGroup>
 
-Set it with `INTERFERE_ENVIRONMENT`:
+## Set your keys
+
+Copy the keys from your [surface](/product/surfaces) into your deployment's environment variables. Set both for builds; the runtime needs the public key.
 
 ```env
-INTERFERE_ENVIRONMENT=production
+INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
+INTERFERE_API_KEY=YOUR_SURFACE_SECRET_KEY
+INTERFERE_ENVIRONMENT=staging
 ```
 
-The label is free-form: `production`, `staging`, `preview`, `canary`, or whatever you name it. If you don't set it, Interfere falls back to `VERCEL_ENV`, then `NODE_ENV`, then `development`. On Vercel you usually get the right value without doing anything.
+Use `production` for your production deployment. Keep the secret key out of browser code. These variables do not need a `NEXT_PUBLIC_` prefix.
 
-<Note>
-  Interfere reads this at build time and bakes it into your bundle, so it does not need a
-  `NEXT_PUBLIC_` prefix.
-</Note>
+## Add the build plugin
 
-<Warning>
-  Interfere drops local-like environments (`development`, `local`, `test`) before ingestion, so
-  everyday local traffic never reaches your dashboard. An app with no environment set defaults to
-  `development` and is filtered out, which is one reason nothing shows up until you deploy. Set a
-  real environment, or turn off environment filtering for the surface, to capture from one.
-</Warning>
-
-### Custom ingest domain
-
-Interfere's public endpoint is the default. Point the browser SDK at a subdomain of your own site to survive ad-blocker deny-lists (no server component involved), or at a regional endpoint:
+Wrap your existing Next.js config. The plugin registers releases and uploads source maps during production builds.
 
 ```ts next.config.ts
 import { withInterfere } from "@interfere/next/config";
@@ -235,368 +50,80 @@ import type { NextConfig } from "next";
 
 const config: NextConfig = {};
 
-export default withInterfere({
-  interfere: { apiHost: "https://in.yourapp.com" },
-  ...config,
-});
+export default withInterfere(config);
 ```
 
-Add a CNAME pointing your subdomain at the target shown in your dashboard; Interfere provisions TLS automatically. To target a regional endpoint instead, set `apiHost` (or the `INTERFERE_API_URL` env var) to that URL. Ingest requests never carry cookies.
+Keep `withInterfere()` outermost when composing config wrappers. See [Releases and source maps](/sdk/releases) if another tool also uploads source maps.
 
-### Choose what's captured
+## Start server instrumentation
 
-By default Interfere captures all of the signals below. Turn any off with the provider's `plugins` prop. For example, disable session replay if you don't want recordings:
+Create `instrumentation.ts` in the project root, or inside `src` if your app uses a `src` directory.
+
+```ts instrumentation.ts
+export { onRequestError, register } from "@interfere/next/instrumentation";
+```
+
+If you already initialize OpenTelemetry, follow [OpenTelemetry composition](/sdk/opentelemetry) instead of registering a second provider.
+
+## Start browser capture
+
+Create `instrumentation-client.ts` beside `instrumentation.ts`. Next.js loads it before the app becomes interactive.
+
+```ts instrumentation-client.ts
+import { init } from "@interfere/next/instrument-client";
+
+init();
+```
+
+## Add the React provider
+
+Wrap the root layout. The provider exposes identity and consent hooks and reports React render errors. Browser capture still requires the `init()` call above.
 
 ```tsx app/layout.tsx
-<InterfereProvider plugins={{ replay: false }}>{children}</InterfereProvider>
-```
+import { InterfereProvider } from "@interfere/next/provider";
+import type { ReactNode } from "react";
 
-<ParamField path="plugins" type="object">
-  Each signal can be toggled on or off. All default to on.
-
-  <ul>
-    <li><code>errors</code>: uncaught exceptions</li>
-    <li><code>logs</code>: console output</li>
-    <li><code>device</code>: device and browser info</li>
-    <li><code>pageEvents</code>: pageviews and clicks</li>
-    <li><code>rageClick</code>: rage-click detection</li>
-    <li><code>replay</code>: session replay</li>
-  </ul>
-</ParamField>
-
-### React error boundary
-
-The provider reports React render errors through an error boundary. Set `errorBoundary={false}` if your app already provides the boundary you want to use.
-
-```tsx app/layout.tsx
-<InterfereProvider errorBoundary={false}>{children}</InterfereProvider>
-```
-
-## Identity
-
-By default a session is anonymous. Link it to your authenticated user so a problem shows you who hit it in [Users](https://interfere.com/~/*/users), with a name and email instead of an opaque id. Call `identity.set()` from the `useInterfere` hook once your user loads:
-
-```tsx
-import { useInterfere } from "@interfere/next/provider";
-
-function SyncIdentity() {
-  const { identity } = useInterfere();
-  const { user } = useAuthProvider(); // Clerk, Auth0, etc.
-
-  useEffect(() => {
-    if (!user) return;
-    identity.set({
-      identifier: user.id,
-      name: user.name,
-      email: user.email,
-      source: { type: "clerk", name: "Clerk" },
-    });
-  }, [user]);
-
-  return null;
-}
-```
-
-<ParamField path="identifier" type="string" required>
-  Your internal, stable user ID. Use this rather than the email.
-</ParamField>
-
-<ParamField path="source" type="object" required>
-  Where the identity came from.
-
-  <ul>
-    <li><code>type</code>: one of <code>clerk</code>, <code>auth0</code>, or <code>custom</code></li>
-    <li><code>name</code>: the provider's display name, for example <code>"Clerk"</code></li>
-  </ul>
-</ParamField>
-
-<ParamField path="name" type="string">
-  Display name.
-</ParamField>
-
-<ParamField path="email" type="string">
-  Email address.
-</ParamField>
-
-<ParamField path="avatar" type="string">
-  Avatar URL.
-</ParamField>
-
-<ParamField path="traits" type="object">
-  Any extra metadata you want attached to the user (`Record<string, unknown>`).
-</ParamField>
-
-<Note>
-  `identity.set()` is deduplicated per session, so calling it on every render is fine. Identity
-  clears automatically when the session rotates.
-</Note>
-
-<Note>Read the current session ID with the `useSession` hook from `@interfere/next/provider`.</Note>
-
-## Consent
-
-By default all features are active. To respect a cookie banner or privacy preference, pass `consent` to the provider. Once you do, only essential capture (error tracking and logs) plus the categories you opt into will run:
-
-```tsx app/layout.tsx
-<InterfereProvider consent={{ analytics: true, replay: false }}>{children}</InterfereProvider>
-```
-
-| Category    | What it covers                        | Gateable  |
-| ----------- | ------------------------------------- | --------- |
-| `necessary` | Error tracking, logs                  | Always on |
-| `analytics` | Page events, rage clicks, device info | Yes       |
-| `replay`    | Session replay                        | Yes       |
-
-Update consent at runtime through the same hook:
-
-```tsx
-const { consent } = useInterfere();
-
-consent.set({ analytics: true, replay: true }); // selective
-consent.set(); // grant everything
-```
-
-Interfere works with any consent platform (c15t, CookieYes, OneTrust). Map its booleans to the categories above.
-
-<Tip>
-  Set the `consent` prop from the provider's first render so a non-consented feature never gets a
-  chance to load. Update it through the hook as the user changes their mind.
-</Tip>
-
-## Mask replay data
-
-Session replay records the DOM. Password inputs are masked by default. The following privacy classes always apply; add them to elements whose content or input events you need to exclude.
-
-| Class              | Effect                                                                                                     |
-| ------------------ | ---------------------------------------------------------------------------------------------------------- |
-| `interfere-block`  | The element isn't recorded. It replays as a same-size placeholder. Drops a whole input, widget, or region. |
-| `interfere-ignore` | The element still renders. Its keystrokes and input changes are not recorded.                              |
-| `interfere-mask`   | The element's text and its children's text is masked. Applies to rendered text, not input values.          |
-
-```tsx
-<input className="interfere-block" />                {/* whole element dropped */}
-<input className="interfere-ignore" />               {/* input events not recorded */}
-<span className="interfere-mask">$128,400.00</span>  {/* text + children masked */}
-```
-
-To mask input values by type, pass a `replay` config to the provider's `plugins`. Only passwords are masked by default; set `maskAllInputs: true` for a stricter baseline that redacts every input.
-
-```tsx app/layout.tsx
-<InterfereProvider
-  plugins={{
-    replay: {
-      maskInputOptions: { email: true }, // mask specific input types
-      // maskAllInputs: true,            // or mask every input value
-    },
-  }}
->
-  {children}
-</InterfereProvider>
-```
-
-<Note>
-  For finer control, `plugins.replay` also forwards raw [rrweb](https://github.com/rrweb-io/rrweb)
-  options, including `maskTextSelector` / `blockSelector` / `ignoreSelector` to target elements by
-  CSS selector, `maskInputFn` / `maskTextFn` to transform masked values, and `recordCanvas`. These
-  are additive; the `interfere-*` classes still apply.
-</Note>
-
-## Report a handled error
-
-Interfere captures uncaught errors for you. When you catch an error yourself but still want it reported, call `capture` on the client or `captureError` on the server.
-
-```tsx
-import { capture } from "@interfere/next/instrument-client";
-
-try {
-  await saveDraft();
-} catch (error) {
-  capture(error);
-}
-```
-
-```ts
-import { captureError } from "@interfere/next/server";
-
-export async function placeOrder() {
-  try {
-    await chargeCard();
-  } catch (error) {
-    captureError(error);
-    throw error;
-  }
-}
-```
-
-### Custom spans
-
-To time and trace your own work, wrap it in `span`. Interfere records the duration and outcome and links it into the surrounding trace.
-
-```ts
-import { span } from "@interfere/next/instrument-client";
-
-await span("checkout.submit", async () => {
-  await submitOrder();
-});
-```
-
-## Middleware and server actions
-
-Next.js does not route proxy (middleware) or Server Action errors through `onRequestError`, so wrap them explicitly to capture them with full context.
-
-### Proxy (middleware)
-
-Wrap your `proxy.ts` export (Next.js's renamed middleware) with `withInterfereProxy`. It captures thrown errors with the request method and path, then rethrows them unchanged.
-
-```ts proxy.ts
-import { withInterfereProxy } from "@interfere/next/server";
-
-export default withInterfereProxy((request) => {
-  // your proxy logic
-});
-
-export const config = { matcher: ["/((?!_next/static).*)"] };
-```
-
-### Server actions
-
-Wrap a Server Action with `withInterfereServerAction` to attribute failures to the action. It records the action's name, an argument _shape_ (types only, never values), and outcome on a span, then annotates any thrown error so Next's `onRequestError` reports it as one event that groups with the client report.
-
-```ts
-import { withInterfereServerAction } from "@interfere/next/server";
-
-export async function createUser(formData: FormData) {
-  "use server";
-  return withInterfereServerAction(
-    "createUser",
-    async () => {
-      // ...action body
-    },
-    { args: [formData] },
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <InterfereProvider>{children}</InterfereProvider>
+      </body>
+    </html>
   );
 }
 ```
 
-## Advanced
+Configure [consent](/sdk/consent) and [replay masking](/sdk/replay-privacy) before deploying capture to customers.
 
-Use this section when you already have an OpenTelemetry setup or need to understand browser-to-server trace correlation.
+## Verify capture
 
-### Bring your own OTel
+Add this temporary button to a page in your staging app:
 
-Use one OpenTelemetry bootstrap per process. If you already initialize `@vercel/otel`, `dd-trace`, or a custom provider, use `buildInterfereOtelKit()` to add Interfere to that setup instead of also calling Interfere's `register()`.
+```tsx app/capture-test.tsx
+"use client";
 
-```ts instrumentation.ts
-import { registerOTel } from "@vercel/otel";
-import { buildInterfereOtelKit } from "@interfere/next/instrumentation";
+import { capture } from "@interfere/next/instrument-client";
 
-export { onRequestError } from "@interfere/next/instrumentation";
-
-export function register() {
-  const kit = buildInterfereOtelKit({ serviceName: "@acme/storefront" });
-
-  registerOTel({
-    serviceName: "@acme/storefront",
-    attributes: { ...kit?.resourceAttributes },
-    spanProcessors: ["auto", ...(kit?.spanProcessors ?? [])],
-    logRecordProcessors: [...(kit?.logRecordProcessors ?? [])],
-    propagators: ["auto", ...(kit?.propagators ?? [])],
-  });
-
-  kit?.enableConsoleBridge();
-  void kit?.fetchRemoteConfig();
+export function CaptureTest() {
+  return (
+    <button onClick={() => capture(new Error("Interfere setup test"))}>Send test error</button>
+  );
 }
 ```
 
-The kit constructs processors, propagators, and resource attributes without registering providers globally. It returns `null` when `INTERFERE_PUBLIC_KEY` is unset.
+Render the button from a temporary route:
 
-| Kit field               | Use                                                                                                                                             |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `resourceAttributes`    | Merge with your provider's attributes to preserve SDK, service, environment, and release identity.                                              |
-| `spanProcessors`        | Add baggage stamping and the trace exporter. The exporter is omitted in server trace drain mode.                                                |
-| `logRecordProcessors`   | Add the log exporter. It is omitted in log drain mode.                                                                                          |
-| `propagators`           | Add the freshness stamper and W3C baggage propagation after your trace-context propagator. The kit does not include a trace-context propagator. |
-| `instrumentations`      | Currently empty. Next.js or your host setup supplies outbound HTTP instrumentation.                                                             |
-| `enableConsoleBridge()` | Forward console records after your logger provider is registered. Returns a cleanup function. In log drain mode it does not install a bridge.   |
-| `fetchRemoteConfig()`   | Fetch and cache remote SDK configuration.                                                                                                       |
+```tsx app/interfere-test/page.tsx
+import { CaptureTest } from "../capture-test";
 
-### Composition gotchas
+export default function InterfereTestPage() {
+  return <CaptureTest />;
+}
+```
 
-Keep `kit.propagators` after your trace-context propagator, as in `propagators: ["auto", ...kit.propagators]`. Propagators run in order. The freshness stamper must write `tracestate` after trace context is injected.
+Build and deploy to staging, open `/interfere-test`, and select **Send test error**. Check the surface's event chart for incoming traffic, then remove the button. If events do not arrive, follow [No events arriving](/sdk/troubleshooting).
 
-Merge the kit's resource attributes with your own. Pass the same service name to the kit and your host bootstrap so spans retain consistent service and release attribution.
+## Next steps
 
-If you already have an `onRequestError` handler, call Interfere's handler inside it as well. Keep both behaviors instead of replacing one export with the other.
-
-Only one browser SDK should inject W3C trace context for a given request URL. If another SDK also writes `traceparent`, scope its injection to other hosts or use its vendor-specific propagation where supported. Competing headers can break browser-to-server correlation.
-
-Skip the console bridge when your logger already emits the same records through OpenTelemetry. Avoid adding a second HTTP instrumentation for requests already traced by Next.js or your host setup.
-
-The kit does not publish releases or upload source maps. Keep the [build plugin](#build-plugin) configured.
-
-### How trace stitching works
-
-On a dynamically rendered page, Next.js can inject `traceparent` and `tracestate` metadata into the HTML. `withInterfere()` enables this through `experimental.clientTraceMetadata`. The browser SDK reads the metadata and attaches page activity to the server request trace.
-
-Outgoing same-origin requests carry trace context back to the server. Route handlers and Server Actions can then join that trace.
-
-- Client-side navigation starts a new browser trace for the next page view. The request that caused the navigation belongs to the preceding page's trace.
-- Prefetch requests carry `http.request.prefetch: true` so they can be distinguished from other requests.
-- Build-time static pages have no per-request server trace. Their browser activity starts a browser trace.
-
-### Cached HTML and the freshness stamp
-
-Cached HTML can contain trace metadata from an earlier render. Reusing it for every visitor would attach unrelated sessions to the same server trace.
-
-The standalone `register()` path avoids injecting trace metadata during static generation and ISR revalidation. For other rendering paths, the server adds an `interfere=<unix seconds>` freshness entry to `tracestate`.
-
-The browser rejects stamped trace context older than two minutes and starts its own trace. A missing stamp is accepted for compatibility. A device clock more than two minutes ahead can reject otherwise valid context; telemetry still records in a browser trace.
-
-Composed OpenTelemetry setups need `kit.propagators` to add the freshness stamp. The kit cannot suppress their host propagator's ISR metadata, but the stamp limits how long cached context can be reused.
-
-### Edge runtime
-
-On the Edge runtime, `@interfere/next/instrumentation` uses an edge-specific build. `register()` creates an edge-compatible trace exporter and supports `onRequestError`, but it does not register a propagator. Edge-rendered pages therefore start browser traces without correlating through server-injected trace metadata.
-
-`buildInterfereOtelKit()` returns `null` on Edge. Optional chaining in the composition example allows the same file to load on Node.js and Edge. Node.js routes keep their Node.js instrumentation.
-
-## Other frameworks
-
-<CardGroup cols={3}>
-  <Card title="Vite + React" icon="/icons/tech/vite/transparent.svg" href="/sdk/vite">
-    `@interfere/vite`: a Vite plugin plus `init()` before render. Works for SPA and SSR.
-  </Card>
-
-<Card
-  title="TanStack Start"
-  icon="/icons/tech/tanstack/currentcolor.svg"
-  href="/sdk/vite#server-side-rendering"
->
-  `@interfere/vite`: the same plugin, with server instrumentation for SSR.
-</Card>
-
-  <Card title="NestJS" icon="/icons/tech/nestjs/transparent.svg" href="/sdk/nestjs">
-    `@interfere/nest`: a backend module plus `instrument.ts` for server error capture.
-  </Card>
-</CardGroup>
-
-## FAQ
-
-<AccordionGroup>
-  <Accordion title="Why isn't anything showing up in development?">
-    The SDK stays quiet when `NODE_ENV !== "production"`, so local noise doesn't reach your dashboard. To capture while testing, call `init({ enabled: true })` in `instrumentation-client.ts`. Interfere also drops the `development`, `local`, and `test` environments before ingestion, so set a real [environment](#environments) too if you want that data to land.
-  </Accordion>
-
-<Accordion title="Do you handle the same issue across multiple apps?">
-  Yes. Give each app its own `serviceName`. When the same issue hits more than one surface,
-  Interfere correlates it into a single problem instead of a separate alert per app.
-</Accordion>
-
-<Accordion title="What about ad-blockers?">
-  Set [`apiHost`](#custom-ingest-domain) to a subdomain of your own site with a CNAME to the target
-  shown in your dashboard. Telemetry posts to that subdomain without a server route or middleware.
-</Accordion>
-
-  <Accordion title="Can I ship errors only, without analytics or replay?">
-    Yes. Disable the signals you don't want with the provider's `plugins` prop, for example `<InterfereProvider plugins={{ replay: false, pageEvents: false }}>`. To drop browser tracing from the bundle entirely, pass `init({ tracing: false })`.
-  </Accordion>
-</AccordionGroup>
+[Identify users](/sdk/identity), [report handled errors and trace custom work](/sdk/error-capture), or configure [server telemetry and OpenTelemetry](/sdk/opentelemetry).

@@ -1,0 +1,76 @@
+---
+title: "OpenTelemetry"
+description: "Compose Next.js instrumentation and avoid duplicate telemetry."
+icon: "/icons/ui/link.svg"
+---
+
+Use this guide when your Next.js app already initializes OpenTelemetry or receives telemetry through platform drains.
+
+## Use an existing OpenTelemetry provider
+
+Use one OpenTelemetry bootstrap per process. If you already initialize `@vercel/otel`, `dd-trace`, or a custom provider, use `buildInterfereOtelKit()` to add Interfere to that setup instead of also calling Interfere's `register()`.
+
+```ts instrumentation.ts
+import { registerOTel } from "@vercel/otel";
+import { buildInterfereOtelKit } from "@interfere/next/instrumentation";
+
+export { onRequestError } from "@interfere/next/instrumentation";
+
+export function register() {
+  const kit = buildInterfereOtelKit({ serviceName: "@acme/storefront" });
+
+  registerOTel({
+    serviceName: "@acme/storefront",
+    attributes: { ...kit?.resourceAttributes },
+    spanProcessors: ["auto", ...(kit?.spanProcessors ?? [])],
+    logRecordProcessors: [...(kit?.logRecordProcessors ?? [])],
+    propagators: ["auto", ...(kit?.propagators ?? [])],
+  });
+
+  kit?.enableConsoleBridge();
+  void kit?.fetchRemoteConfig();
+}
+```
+
+The kit constructs processors, propagators, and resource attributes without registering providers globally. It returns `null` when `INTERFERE_PUBLIC_KEY` is unset.
+
+| Kit field               | Use                                                                                                                                           |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `resourceAttributes`    | Merge with your provider's attributes to preserve SDK, service, environment, and release identity.                                            |
+| `spanProcessors`        | Add baggage stamping and the trace exporter. The exporter is omitted in server trace drain mode.                                              |
+| `logRecordProcessors`   | Add the log exporter. It is omitted in log drain mode.                                                                                        |
+| `propagators`           | Append after your trace-context propagator to preserve browser-to-server correlation.                                                         |
+| `instrumentations`      | Currently empty. Next.js or your host setup supplies outbound HTTP instrumentation.                                                           |
+| `enableConsoleBridge()` | Forward console records after your logger provider is registered. Returns a cleanup function. In log drain mode it does not install a bridge. |
+| `fetchRemoteConfig()`   | Fetch and cache remote SDK configuration.                                                                                                     |
+
+## Compose processors and propagators
+
+Append `kit.propagators` after your trace-context propagator, as in `propagators: ["auto", ...kit.propagators]`, to preserve browser-to-server correlation.
+
+Merge the kit's resource attributes with your own. Pass the same service name to the kit and your host bootstrap so spans retain consistent service and release attribution.
+
+If you already have an `onRequestError` handler, call Interfere's handler inside it as well. Keep both behaviors instead of replacing one export with the other.
+
+Only one browser SDK should inject W3C trace context for a given request URL. If another SDK also writes `traceparent`, scope its injection to other hosts or use its vendor-specific propagation where supported. Competing headers can break browser-to-server correlation.
+
+Skip the console bridge when your logger already emits the same records through OpenTelemetry. Avoid adding a second HTTP instrumentation for requests already traced by Next.js or your host setup.
+
+The kit does not publish releases or upload source maps. Keep the [build plugin](/sdk/releases) configured.
+
+## Browser-to-server traces
+
+Keep both the build plugin and browser initialization from the [Next.js guide](/sdk/next-js). On dynamically rendered pages, they connect browser activity to the server request. The composed setup above also needs `kit.propagators` for that connection.
+
+Static pages and Edge-rendered pages start separate browser traces. Capture still works, but those pages do not have the same server-to-browser link. On Edge, `buildInterfereOtelKit()` returns `null`; the optional chaining in the example lets it load without registering a Node.js provider.
+
+## Server telemetry
+
+The Next.js SDK exports server traces and logs directly by default. If you receive the same data through platform drains, disable the corresponding SDK exporter:
+
+| Variable                         | Effect                                                   |
+| -------------------------------- | -------------------------------------------------------- |
+| `INTERFERE_SERVER_TRACING=drain` | Disable the SDK's server trace exporter                  |
+| `INTERFERE_LOG_SOURCING=drain`   | Disable the SDK's server log exporter and console bridge |
+
+Create [Vercel drains](/integrations/vercel#trace-and-log-drains) separately. These variables control the SDK; they do not create a drain.
