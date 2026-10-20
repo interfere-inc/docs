@@ -14,7 +14,9 @@ Use active voice, sentence case, and concrete instructions. Describe what a feat
 
 Use bold for UI labels and code formatting for commands, paths, variables, and API fields. Keep secrets out of examples. Do not add source-code comments to examples.
 
-Use SVGs from the Interfere icon pack under `icons/ui/` for page and card icons. Keep provider and framework logos under `icons/tech/`. Do not substitute built-in icon-library glyphs.
+Use sidebar icons only for destinations that have icons in the product navigation, and match the product icon. Task pages, subsections, SDK guides, and reference pages have no sidebar icon. Use SVGs from the Interfere icon pack under `icons/ui/`; do not substitute generic glyphs.
+
+Product pages explain the UI and how to use it. Keep SDK APIs, build configuration, and upload scripts in the SDK section, linked from product pages when needed.
 
 ## Validation
 
@@ -27,3 +29,7 @@ Run `bun run format`, `bun run lint`, `bun run typecheck`, `bun run validate`, a
 Mintlify is connected to `interfere-inc/docs`, branch `main`, with `docs.json` at the repository root. Updates to that branch trigger production deployments at `https://interfere.com/docs`. Check the deployment in Mintlify Activity after publishing. Preview deployments depend on workspace availability.
 
 The API reference reads `https://api.interfere.com/openapi.json`. Keep the build validation enabled for OpenAPI so a broken specification fails the check. Scraped files under `sources/` are reference material, excluded through `.mintignore`.
+
+## Visual explanations
+
+Use Mermaid for relationships and flows, with an accessible title and description. Use framed screenshots when readers need to recognize a specific UI control; exclude outdated navigation and unrelated settings. Add callouts for plan availability, prerequisites, and concrete footguns. Verify diagrams, captions, and callouts against the product, and inspect their rendered output.

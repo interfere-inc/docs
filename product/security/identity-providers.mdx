@@ -1,0 +1,27 @@
+---
+title: "Identity providers"
+description: "Choose how members sign in to your workspace."
+---
+
+Open [Settings → Security](https://interfere.com/~/*/settings/security), then **Access control → Sign-in methods**. This setting controls the identity providers available to users associated with your verified domains.
+
+## Choose sign-in methods
+
+The menu lets you enable or disable Google, GitHub, and Vercel sign-in. Changing these choices requires permission to manage workspace authentication.
+
+Email codes and passkeys are retained by the settings flow and are not toggles in this menu. Enabling an enterprise SSO connection does not, by itself, disable them.
+
+<Note>
+  Ask support about your required authentication policy before relying on an SSO-only rollout. The
+  sign-in methods menu does not provide an “enforce SSO only” switch.
+</Note>
+
+## Connect an enterprise identity provider
+
+Use [Single sign-on](/product/security/sso) for a company-managed SAML or OIDC connection. Once an active connection is available, **Enterprise SSO** appears in the sign-in methods menu. Manage the connection in the **Single sign-on** row.
+
+If your goal is to synchronize users or groups, configure [Directory sync](/product/security/scim) as well. Authentication and membership provisioning are separate controls.
+
+## Verify your company domain
+
+[Verified domains](/product/workspace-domains) associate your team's email domain with the workspace and control enrollment. A domain managed by an enterprise identity provider displays that relationship in Security.
