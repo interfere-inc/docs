@@ -14,6 +14,8 @@ In the Inbox, filter to the checkout surface and **production** environment. Ope
 
 Check its first and latest detection times, affected users, and priority. Compare the first occurrence with the deployment time. A matching timestamp helps identify the release to inspect; the trace and source code will show whether that release caused the failure.
 
+**First seen** is the earliest evidence recorded for the problem. **Last seen** is its most recent occurrence. Compare them to see how long the problem has been occurring and whether new occurrences are still arriving. When a resolved problem returns as a regression, last seen advances to the new occurrence while first seen stays unchanged.
+
 ## 2. Read the investigation
 
 Open **Timeline** and read the explanation. Follow its links to the supporting records.
