@@ -20,6 +20,8 @@ Set `INTERFERE_API_KEY` to the secret key from your surface. Run secret-key requ
 
 Use the surface's public key for endpoints that accept public-key authentication. The SDK supplies it for normal application capture. Check the operation's authentication fields before making a direct request.
 
+For native OTLP ingestion at `/drain/v1/traces`, `/drain/v1/logs`, and `/drain/v1/metrics`, use a workspace key with `org:telemetry:write`. Send it as `Authorization: Bearer <key>` or in `x-api-key`. See [OpenTelemetry ingestion](/sdk/otel-ingestion).
+
 ## Workspace automation
 
 Use [MCP](/integrations/mcp) or the [CLI](/integrations/cli) to work interactively with workspace data. Use scoped [workspace keys](/integrations/api-keys#workspace-keys) for unattended operations and [Terraform](/integrations/terraform) to manage infrastructure configuration.

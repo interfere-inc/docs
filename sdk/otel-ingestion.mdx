@@ -1,0 +1,94 @@
+---
+title: "OpenTelemetry ingestion"
+description: "Send traces, logs, and metrics from an OpenTelemetry Collector or native exporter."
+---
+
+Send telemetry to Interfere using your existing OpenTelemetry instrumentation. You can export through a Collector or directly from your service, without installing an Interfere SDK or creating a surface.
+
+## Create a telemetry key
+
+Open [Knowledge](https://interfere.com/~/*/knowledge), select **Set up OpenTelemetry**, then **Enable OpenTelemetry**. Create a workspace API key with the **Send telemetry** permission, or use an existing key with that permission. Its API scope is `org:telemetry:write`.
+
+Store the returned secret as `INTERFERE_API_KEY` in your service or Collector environment. Keep this workspace key on the server. Surface public keys and release-only build keys do not provide workspace telemetry access.
+
+You can manage and revoke the key in [Developer settings](https://interfere.com/~/*/settings/developer). See [API keys](/integrations/api-keys) for key creation and expiration settings.
+
+## Endpoints and authentication
+
+Use `https://api.interfere.com/drain` as the OTLP/HTTP base endpoint. The intake accepts protobuf or OTLP JSON, with optional gzip compression. Configure an HTTP exporter; this endpoint does not accept OTLP/gRPC.
+
+| Signal  | HTTP endpoint                                |
+| ------- | -------------------------------------------- |
+| Traces  | `https://api.interfere.com/drain/v1/traces`  |
+| Logs    | `https://api.interfere.com/drain/v1/logs`    |
+| Metrics | `https://api.interfere.com/drain/v1/metrics` |
+
+Authenticate each request with the workspace key:
+
+```http
+Authorization: Bearer YOUR_WORKSPACE_TELEMETRY_KEY
+```
+
+The `x-api-key` header also accepts the same secret. The key selects the workspace; resource attributes identify the service sending data.
+
+## Export through a Collector
+
+If your applications already export to a Collector, keep that setup and add this exporter to its configuration:
+
+```yaml
+exporters:
+  otlphttp/interfere:
+    endpoint: "https://api.interfere.com/drain"
+    headers:
+      Authorization: "Bearer ${env:INTERFERE_API_KEY}"
+```
+
+Add `otlphttp/interfere` to the `exporters` list in each traces, logs, or metrics pipeline you want to send. Keep the pipeline's existing receivers, processors, and other exporters. Defining the exporter alone does not enable it.
+
+The Collector appends the signal path to the base endpoint. See the [OTLP HTTP exporter configuration](https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/otlphttpexporter) for batching, queue, timeout, and retry options.
+
+## Export directly from a service
+
+For an OTel SDK that supports standard exporter environment variables, configure your service before it starts:
+
+```bash
+export OTEL_SERVICE_NAME="checkout-api"
+export OTEL_EXPORTER_OTLP_ENDPOINT="https://api.interfere.com/drain"
+export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
+export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Bearer%20${INTERFERE_API_KEY}"
+export OTEL_RESOURCE_ATTRIBUTES="service.namespace=commerce,deployment.environment.name=production,service.version=1.2.3"
+```
+
+Supply `INTERFERE_API_KEY` through your secret manager. `%20` encodes the space after `Bearer` in the exporter header setting.
+
+These variables configure exporters that your application initializes; they do not install instrumentation or enable every signal. Configure the trace, log, and metric exporters you need through your language's [OpenTelemetry setup](https://opentelemetry.io/docs/languages/), and flush buffered telemetry during graceful shutdown.
+
+Signal-specific settings override the shared settings. For example, `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` must contain the full URL ending in `/drain/v1/traces`. Check for existing endpoint and header overrides when changing destinations. See [OTLP exporter configuration](https://opentelemetry.io/docs/languages/sdk-configuration/otlp-exporter/).
+
+Use one export path per signal to avoid sending the same records both directly and through a Collector. For Next.js apps that already use the Interfere SDK, see [OpenTelemetry composition](/sdk/opentelemetry).
+
+## Identify services and deployments
+
+Set resource attributes in the application so a Collector forwarding multiple services retains each service's identity.
+
+| Attribute                     | Use                                                                                              |
+| ----------------------------- | ------------------------------------------------------------------------------------------------ |
+| `service.name`                | A stable service name, such as `checkout-api`. Include it so Interfere can discover the service. |
+| `service.namespace`           | An optional grouping, such as `commerce`, that distinguishes services with the same name.        |
+| `deployment.environment.name` | The deployment environment, such as `staging` or `production`.                                   |
+| `service.version`             | The deployed version or Git commit SHA, so you can identify which code produced the telemetry.   |
+
+Keep the service name and namespace consistent across deployments. Each discovered service appears as a data source in [Knowledge](/product/knowledge). This setup does not automatically associate the service with an existing surface or upload source maps.
+
+## Verify ingestion
+
+Generate a request in your service, allow its exporter to flush, then check Knowledge for the service name. Check the exporter or Collector logs for rejected records or connection errors.
+
+An HTTP `200` response can include OTLP partial-success details. Check those details before treating the entire batch as accepted.
+
+| Response | Check                                                                         |
+| -------- | ----------------------------------------------------------------------------- |
+| `401`    | The workspace key, its expiration, and the `org:telemetry:write` scope.       |
+| `413`    | Reduce the export batch size.                                                 |
+| `415`    | Use `application/x-protobuf` or `application/json` with a valid OTLP payload. |
+| `503`    | Retry with backoff, respecting `Retry-After` when present.                    |

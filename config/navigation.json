@@ -80,7 +80,14 @@
             {
               "group": "Installation",
               "expanded": false,
-              "pages": ["sdk/next-js", "sdk/vite", "sdk/tanstack-start", "sdk/nestjs", "sdk/node"]
+              "pages": [
+                "sdk/next-js",
+                "sdk/vite",
+                "sdk/tanstack-start",
+                "sdk/nestjs",
+                "sdk/node",
+                "sdk/otel-ingestion"
+              ]
             },
             {
               "group": "Customization",
