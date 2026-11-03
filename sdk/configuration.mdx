@@ -29,15 +29,9 @@ The surface public key selects the app receiving telemetry. The service name ide
 
 ## Environments
 
-Set `INTERFERE_ENVIRONMENT` to your deployment label:
+On Vercel and Cloudflare, the SDK reads the environment from the platform. On other hosts it falls back to `NODE_ENV`. To label a self-hosted staging deployment, set `INTERFERE_ENVIRONMENT=staging` in its environment.
 
-```env
-INTERFERE_ENVIRONMENT=production
-```
-
-Next.js and Vite stamp the value into the build. It does not need a `NEXT_PUBLIC_` or `VITE_` prefix. Without an explicit value, the SDK falls back to `VERCEL_ENV`, then `NODE_ENV`, then `development`.
-
-Interfere filters local-like environments such as `development`, `local`, and `test` before ingestion. Use a deployment label such as `staging` for verification, or change environment filtering for the surface.
+Interfere filters local-like environments such as `development`, `local`, and `test` before ingestion. Verify on a deployed environment such as a preview or staging deployment, or change environment filtering for the surface.
 
 ## Capture features
 

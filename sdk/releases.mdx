@@ -96,7 +96,7 @@ The script prints `Published N source maps for rel_…` after the complete batch
 
 It adds debug IDs to the compiled JavaScript and maps. **Deploy the modified output**, and run any file hashing or artifact signing afterward. The script retains the maps so other uploaders can use them. Keep `.map` files out of publicly served assets unless you intend to publish your source code.
 
-Set `INTERFERE_SOURCE_ID` to the same commit SHA in the deployed Node.js or NestJS process, alongside `INTERFERE_PUBLIC_KEY` and `INTERFERE_ENVIRONMENT`. Trigger a test error, then open its stack trace to check that frames resolve to your original TypeScript files.
+Set `INTERFERE_SOURCE_ID` to the same commit SHA in the deployed Node.js or NestJS process, alongside `INTERFERE_PUBLIC_KEY`. Trigger a test error, then open its stack trace to check that frames resolve to your original TypeScript files.
 
 ### Other build systems
 
