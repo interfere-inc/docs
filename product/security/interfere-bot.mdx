@@ -1,0 +1,36 @@
+---
+title: "Interfere bot"
+description: "What the Interfere bot requests, on whose behalf, how it identifies itself, and how it treats robots.txt."
+---
+
+Interfere sends a small set of automated HTTP requests on behalf of the workspaces that use it. Each request carries the same identity, so website and API operators can recognize, allow, or block it.
+
+## How it identifies itself
+
+Every request sends the user agent `Interfere/1.0 (+https://interfere.com/bot)`. Match on the stable token `Interfere/`.
+
+In production, requests are also signed with [Web Bot Auth](https://developers.cloudflare.com/bots/reference/bot-verification/web-bot-auth/) (HTTP Message Signatures with Ed25519). Each signature covers the authority, method, path and query, carries `tag="web-bot-auth"`, and expires after 60 seconds. Requests send `Signature-Agent: "https://interfere.com"`, and the public keys are published at `https://interfere.com/.well-known/http-message-signatures-directory`. Interfere-owned address space is listed at `https://interfere.com/ips.json`; requests sent from shared cloud infrastructure rely on the signature instead.
+
+## What it requests and on whose behalf
+
+The bot does not crawl, index, or follow links. It only calls the specific endpoints below, each triggered by a workspace's configuration or by an investigation that workspace runs.
+
+| Request | Destination | Triggered by |
+| --- | --- | --- |
+| MCP discovery, OAuth, and tool or resource reads | MCP servers that a workspace connects | A workspace member connecting the server, and investigations that read evidence from it |
+| Domain Connect discovery | The DNS provider of a domain the workspace adds | A workspace member adding a [workspace domain](/product/workspace-domains) |
+| RDAP lookups | IANA bootstrap and regional internet registries | A workspace member adding an ASN to [network access](/product/network-access) rules |
+| Company logo | The logo.dev API | Interfere displaying a [company](/product/companies), stored after the first fetch |
+| Documentation | `interfere.com/docs` | The Interfere MCP server answering a documentation request |
+
+## How often
+
+Requests are made on demand, one at a time per action, with a 10-second timeout for most lookups. Interfere does not schedule recurring scans of third-party sites. Company logos are fetched once per company and theme and served from Interfere's storage afterward. Redirects are not followed automatically: each new destination is validated and, in production, signed again.
+
+## robots.txt
+
+Interfere does not fetch or apply `robots.txt`, because it does not crawl. Every request targets a specific API endpoint that a workspace connected, a public registry, or a provider API Interfere integrates with. To refuse Interfere's requests, block the user agent token `Interfere/` or the verified bot in your firewall, or disconnect the server from the workspace.
+
+## Contact
+
+Report a problem with Interfere's automated traffic through `https://interfere.com/.well-known/security.txt`.
