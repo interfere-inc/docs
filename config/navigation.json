@@ -60,6 +60,7 @@
                 "product/security/identity-providers",
                 "product/security/sso",
                 "product/security/scim",
+                "product/security/interfere-bot",
                 "product/workspace-domains",
                 "product/network-access",
                 "product/infrastructure"
