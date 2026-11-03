@@ -65,4 +65,4 @@ Static pages and Edge-rendered pages start separate browser traces. Capture stil
 
 ## Server telemetry
 
-Under `@vercel/otel`, a direct OTLP exporter (full mode) flushes inside `waitUntil`, so each invocation stays billed until the export finishes. Drain mode is the default on Vercel and avoids that cost: Vercel's trace drain ships spans out of process. The SDK selects the mode automatically; see [Vercel drains](/integrations/vercel#trace-and-log-drains).
+Under `@vercel/otel`, a direct OTLP exporter flushes inside `waitUntil`, so each invocation stays billed until the export finishes. With a [Vercel trace drain](/integrations/vercel#trace-and-log-drains) enabled for the surface, the SDK switches to drain mode automatically and avoids that cost: Vercel ships spans out of process. Without a drain, the SDK exports directly and caps each export on Vercel at 2 seconds.

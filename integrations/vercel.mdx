@@ -41,9 +41,7 @@ Redeploying the same commit uses the same release identity. The commit identifie
 
 Open **Drains** after mapping the project and surface. Enable a trace drain, log drain, or both. Each drain shows whether it is live or paused, and you can pause, resume, or delete it.
 
-The Next.js SDK selects drain mode automatically; there is nothing to configure. When a trace or log drain is enabled for the surface, the build reads it from the surface configuration and skips the matching SDK exporter. A surface without a trace drain keeps the SDK exporter, so traces are never dropped. If the build cannot load the surface configuration, server traces default to drain on Vercel.
-
-To export directly instead, pass `serverTracing: "full"` to `register()`. On Vercel the SDK logs a warning and caps each export at 2 seconds. See [OpenTelemetry](/sdk/opentelemetry#server-telemetry).
+The SDK picks the mode automatically; there is nothing to configure. When a trace or log drain is enabled for the surface, the build reads it from the surface configuration and skips the matching SDK exporter. A surface without a drain keeps the SDK exporter, and on Vercel each direct export is capped at 2 seconds. See [OpenTelemetry](/sdk/opentelemetry#server-telemetry).
 
 ## Permissions
 
