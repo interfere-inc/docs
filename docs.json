@@ -99,5 +99,18 @@
   ],
   "interaction": {
     "drilldown": false
+  },
+  "markdown": {
+    "schema": true
+  },
+  "api": {
+    "openapi": "https://api.interfere.com/openapi.json",
+    "playground": {
+      "display": "interactive"
+    },
+    "examples": {
+      "defaults": "required",
+      "autogenerate": true
+    }
   }
 }

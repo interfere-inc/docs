@@ -1,31 +1,41 @@
 {
   "directory": "card",
-  "tabs": [
+  "groups": [
     {
-      "tab": "Documentation",
-      "groups": [
+      "group": "Documentation",
+      "pages": [
         {
           "group": "Getting started",
-          "pages": ["index", "product/overview", "quickstart"]
+          "pages": [
+            "product/overview",
+            "quickstart",
+            "index"
+          ]
         },
         {
           "group": "Product",
           "pages": [
             {
               "group": "Inbox",
-              "root": "product/inbox",
-              "pages": ["product/problems", "product/session-replay"],
               "icon": "/icons/ui/inbox.svg",
-              "expanded": false
+              "expanded": false,
+              "root": "product/inbox",
+              "pages": [
+                "product/problems",
+                "product/session-replay"
+              ]
             },
             "product/activity",
             "product/observability",
             {
               "group": "Surfaces",
-              "root": "product/surfaces",
-              "pages": ["product/surfaces/create", "product/surfaces/releases"],
               "icon": "/icons/ui/layers.svg",
-              "expanded": false
+              "expanded": false,
+              "root": "product/surfaces",
+              "pages": [
+                "product/surfaces/create",
+                "product/surfaces/releases"
+              ]
             },
             "product/users",
             "product/companies",
@@ -41,6 +51,8 @@
             {
               "group": "Connections",
               "icon": "/icons/ui/connections.svg",
+              "expanded": false,
+              "root": "integrations/overview",
               "pages": [
                 "integrations/github",
                 "integrations/github-enterprise-cloud",
@@ -49,12 +61,12 @@
                 "integrations/cloudflare-workers",
                 "integrations/slack",
                 "integrations/linear"
-              ],
-              "expanded": false,
-              "root": "integrations/overview"
+              ]
             },
             {
               "group": "Security",
+              "icon": "/icons/ui/shield.svg",
+              "expanded": false,
               "root": "product/security",
               "pages": [
                 "product/security/identity-providers",
@@ -64,16 +76,17 @@
                 "product/workspace-domains",
                 "product/network-access",
                 "product/infrastructure"
-              ],
-              "icon": "/icons/ui/shield.svg",
-              "expanded": false
+              ]
             },
             "product/audit-log"
           ]
         },
         {
           "group": "Compliance",
-          "pages": ["product/compliance", "product/data-residency"]
+          "pages": [
+            "product/compliance",
+            "product/data-residency"
+          ]
         },
         {
           "group": "SDKs",
@@ -118,15 +131,20 @@
       ]
     },
     {
-      "tab": "API",
-      "groups": [
+      "group": "Platform API",
+      "openapi": "https://api.interfere.com/openapi.json",
+      "pages": [
         {
           "group": "Platform SDK",
-          "pages": ["platform-sdk/typescript"]
+          "pages": [
+            "platform-sdk/typescript"
+          ]
         },
         {
           "group": "Using the API",
-          "pages": ["api-reference/authentication"]
+          "pages": [
+            "api-reference/authentication"
+          ]
         },
         {
           "group": "Public API",
