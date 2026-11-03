@@ -65,11 +65,4 @@ Static pages and Edge-rendered pages start separate browser traces. Capture stil
 
 ## Server telemetry
 
-The Next.js SDK exports server traces and logs directly by default. If you receive the same data through platform drains, disable the corresponding SDK exporter:
-
-| Variable                         | Effect                                                   |
-| -------------------------------- | -------------------------------------------------------- |
-| `INTERFERE_SERVER_TRACING=drain` | Disable the SDK's server trace exporter                  |
-| `INTERFERE_LOG_SOURCING=drain`   | Disable the SDK's server log exporter and console bridge |
-
-Create [Vercel drains](/integrations/vercel#trace-and-log-drains) separately. These variables control the SDK; they do not create a drain.
+Under `@vercel/otel`, a direct OTLP exporter flushes inside `waitUntil`, so each invocation stays billed until the export finishes. With a [Vercel trace drain](/integrations/vercel#trace-and-log-drains) enabled for the surface, the SDK switches to drain mode automatically and avoids that cost: Vercel ships spans out of process. Without a drain, the SDK exports directly and caps each export on Vercel at 2 seconds.
