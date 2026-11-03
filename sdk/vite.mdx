@@ -40,10 +40,9 @@ Copy the keys from your [surface](/product/surfaces) into the build environment:
 ```env
 VITE_INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
 INTERFERE_API_KEY=YOUR_SURFACE_SECRET_KEY
-INTERFERE_ENVIRONMENT=staging
 ```
 
-Use `production` for production builds. Only the public key gets a `VITE_` prefix. Prefixing the secret key would expose it in the browser bundle.
+Only the public key gets a `VITE_` prefix. Prefixing the secret key would expose it in the browser bundle.
 
   </Step>
   <Step title="Connect your build">

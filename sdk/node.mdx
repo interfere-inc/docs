@@ -30,14 +30,11 @@ bun add @interfere/node
 
 </CodeGroup>
 
-Set the public key from your [surface](/product/surfaces) and the deployment environment:
+Set the public key from your [surface](/product/surfaces):
 
 ```env
 INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
-INTERFERE_ENVIRONMENT=staging
 ```
-
-Use `production` for production deployments.
 
   </Step>
   <Step title="Initialize before your application work">
@@ -49,7 +46,6 @@ import { init } from "@interfere/node";
 
 init({
   serviceName: "checkout-worker",
-  environment: process.env.INTERFERE_ENVIRONMENT,
 });
 ```
 
@@ -88,16 +84,16 @@ The SDK installs handlers for uncaught exceptions and unhandled rejections by de
 
 ## Configuration
 
-| Option             | Purpose                                                                                                 |
-| ------------------ | ------------------------------------------------------------------------------------------------------- |
-| `serviceName`      | Identify the process. Defaults to `OTEL_SERVICE_NAME`, then `node-app`.                                 |
-| `serviceNamespace` | Group related services.                                                                                 |
-| `environment`      | Set the deployment environment. Otherwise reads `INTERFERE_ENVIRONMENT`, `VERCEL_ENV`, then `NODE_ENV`. |
-| `debug`            | Print initialization and exporter diagnostics. Also enabled with `INTERFERE_DEBUG=1`.                   |
+| Option             | Purpose                                                                                                             |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| `serviceName`      | Identify the process. Defaults to `OTEL_SERVICE_NAME`, then `node-app`.                                             |
+| `serviceNamespace` | Group related services.                                                                                             |
+| `environment`      | Set the deployment environment label. Defaults to the platform's environment (Vercel, Cloudflare), then `NODE_ENV`. |
+| `debug`            | Print initialization and exporter diagnostics.                                                                      |
 
 ## Releases
 
-Use the [release workflow](/sdk/releases#custom-build-pipelines) to publish release metadata and source maps from a custom build pipeline. Build and runtime must use the same commit SHA. Set `INTERFERE_SOURCE_ID` in both when git metadata is unavailable.
+Use the [release workflow](/sdk/releases#custom-build-pipelines) to publish release metadata and source maps from a custom build pipeline. Build and runtime must use the same commit SHA. If the deployed process has no git checkout, follow [Use the same commit at build time and runtime](/sdk/releases#use-the-same-commit-at-build-time-and-runtime).
 
 ## Shutdown
 
