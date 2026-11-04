@@ -5,13 +5,13 @@ sidebarTitle: "API"
 icon: "/icons/ui/developer.svg"
 ---
 
-Interfere uses public surface keys for telemetry and secret API keys for authenticated operations. Secret keys have explicit scopes and an expiration setting. Keep them in your secret manager or CI environment.
+Interfere uses public app keys for telemetry and secret API keys for authenticated operations. Secret keys have explicit scopes and an expiration setting. Keep them in your secret manager or CI environment.
 
-## Surface keys
+## App keys
 
-Open a surface and select **Keys**. Use its public key in the SDK to capture telemetry. It is safe to include in browser code.
+Open an app and copy its **Public key** from the sidebar. Use the public key in the SDK to capture telemetry. It is safe to include in browser code.
 
-Use its secret key with `release:write` to register releases and upload source maps. Set `INTERFERE_API_KEY` in the build environment for SDK plugins. The CLI uses `INTERFERE_SECRET_KEY` for secret key authentication.
+Use the app's secret key with `release:write` to register releases and upload source maps. Interfere shows the secret key once, when you create the app; to issue a new one, run **Reroll INTERFERE_API_KEY** from the app's command menu. Set `INTERFERE_API_KEY` in the build environment for SDK plugins. The CLI uses `INTERFERE_SECRET_KEY` for secret key authentication.
 
 ## Workspace keys
 
@@ -31,7 +31,7 @@ interfere auth login --scheme oauth-production
 
 Use an Owner or Admin account with permission to manage workspace authentication. You can only grant permissions your account already has.
 
-Create a key for Terraform to manage surfaces. Replace `acme` with the workspace slug from your Interfere URL, and replace the example UUID with a new UUID:
+Create a key for Terraform to manage apps, which the API and scopes call surfaces. Replace `acme` with the workspace slug from your Interfere URL, and replace the example UUID with a new UUID:
 
 ```bash
 interfere keys private create \
@@ -49,7 +49,7 @@ The response contains `apiKey.id`, `apiKey.name`, and `apiKey.secret`. Save the 
 
 This key expires after 30 days. Set the lifetime to the number of seconds your automation needs. Keep the same UUID and arguments if you retry an uncertain creation request; use a new UUID for a different key.
 
-The example grants surface management only. To manage workspace settings or issue additional keys, add the permissions listed for those [Terraform resources](/integrations/terraform). You can inspect all accepted fields with `interfere keys private create --schema`.
+The example grants app management only. To manage workspace settings or issue additional keys, add the permissions listed for those [Terraform resources](/integrations/terraform). You can inspect all accepted fields with `interfere keys private create --schema`.
 
 ## Permission changes
 
@@ -65,4 +65,4 @@ interfere keys private delete --workspace acme --api-key-id KEY_ID
 
 Revocation prevents subsequent requests from using that credential.
 
-For surface credentials, open the surface's key settings. Public ingestion credentials and secret build credentials serve different purposes; copy the credential required by your SDK or tool.
+For app credentials, open the app. Public ingestion credentials and secret build credentials serve different purposes; copy the credential required by your SDK or tool.

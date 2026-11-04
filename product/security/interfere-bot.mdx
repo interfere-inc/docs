@@ -15,13 +15,13 @@ In production, requests are also signed with [Web Bot Auth](https://developers.c
 
 The bot does not crawl, index, or follow links. It only calls the specific endpoints below, each triggered by a workspace's configuration or by an investigation that workspace runs.
 
-| Request | Destination | Triggered by |
-| --- | --- | --- |
-| MCP discovery, OAuth, and tool or resource reads | MCP servers that a workspace connects | A workspace member connecting the server, and investigations that read evidence from it |
-| Domain Connect discovery | The DNS provider of a domain the workspace adds | A workspace member adding a [workspace domain](/product/workspace-domains) |
-| RDAP lookups | IANA bootstrap and regional internet registries | A workspace member adding an ASN to [network access](/product/network-access) rules |
-| Company logo | The logo.dev API | Interfere displaying a [company](/product/companies), stored after the first fetch |
-| Documentation | `interfere.com/docs` | The Interfere MCP server answering a documentation request |
+| Request                                          | Destination                                     | Triggered by                                                                            |
+| ------------------------------------------------ | ----------------------------------------------- | --------------------------------------------------------------------------------------- |
+| MCP discovery, OAuth, and tool or resource reads | MCP servers that a workspace connects           | A workspace member connecting the server, and investigations that read evidence from it |
+| Domain Connect discovery                         | The DNS provider of a domain the workspace adds | A workspace member adding a [workspace domain](/product/workspace-domains)              |
+| RDAP lookups                                     | IANA bootstrap and regional internet registries | A workspace member adding an ASN to [network access](/product/network-access) rules     |
+| Company logo                                     | The logo.dev API                                | Interfere displaying a [company](/product/companies), stored after the first fetch      |
+| Documentation                                    | `interfere.com/docs`                            | The Interfere MCP server answering a documentation request                              |
 
 ## How often
 

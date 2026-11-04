@@ -45,11 +45,9 @@ Import `captureError` from your framework's server entry point:
 | -------------- | ------------------------ |
 | Next.js        | `@interfere/next/server` |
 | TanStack Start | `@interfere/vite/server` |
-| NestJS         | `@interfere/nest`        |
-| Node.js        | `@interfere/node`        |
 
 ```ts
-import { captureError } from "@interfere/node";
+import { captureError } from "@interfere/next/server";
 
 try {
   await fulfillOrder();
@@ -58,6 +56,8 @@ try {
   throw error;
 }
 ```
+
+Node.js and NestJS services record caught errors with OpenTelemetry instead. See [Node.js](/sdk/otel-ingestion#node-js) and [Record server exceptions](/sdk/nestjs#record-server-exceptions).
 
 ## Custom spans
 
@@ -69,13 +69,7 @@ import { span } from "@interfere/next/instrument-client";
 await span("checkout.submit", () => submitOrder());
 ```
 
-In Node.js and NestJS, use `withSpan`:
-
-```ts
-import { withSpan } from "@interfere/node";
-
-await withSpan("checkout.fulfill", () => fulfillOrder());
-```
+In Node.js and NestJS, use `tracer.startActiveSpan()` from `@opentelemetry/api`, as described in the [Node.js setup](/sdk/otel-ingestion#node-js).
 
 ## Next.js proxy
 

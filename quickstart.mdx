@@ -3,7 +3,7 @@ title: "Quickstart"
 description: "Connect your first app and verify capture."
 ---
 
-Create a workspace, install the SDK in your app, and check that Interfere receives events.
+Create a workspace, add Interfere to your app, and check that Interfere receives events.
 
 ## Create a workspace
 
@@ -13,11 +13,27 @@ The slug identifies your workspace in links and API requests. For `interfere.com
 
 New workspaces use **Unrestricted** [data residency](/product/data-residency). Storage and processing are not restricted to a specific region. Use your team's email domain so colleagues can join through your [workspace domain settings](/product/settings#workspace-domains).
 
+## Choose a setup method
+
+Setup then asks how you want to get started. Select **Use Interfere MCP** to let your coding agent do the setup, which is the recommended path, or select **or continue with manual setup** to follow the steps yourself. During manual setup, select **Setup method** to return to this choice.
+
+### Set up with Interfere MCP
+
+Setup lists Claude Code, Codex, Cursor, and other agents:
+
+- For Claude Code, select **Copy command** and paste the command into your terminal. It installs the [Interfere plugin](/integrations/plugins) and starts Claude Code with a setup prompt.
+- For Codex, select **Copy command** and paste it into your terminal. It adds the [Interfere MCP](/integrations/mcp) server, signs you in, and starts Codex with the same prompt.
+- For Cursor, select **Add**. For another agent, select **Copy URL** and add the MCP server in that agent. Then ask the agent to set up Interfere in your project.
+
+Select **Continue** to watch your agent's progress. The agent creates an app, installs the SDK, and opens the GitHub and deployment platform install pages so you can choose repositories and approve access in your browser. The checklist marks **Configured app**, **Connect codebase**, and **Connect deployment platform** as each step completes. When all three are done, select **Get Started**, then [verify events](#verify-events) and select a plan.
+
+If you set up manually, continue with the next section.
+
 ## Add your app
 
-Create a surface for the app you want to monitor. Give separately deployed apps their own surfaces, such as a storefront and its backend API.
+Create an app for the application you want to monitor. Give separately deployed applications their own apps, such as a storefront and its backend API.
 
-Choose the framework and copy the surface's public key. The SDK uses it to send telemetry. Copy the secret API key to your build environment for release registration and source maps.
+Name the app, then answer **What stack are you using?** by choosing Next.js, Vite, NestJS, or Elysia, and select **Create app**. Setup shows the code snippets for your stack, followed by your keys. Copy the app public key; the SDK uses it to send telemetry. Copy the secret key to your build environment for release registration and source maps, because setup shows it only once. NestJS and Elysia apps use OpenTelemetry with a Workspace API key instead of the app public key.
 
 ## Install the SDK
 
@@ -38,29 +54,33 @@ Follow one guide through its verification step:
     Browser and server capture for Start.
   </Card>
   <Card title="NestJS" icon="/icons/tech/nestjs/transparent.svg" href="/sdk/nestjs">
-    Request errors and tracing in NestJS.
+    Request errors and tracing in NestJS with OpenTelemetry.
   </Card>
-  <Card title="Node.js" icon="/icons/tech/nodejs/transparent.svg" href="/sdk/node">
-    Services, background workers, and scripts.
+  <Card
+    title="OpenTelemetry"
+    icon="/icons/tech/opentelemetry/currentcolor.svg"
+    href="/sdk/otel-ingestion"
+  >
+    Node.js and other services that export OpenTelemetry.
   </Card>
 </CardGroup>
 
 ## Connect your code and deployment
 
-Connect [GitHub](/integrations/github) and select the repository for your surface. This gives investigations access to the code behind an error.
+Connect [GitHub](/integrations/github) and select the repository for your app. This gives investigations access to the code behind an error.
 
-Connect [Vercel](/integrations/vercel) or [Cloudflare Workers](/integrations/cloudflare-workers) if you deploy there, then map the project or Worker to your surface. For other hosts, the SDK build plugins publish [release metadata and source maps](/sdk/releases).
+Connect [Vercel](/integrations/vercel) or [Cloudflare Workers](/integrations/cloudflare-workers) if you deploy there, then map the project or Worker to your app. For other hosts, the SDK build plugins publish [release metadata and source maps](/sdk/releases).
 
 ## Verify events
 
-Build and deploy the app with its public key and an environment label such as `staging`. Run the test capture in your SDK guide, then open the surface in [Surfaces](https://interfere.com/~/*/surfaces).
+Build and deploy the app with its public key and an environment label such as `staging`. Open your application and trigger an action, or run the test capture in your SDK guide.
 
-The event chart should show incoming traffic. Setup's **Events** step completes when the first event arrives.
+Setup shows **Waiting for events…** until the first event arrives, then **Event received**. Select **Continue**, or select **Skip for now** to verify later in [Apps](https://interfere.com/~/*/apps), where the app's event chart shows incoming traffic.
 
-Finish the remaining setup steps, including selecting a plan. The event chart confirms delivery; problems appear as Interfere detects and investigates issues.
+Finish setup by choosing a plan in **Plans & Billing**. Only workspace billing admins can purchase a plan. Problems appear as Interfere detects and investigates issues.
 
 ## Open your first investigation
 
-Open the [Inbox](/product/inbox), select the surface and environment you just deployed, and open a detected problem. In **Timeline**, read the explanation. In **Findings**, open an occurrence and inspect its error and stack frames. For browser problems, open **Sessions** to replay the actions around the failure.
+Open the [Inbox](/product/inbox), select the app and environment you just deployed, and open a detected problem. In **Timeline**, read the explanation. In **Findings**, open an occurrence and inspect its error and stack frames. For browser problems, open **Sessions** to replay the actions around the failure.
 
 Follow [Investigations](/product/problems) for a worked example showing how to check the explanation against a trace, a release, and an affected session.

@@ -1,10 +1,10 @@
 ---
 title: "Terraform"
-description: "Manage workspace settings, surfaces, and private API keys."
+description: "Manage workspace settings, apps, and private API keys."
 icon: "/icons/tech/terraform/original.svg"
 ---
 
-The Interfere Terraform provider manages existing workspace settings, surfaces, and private API keys.
+The Interfere Terraform provider manages existing workspace settings, apps, and private API keys. The provider and API call an app a surface, so resources, attributes, and scopes use that name.
 
 ## Configure the provider
 
@@ -22,13 +22,13 @@ terraform {
 provider "interfere" {}
 ```
 
-Follow [Create a workspace key](/integrations/api-keys#create-a-workspace-key) to sign in with the CLI and create your first Terraform credential. Configure your shell or CI secret manager to supply the returned secret as `INTERFERE_TOKEN`. Surface management requires these scopes:
+Follow [Create a workspace key](/integrations/api-keys#create-a-workspace-key) to sign in with the CLI and create your first Terraform credential. Configure your shell or CI secret manager to supply the returned secret as `INTERFERE_TOKEN`. App management requires these scopes:
 
 - `org:surfaces:read`
 - `org:surfaces:write`
 - `org:surfaces:delete`
 
-Use a workspace API key for unattended runs. A release-only surface key cannot manage workspace resources.
+Use a workspace API key for unattended runs. A release-only app key cannot manage workspace resources.
 
 ## Manage workspace settings
 
@@ -49,7 +49,7 @@ Grant the provider credential `org:workspace_basics:read` and `org:workspace_bas
 terraform import interfere_workspace.team acme
 ```
 
-## Create a surface
+## Create an app
 
 ```hcl
 variable "workspace_slug" {
@@ -79,7 +79,7 @@ workspace_slug = "acme"
 creation_id    = "9e3c0d0e-3bf7-48ae-9271-6ea58e7b970d"
 ```
 
-Replace `acme` with your workspace slug and generate a nonzero UUID for this surface. Keep that UUID stable across plans and retries; do not use `uuid()` to generate a different value on every run.
+Replace `acme` with your workspace slug and generate a nonzero UUID for this app. Keep that UUID stable across plans and retries; do not use `uuid()` to generate a different value on every run.
 
 ```bash
 terraform init
@@ -87,34 +87,34 @@ terraform plan
 terraform apply
 ```
 
-The resource returns `id` and `slug`. Surface creation also issues default credentials. Manage SDK and build credentials through the surface's key settings. They are not stored in Terraform state.
+The resource returns `id` and `slug`. App creation also issues default credentials. Manage SDK and build credentials on the app in Interfere. They are not stored in Terraform state.
 
-## Update or replace a surface
+## Update or replace an app
 
 | Field             | Behavior                                                                           |
 | ----------------- | ---------------------------------------------------------------------------------- |
-| `name`            | Updates the existing surface. Use 1 to 48 characters.                              |
+| `name`            | Updates the existing app. Use 1 to 48 characters.                                  |
 | `type`            | Requires replacement.                                                              |
 | `workspace_slug`  | Requires replacement.                                                              |
 | `idempotency_key` | Identifies the creation attempt. Use a new UUID for a replacement or new creation. |
 
-Review a replacement plan before applying it. Deleting a resource from configuration causes Terraform to request deletion of the managed surface.
+Review a replacement plan before applying it. Deleting a resource from configuration causes Terraform to request deletion of the managed app.
 
 Supported framework values are `elysia`, `nest`, `nextjs`, `python`, and `react`.
 
-## Import an existing surface
+## Import an existing app
 
-Add a matching resource block, then import with the workspace and surface slugs:
+Add a matching resource block, then import with the workspace and app slugs:
 
 ```bash
 terraform import interfere_surface.app acme/storefront
 ```
 
-The creation UUID cannot be recovered during import. Supply a new UUID in your configuration. The next apply records it without recreating the imported surface.
+The creation UUID cannot be recovered during import. Supply a new UUID in your configuration. The next apply records it without recreating the imported app.
 
 ## Manage private API keys
 
-Use `interfere_private_key` for a workspace automation key or a surface build key. Set `surface_slug` to scope a key to a surface; omit it for a workspace key.
+Use `interfere_private_key` for a workspace automation key or an app build key. Set `surface_slug` to scope a key to an app; omit it for a workspace key.
 
 ```hcl
 resource "interfere_private_key" "releases" {
@@ -127,7 +127,7 @@ resource "interfere_private_key" "releases" {
 }
 ```
 
-For workspace keys, the provider credential needs `org:workspace_auth:read` and `org:workspace_auth:write`. For surface keys, it needs `org:surfaces:read` and `org:surfaces:write`. The credential must also be allowed to grant the requested scopes.
+For workspace keys, the provider credential needs `org:workspace_auth:read` and `org:workspace_auth:write`. For app keys, it needs `org:surfaces:read` and `org:surfaces:write`. The credential must also be allowed to grant the requested scopes.
 
 The example expires after 30 days. Omit `seconds_until_expiration` or set it to `null` for no expiry. Changing grants or lifetime replaces the key, so choose a fresh creation UUID for the replacement.
 
@@ -141,4 +141,4 @@ terraform import interfere_private_key.releases acme/KEY_ID
 
 The provider does not automatically retry API requests. After an uncertain create response, keep the original creation UUID and configuration when retrying.
 
-If Interfere explicitly reports that a surface is deleted, the provider removes it from state. An empty response or an HTTP error preserves state and reports an error, because missing permissions can also prevent a read. Check credentials and workspace access before changing state manually.
+If Interfere explicitly reports that an app is deleted, the provider removes it from state. An empty response or an HTTP error preserves state and reports an error, because missing permissions can also prevent a read. Check credentials and workspace access before changing state manually.

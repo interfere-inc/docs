@@ -1,0 +1,41 @@
+---
+title: "Services"
+description: "Review the OpenTelemetry services sending telemetry to your workspace."
+icon: "/icons/tech/opentelemetry/currentcolor.svg"
+---
+
+Open [Services](https://interfere.com/~/*/services) to see each OpenTelemetry service that sends telemetry to your workspace. Interfere adds a service when telemetry with its `service.name` and `service.namespace` resource attributes arrives, so the list fills in as your applications report. Viewing Services requires permission to read integration settings.
+
+## Read the list
+
+Each row shows a service's name, its namespace, and a logo for the platform it reports from, such as Node.js, Python, Go, Vercel, or Cloudflare. Services without a recognized platform show the OpenTelemetry logo. A service named `unknown_service` shows **Set service.name to identify this service**; set `OTEL_SERVICE_NAME` or the `service.name` resource attribute so each service appears under its own name.
+
+| Column        | Shows                                                                                                           |
+| ------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Service**   | The service name and namespace.                                                                                 |
+| **App**       | The [app](/product/apps) the service is linked to. Select it to open the app.                                   |
+| **Status**    | **Active** when telemetry arrived in the last 24 hours, **Inactive** when it is older, or **No telemetry yet**. |
+| **Last seen** | When the service last sent telemetry, or **Over 7 days ago**.                                                   |
+| **Last 24h**  | A sparkline of traces, logs, and metrics received per hour. Hover a bar to see the counts for that hour.        |
+
+Search by service name, namespace, or app name. When services are linked to more than one app, use the app filter to show one app's services; **All apps** shows every service.
+
+## Set up OpenTelemetry
+
+Members who can manage integrations see **Set up OpenTelemetry** in the page header, and in the empty state before any service reports. The dialog shows the exporter to add to your OpenTelemetry Collector configuration; add `otlphttp/interfere` to the exporters in your traces, logs, and metrics pipelines.
+
+Telemetry authenticates with a Workspace API key that has the **Send telemetry** permission. Select **Manage Workspace keys** to open **Settings → Developer** and create one. App public keys cannot authenticate workspace telemetry. Follow [OpenTelemetry ingestion](/sdk/otel-ingestion) to configure a Collector or send telemetry directly from your services.
+
+## Link a service to an app
+
+A service linked to an app has its traces charted on the app's **Overview** page under **Linked OpenTelemetry services**. Logs and metrics from linked services are not charted yet. Linking does not change where telemetry is stored, and unlinking keeps the service's data.
+
+You can currently link services only for apps that deploy to [Cloudflare Workers](/integrations/cloudflare-workers): open the app and choose its Workers with **Select Workers**. Each Worker you select is linked to the app as a service and appears in Services as **No telemetry yet** until it emits telemetry; assets-only Workers never emit. The [audit log](/product/audit-log) records each link as **Telemetry service linked**. Other OpenTelemetry services appear in Services without an app.
+
+## Link a service to its repository
+
+Link a service to the [GitHub](/integrations/github) repository, and optionally the working directory, that holds its code. Investigations then read the commit from the `service.version` resource attribute on the service's telemetry. The Services page has no control for this link; ask an agent connected through the [Interfere MCP](/integrations/mcp) to set it. The audit log records it as **Service repository linked**.
+
+## Choose the reportable environment
+
+By default, exceptions from every environment of a service create findings and problems. Set a reportable environment to limit them to one environment, matched against the `deployment.environment.name` resource attribute. Exceptions from other environments, or without the attribute, are still stored as telemetry. Ask an agent connected through the [Interfere MCP](/integrations/mcp) to change this setting; the audit log records it as **Service reportable environment changed**.

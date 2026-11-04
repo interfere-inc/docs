@@ -1,138 +1,154 @@
 ---
 title: "NestJS"
-description: "Instrument your NestJS backend so server errors reach Interfere with full stack traces."
+description: "Send traces and server errors from your NestJS backend to Interfere with OpenTelemetry."
 ---
 
-`@interfere/nest` captures server errors and traces from your NestJS app.
+NestJS backends send telemetry to Interfere through OpenTelemetry. The OpenTelemetry Node.js SDK instruments HTTP and NestJS, and your exception filter records server errors on the request span.
+
+<Note>
+  `@interfere/nest` and `@interfere/node` are retired. Installed versions keep sending data, and new
+  setups use OpenTelemetry. To migrate, follow this guide, then remove `InterfereModule.forRoot()`
+  and the imports from `@interfere/nest/instrument` and `@interfere/nest/module`.
+</Note>
 
 ## Prerequisites
 
 - A NestJS app
 - Node.js `>= 20`
 
-## Install
-
-<CodeGroup>
-
-```bash npm
-npm install @interfere/nest
-```
-
-```bash pnpm
-pnpm add @interfere/nest
-```
-
-```bash Yarn
-yarn add @interfere/nest
-```
-
-```bash Bun
-bun add @interfere/nest
-```
-
-</CodeGroup>
-
-## Set your public key
-
-Copy the public key from your [surface](/product/surfaces) into the server environment:
-
-```env
-INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
-```
-
 ## Setup
 
 <Steps>
-  <Step title="Start the SDK before Nest loads">
-    Create `instrument.ts` and call `init()`. This file must run before any `@nestjs/*` import so the SDK can instrument the runtime.
+  <Step title="Create a telemetry key">
+    Open [Services](https://interfere.com/~/*/services) and select **Set up OpenTelemetry**, then select **Manage Workspace keys**. Create a workspace API key with the **Send telemetry** permission, or use an existing key with that permission.
 
-    ```ts src/instrument.ts
-    import { init } from "@interfere/nest/instrument";
-
-    init({ serviceName: "my-api" });
-    ```
+    Store the secret as `INTERFERE_API_KEY` in your server environment. App public keys cannot authenticate workspace telemetry, and the workspace key must stay out of browser code.
 
   </Step>
-  <Step title="Import it first in your entry file">
-    Make `instrument` the first import in your existing `main.ts`, ahead of Nest. Keep the rest of your bootstrap function as it is.
+  <Step title="Configure your server environment">
+    Set the exporter variables before the server starts:
 
-    ```ts src/main.ts
-    import "./instrument";
-
-    import { NestFactory } from "@nestjs/core";
+    ```bash
+    export OTEL_SERVICE_NAME="my-api"
+    export OTEL_EXPORTER_OTLP_ENDPOINT="https://api.interfere.com/drain"
+    export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
+    export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Bearer%20${INTERFERE_API_KEY}"
+    export OTEL_RESOURCE_ATTRIBUTES="deployment.environment.name=production"
     ```
+
+    Give each process, such as an API and its workers, its own `OTEL_SERVICE_NAME`. See [OpenTelemetry ingestion](/sdk/otel-ingestion#identify-services-and-deployments) for other resource attributes.
 
   </Step>
-  <Step title="Register the module">
-    `InterfereModule.forRoot()` installs a global exception filter that captures server errors and uncaught throws. Client errors with 4xx status codes produce request spans without error events.
+  <Step title="Install OpenTelemetry">
 
-    ```ts src/app.module.ts
-    import { Module } from "@nestjs/common";
-    import { InterfereModule } from "@interfere/nest/module";
+    <CodeGroup>
 
-    @Module({ imports: [InterfereModule.forRoot()] })
-    export class AppModule {}
+    ```bash npm
+    npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/auto-instrumentations-node @opentelemetry/exporter-trace-otlp-proto
     ```
+
+    ```bash pnpm
+    pnpm add @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/auto-instrumentations-node @opentelemetry/exporter-trace-otlp-proto
+    ```
+
+    ```bash Yarn
+    yarn add @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/auto-instrumentations-node @opentelemetry/exporter-trace-otlp-proto
+    ```
+
+    ```bash Bun
+    bun add @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/auto-instrumentations-node @opentelemetry/exporter-trace-otlp-proto
+    ```
+
+    </CodeGroup>
+
+  </Step>
+  <Step title="Create instrumentation.mjs">
+
+    ```js instrumentation.mjs
+    import { NodeSDK } from "@opentelemetry/sdk-node";
+    import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+    import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
+
+    export const sdk = new NodeSDK({
+      traceExporter: new OTLPTraceExporter(),
+      instrumentations: [getNodeAutoInstrumentations()],
+    });
+
+    sdk.start();
+    ```
+
+    If your app already registers an OpenTelemetry provider, add the exporter to that provider instead of starting a second one.
+
+  </Step>
+  <Step title="Start instrumentation before your app">
+    Load `instrumentation.mjs` before any application or NestJS imports. Instrumentation loaded after Nest can miss HTTP and framework spans without an error. For a CommonJS build, preload it when starting the compiled app:
+
+    ```bash
+    node --import ./instrumentation.mjs dist/main.js
+    ```
+
+    For an ESM build, also configure the [OpenTelemetry ESM loader hook](https://opentelemetry.io/docs/languages/js/getting-started/nodejs/).
+
+    Await `sdk.shutdown()` in your application's graceful shutdown handler, after the app stops accepting requests, so buffered spans flush before the process exits.
 
   </Step>
 </Steps>
 
+## Record server exceptions
+
+Auto-instrumentation creates request spans, but it does not report every exception your app handles. Add a helper that records an exception on the active span and sets its status to `ERROR`:
+
+```ts src/report-error.ts
+import { SpanStatusCode, trace } from "@opentelemetry/api";
+
+const tracer = trace.getTracer("my-api");
+
+export function reportError(error: Error) {
+  const active = trace.getActiveSpan();
+  const span = active ?? tracer.startSpan("application.error");
+
+  span.recordException(error);
+  span.setStatus({ code: SpanStatusCode.ERROR });
+
+  if (!active) {
+    span.end();
+  }
+}
+```
+
+If your app uses Nest's default exception handling, a global filter can record server failures and pass the response to `BaseExceptionFilter`:
+
+```ts src/telemetry-exception.filter.ts
+import { ArgumentsHost, Catch, HttpException } from "@nestjs/common";
+import { BaseExceptionFilter } from "@nestjs/core";
+import { reportError } from "./report-error";
+
+@Catch()
+export class TelemetryExceptionFilter extends BaseExceptionFilter {
+  override catch(exception: unknown, host: ArgumentsHost) {
+    const status = exception instanceof HttpException ? exception.getStatus() : 500;
+
+    if (status >= 500 && exception instanceof Error) {
+      reportError(exception);
+    }
+
+    super.catch(exception, host);
+  }
+}
+```
+
+Register it with the HTTP adapter in `main.ts`:
+
+```ts src/main.ts
+app.useGlobalFilters(new TelemetryExceptionFilter(app.getHttpAdapter()));
+```
+
+If an existing filter already formats error responses, call `reportError` there instead. Client errors with 4xx status codes, such as validation or authorization failures, are not server exceptions; leave them unreported.
+
+To trace an operation of your own, use `tracer.startActiveSpan()` and end the span when the operation finishes.
+
 ## Verify capture
 
-After initialization, report a temporary error in a staging process:
+Send a request to a staging deployment and trigger a caught server exception. After the exporter flushes, open [Services](https://interfere.com/~/*/services) and find the service by its `OTEL_SERVICE_NAME`. Stop the app and confirm that spans from the last requests still arrive.
 
-```ts
-import { captureError } from "@interfere/nest";
-
-captureError(new Error("Interfere setup test"));
-```
-
-Check the surface's event chart for incoming traffic. Remove the test capture afterward.
-
-## Source maps and releases
-
-Publish release metadata and source maps after compiling the app. Follow the [release workflow](/sdk/releases#custom-build-pipelines) for the API calls and upload order.
-
-Build and runtime must resolve the same release. If the deployed app has no git checkout, follow [Use the same commit at build time and runtime](/sdk/releases#use-the-same-commit-at-build-time-and-runtime). Keep build credentials in CI and use the surface public key for runtime ingestion.
-
-## Configuration
-
-Pass options to `init()`. Most apps only set `serviceName`.
-
-<ParamField path="serviceName" default="node-app" type="string">
-  The name your telemetry is grouped under. Give each process a distinct value (an API, a worker, a
-  cron) when they share one public key.
-</ParamField>
-
-<ParamField path="serviceNamespace" type="string">
-  Group related services under one product surface, for example `checkout` across an API and its
-  workers.
-</ParamField>
-
-<ParamField path="environment" type="string">
-  Set the deployment environment label. Defaults to the platform's environment (Vercel, Cloudflare),
-  then `NODE_ENV`.
-</ParamField>
-
-<ParamField path="debug" default="false" type="boolean">
-  Log lifecycle events to stdout.
-</ParamField>
-
-The SDK also installs handlers for uncaught exceptions and unhandled rejections by default. Pass `captureUncaughtException: false` or `captureUnhandledRejection: false` to use your own.
-
-## Report a handled error
-
-Unhandled exceptions are captured by the module's filter. To report an error you catch yourself, or to trace a specific operation, import from `@interfere/nest`:
-
-```ts
-import { captureError, withSpan } from "@interfere/nest";
-
-try {
-  await chargeCard();
-} catch (error) {
-  captureError(error);
-  throw error;
-}
-
-const order = await withSpan("checkout.submit", () => submitOrder(cart));
-```
+If the service does not appear, check the exporter logs and the [response codes](/sdk/otel-ingestion#verify-ingestion) for authentication or payload errors.

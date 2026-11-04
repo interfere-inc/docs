@@ -7,7 +7,7 @@ A release identifies a version of your code. Source maps let Interfere map compi
 
 ## Next.js and Vite builds
 
-The framework build plugins register releases and upload source maps. Set `INTERFERE_API_KEY` to a surface secret key with `release:write` in the build environment.
+The framework build plugins register releases and upload source maps. Set `INTERFERE_API_KEY` to an app secret key with `release:write` in the build environment.
 
 For Next.js, wrap your config with `withInterfere()`. The plugin enables production browser source maps when an API key is present, runs its release pipeline after production compilation, and removes maps after upload.
 
@@ -83,7 +83,7 @@ The example requires Node.js 20 or later and a Git checkout in CI. It handles fl
 
 ### Publish before deploying
 
-Save [publish-release.mjs](/examples/publish-release.mjs) as `scripts/publish-release.mjs` in your app. Set `INTERFERE_API_KEY` in your CI secret manager to a surface secret key with `release:write`. Connect the surface to its [GitHub repository](/integrations/github).
+Save [publish-release.mjs](/examples/publish-release.mjs) as `scripts/publish-release.mjs` in your app. Set `INTERFERE_API_KEY` in your CI secret manager to an app secret key with `release:write`. Connect the app to its [GitHub repository](/integrations/github).
 
 Run your existing build, then invoke the script with its output directory:
 
