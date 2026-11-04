@@ -27,9 +27,9 @@ Connect Cloudflare to track Worker versions and associate deployments with relea
 
 ## Connect Cloudflare
 
-Open [Cloudflare settings](https://interfere.com/~/*/settings/integrations/cloudflare) and authorize the connection. Map the Worker to its Interfere surface.
+Open [Cloudflare settings](https://interfere.com/~/*/settings/connections/cloudflare) and authorize the connection. On the **Destinations** tab, find the Worker and choose **Link to App** to link it to its Interfere app.
 
-If your account can access multiple Cloudflare accounts, the integration connects the first accessible account. Check that the expected Workers appear before mapping a surface.
+If your account can access multiple Cloudflare accounts, the integration connects the first accessible account. Check that the expected Workers appear before linking an app.
 
 ## Tag deployments with the commit
 
@@ -45,7 +45,7 @@ Use a raw commit SHA of 7 to 40 hexadecimal characters. Tags such as `release-ab
 
 ## Verify the release
 
-After deploying, open the surface's releases and check that the Worker version links to the expected commit. Untagged deployments still appear as releases, but have no source commit link.
+After deploying, open the app's releases and check that the Worker version links to the expected commit. Untagged deployments still appear as releases, but have no source commit link.
 
 The deployment connection tracks versions. Install an SDK in your app separately to capture application telemetry.
 
@@ -53,4 +53,4 @@ The deployment connection tracks versions. Install an SDK in your app separately
 
 Interfere requests `memberships.read` to list accessible accounts and `workers-scripts.read` to list Workers. `offline_access` keeps the connection authenticated between visits.
 
-If access expires or is revoked, reconnect in [Integrations](https://interfere.com/~/*/settings/integrations).
+If access expires or is revoked, reconnect in [Connections](https://interfere.com/~/*/settings/connections).

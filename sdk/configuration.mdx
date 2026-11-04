@@ -3,7 +3,7 @@ title: "Configuration"
 description: "Set service names, environments, and browser capture options."
 ---
 
-This page configures browser capture in Next.js, Vite + React, and TanStack Start. For server processes, use the [Node.js options](/sdk/node#configuration) or [NestJS options](/sdk/nestjs#configuration).
+This page configures browser capture in Next.js, Vite + React, and TanStack Start. For Node.js and NestJS server processes, set the service name and environment through [OpenTelemetry resource attributes](/sdk/otel-ingestion#identify-services-and-deployments).
 
 ## Service names
 
@@ -25,13 +25,13 @@ init({ serviceName: "storefront" });
 
 </CodeGroup>
 
-The surface public key selects the app receiving telemetry. The service name identifies the process within that telemetry.
+The app public key selects the Interfere app receiving telemetry. The service name identifies the process within that telemetry.
 
 ## Environments
 
 On Vercel and Cloudflare, the SDK reads the environment from the platform. On other hosts it falls back to `NODE_ENV`. To label a self-hosted staging deployment, set `INTERFERE_ENVIRONMENT=staging` in its environment.
 
-Interfere filters local-like environments such as `development`, `local`, and `test` before ingestion. Verify on a deployed environment such as a preview or staging deployment, or change environment filtering for the surface.
+Interfere filters local-like environments such as `development`, `local`, and `test` before ingestion. Verify on a deployed environment such as a preview or staging deployment, or change environment filtering for the app.
 
 ## Capture features
 

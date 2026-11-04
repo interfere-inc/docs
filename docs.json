@@ -77,6 +77,26 @@
       "destination": "/product/inbox"
     },
     {
+      "source": "/product/surfaces",
+      "destination": "/product/apps"
+    },
+    {
+      "source": "/product/surfaces/create",
+      "destination": "/product/apps/create"
+    },
+    {
+      "source": "/product/surfaces/releases",
+      "destination": "/product/apps/releases"
+    },
+    {
+      "source": "/product/knowledge",
+      "destination": "/product/services"
+    },
+    {
+      "source": "/sdk/node",
+      "destination": "/sdk/otel-ingestion#node-js"
+    },
+    {
       "source": "/onboarding",
       "destination": "/quickstart"
     },

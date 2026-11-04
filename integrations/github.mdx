@@ -27,17 +27,17 @@ Connect GitHub so Interfere can reference the files and commit behind an error. 
 
 ## Connect repositories
 
-Open [GitHub settings](https://interfere.com/~/*/settings/integrations/github), install the Interfere GitHub App, and choose the repositories it can read.
+Open [GitHub settings](https://interfere.com/~/*/settings/connections/github), install the Interfere GitHub App, and choose the repositories it can read.
 
-Link the repository to the corresponding [surface](/product/surfaces). For a monorepo, select the app that belongs to that surface.
+Open the corresponding [app](/product/apps) and use the **Source** row in its sidebar to select the repository. For a monorepo, select the directory that belongs to that app.
 
-After deploying with the SDK build plugin, check the surface's release for the expected commit. Investigations can then use that source when explaining errors.
+After deploying with the SDK build plugin, check the app's release for the expected commit. Investigations can then use that source when explaining errors.
 
 ## Repository access
 
 The GitHub App requests read access to repository contents and metadata. It uses that access to detect apps and frameworks, read source files, and associate problems with commits and releases.
 
-The connection cannot push code or open pull requests. To include another repository, update the app's repository access in GitHub.
+The connection cannot push code or open pull requests. To include another repository, update the GitHub App's repository access in GitHub.
 
 ## GitHub Enterprise Cloud
 
@@ -49,4 +49,4 @@ For a self-hosted instance, follow [GitHub Enterprise Server](/integrations/gith
 
 ## A repository is missing
 
-Check that the GitHub App installation includes the repository and belongs to the expected account or enterprise host. Then review the surface's repository mapping.
+Check that the GitHub App installation includes the repository and belongs to the expected account or enterprise host. Then review the **Source** row on the app.

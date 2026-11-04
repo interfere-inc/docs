@@ -7,18 +7,18 @@ The public API reference describes ingestion and release operations. Download th
 
 ## Release operations
 
-Use a surface secret key with `release:write`. Send it as a bearer token or in the `x-api-key` header.
+Use an app secret key with `release:write`. Send it as a bearer token or in the `x-api-key` header. The API calls an app a surface, so paths, fields, and scopes use that name.
 
 ```bash
 curl --fail-with-body https://api.interfere.com/v3/releases/config \
   --header "Authorization: Bearer $INTERFERE_API_KEY"
 ```
 
-Set `INTERFERE_API_KEY` to the secret key from your surface. Run secret-key requests from your server or build environment.
+Set `INTERFERE_API_KEY` to the secret key from your app. Run secret-key requests from your server or build environment.
 
 ## Ingestion operations
 
-Use the surface's public key for endpoints that accept public-key authentication. The SDK supplies it for normal application capture. Check the operation's authentication fields before making a direct request.
+Use the app's public key for endpoints that accept public-key authentication. The SDK supplies it for normal application capture. Check the operation's authentication fields before making a direct request.
 
 For native OTLP ingestion at `/drain/v1/traces`, `/drain/v1/logs`, and `/drain/v1/metrics`, use a workspace key with `org:telemetry:write`. Send it as `Authorization: Bearer <key>` or in `x-api-key`. See [OpenTelemetry ingestion](/sdk/otel-ingestion).
 

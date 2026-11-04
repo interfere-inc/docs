@@ -5,7 +5,7 @@ description: "Initialize browser and server capture in a Start app."
 
 Interfere uses TanStack Start's Vite build and request middleware to capture browser sessions and server requests. The React provider connects browser capture to your route tree, while trace metadata connects browser and server work.
 
-The server integration requires Node.js. Start with a [surface](/product/surfaces) and keep your existing router options and deployment adapter as you follow the steps below.
+The server integration requires Node.js. Start by creating an [app](/product/apps) in Interfere, and keep your existing router options and deployment adapter as you follow the steps below.
 
 ## Setup
 
@@ -49,12 +49,12 @@ export default defineConfig({
   </Step>
   <Step title="Set browser and server keys">
 
-Copy the keys from your [surface](/product/surfaces) into the build environment:
+Copy the keys from your [app](/product/apps) into the build environment:
 
 ```env
-VITE_INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
-INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
-INTERFERE_API_KEY=YOUR_SURFACE_SECRET_KEY
+VITE_INTERFERE_PUBLIC_KEY=YOUR_APP_PUBLIC_KEY
+INTERFERE_PUBLIC_KEY=YOUR_APP_PUBLIC_KEY
+INTERFERE_API_KEY=YOUR_APP_SECRET_KEY
 ```
 
 Provide `INTERFERE_PUBLIC_KEY` to the server runtime too. Keep the secret key in the build environment.
@@ -165,7 +165,7 @@ captureError(new Error("Interfere server setup test"));
 
 </CodeGroup>
 
-Check the surface's event chart for incoming traffic. Keep the server running long enough to send its telemetry, then remove the test calls.
+Check the app's event chart for incoming traffic. Keep the server running long enough to send its telemetry, then remove the test calls.
 
 ## Next steps
 

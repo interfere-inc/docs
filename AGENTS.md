@@ -6,7 +6,7 @@ This repository publishes the Interfere documentation through Mintlify. Pages us
 
 Verify instructions against the corresponding product or SDK implementation. Treat a release status explicitly supplied by the maintainer as authoritative. Never invent command flags, API paths, permissions, or setup steps.
 
-A workspace belongs to the team using Interfere. A surface is an app that team monitors. A company is a customer account in that app. Problems group related occurrences; findings and telemetry provide investigation evidence.
+A workspace belongs to the team using Interfere. An app is a frontend or service that team monitors; the API and Terraform call it a surface. A company is a customer account in that app. Problems group related occurrences; findings and telemetry provide investigation evidence.
 
 ## Writing
 

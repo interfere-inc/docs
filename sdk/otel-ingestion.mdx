@@ -3,15 +3,15 @@ title: "OpenTelemetry ingestion"
 description: "Send traces, logs, and metrics from an OpenTelemetry Collector or native exporter."
 ---
 
-Send telemetry to Interfere using your existing OpenTelemetry instrumentation. You can export through a Collector or directly from your service, without installing an Interfere SDK or creating a surface.
+Send telemetry to Interfere using your existing OpenTelemetry instrumentation. You can export through a Collector or directly from your service, without installing an Interfere SDK or creating an app. Every workspace accepts OpenTelemetry data, so there is no connection to enable first.
 
 ## Create a telemetry key
 
-Open [Knowledge](https://interfere.com/~/*/knowledge), select **Set up OpenTelemetry**, then **Enable OpenTelemetry**. Create a workspace API key with the **Send telemetry** permission, or use an existing key with that permission. Its API scope is `org:telemetry:write`.
+Open [Services](https://interfere.com/~/*/services) and select **Set up OpenTelemetry**. The dialog shows the Collector exporter configuration and links to **Manage Workspace keys**. In [Developer settings](https://interfere.com/~/*/settings/developer), create a workspace API key with the **Send telemetry** permission, or use an existing key with that permission. Its API scope is `org:telemetry:write`.
 
-Store the returned secret as `INTERFERE_API_KEY` in your service or Collector environment. Keep this workspace key on the server. Surface public keys and release-only build keys do not provide workspace telemetry access.
+Store the returned secret as `INTERFERE_API_KEY` in your service or Collector environment. Keep this workspace key on the server. App public keys and release-only build keys do not provide workspace telemetry access.
 
-You can manage and revoke the key in [Developer settings](https://interfere.com/~/*/settings/developer). See [API keys](/integrations/api-keys) for key creation and expiration settings.
+You can manage and revoke the key in Developer settings. See [API keys](/integrations/api-keys) for key creation and expiration settings.
 
 ## Endpoints and authentication
 
@@ -67,6 +67,78 @@ Signal-specific settings override the shared settings. For example, `OTEL_EXPORT
 
 Use one export path per signal to avoid sending the same records both directly and through a Collector. For Next.js apps that already use the Interfere SDK, see [OpenTelemetry composition](/sdk/opentelemetry).
 
+## Node.js
+
+Node.js services, workers, and scripts send telemetry through the OpenTelemetry Node.js SDK. Set the exporter environment variables from [Export directly from a service](#export-directly-from-a-service), then install the SDK, auto-instrumentations, and the OTLP/HTTP protobuf trace exporter:
+
+<CodeGroup>
+
+```bash npm
+npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/auto-instrumentations-node @opentelemetry/exporter-trace-otlp-proto
+```
+
+```bash pnpm
+pnpm add @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/auto-instrumentations-node @opentelemetry/exporter-trace-otlp-proto
+```
+
+```bash Yarn
+yarn add @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/auto-instrumentations-node @opentelemetry/exporter-trace-otlp-proto
+```
+
+```bash Bun
+bun add @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/auto-instrumentations-node @opentelemetry/exporter-trace-otlp-proto
+```
+
+</CodeGroup>
+
+Create `instrumentation.mjs`:
+
+```js instrumentation.mjs
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
+
+export const sdk = new NodeSDK({
+  traceExporter: new OTLPTraceExporter(),
+  instrumentations: [getNodeAutoInstrumentations()],
+});
+
+sdk.start();
+```
+
+Load this module before any application code so the instrumentations can patch the libraries your app imports. For a CommonJS build, preload it with `node --import ./instrumentation.mjs dist/main.js`. For an ESM build, also configure the [OpenTelemetry ESM loader hook](https://opentelemetry.io/docs/languages/js/getting-started/nodejs/). If your app already registers an OpenTelemetry provider, add the exporter to that provider instead of starting a second one.
+
+Await `sdk.shutdown()` in your application's graceful shutdown handler, after it stops accepting new work, so buffered spans flush before the process exits. For a short-lived script, await it before the script ends.
+
+Auto-instrumentation records request spans but does not report every error your code catches. Record caught exceptions on the active span and set its status to `ERROR`, creating a span when none is active:
+
+```ts
+import { SpanStatusCode, trace } from "@opentelemetry/api";
+
+const tracer = trace.getTracer("checkout-api");
+
+export function reportError(error: Error) {
+  const active = trace.getActiveSpan();
+  const span = active ?? tracer.startSpan("application.error");
+
+  span.recordException(error);
+  span.setStatus({ code: SpanStatusCode.ERROR });
+
+  if (!active) {
+    span.end();
+  }
+}
+```
+
+To trace an operation of your own, use `tracer.startActiveSpan()` and end the span when the operation finishes. The trace exporter above sends traces only; configure log and metric exporters separately if you need those signals.
+
+<Note>
+  `@interfere/node`, `@interfere/nest`, and `@interfere/elysia` are retired. Installed versions keep
+  sending data, and new setups use OpenTelemetry. When migrating, replace `withSpan` with
+  `tracer.startActiveSpan()`, replace `captureError` with `reportError`, and remove the retired
+  package once the service appears on the Services page.
+</Note>
+
 ## Identify services and deployments
 
 Set resource attributes in the application so a Collector forwarding multiple services retains each service's identity.
@@ -78,11 +150,13 @@ Set resource attributes in the application so a Collector forwarding multiple se
 | `deployment.environment.name` | The deployment environment, such as `staging` or `production`.                                   |
 | `service.version`             | The deployed version or Git commit SHA, so you can identify which code produced the telemetry.   |
 
-Keep the service name and namespace consistent across deployments. Each discovered service appears as a data source in [Knowledge](/product/knowledge). This setup does not automatically associate the service with an existing surface or upload source maps.
+Keep the service name and namespace consistent across deployments. Each discovered service appears on the [Services](/product/services) page. Discovery does not attach a service to an app or upload source maps.
+
+Services deployed as [Cloudflare Workers](/integrations/cloudflare-workers) can be [linked to an app](/product/services#link-a-service-to-an-app), which charts their traces on the app's **Overview** under **Linked OpenTelemetry services**. Logs and metrics from linked services are not charted yet.
 
 ## Verify ingestion
 
-Generate a request in your service, allow its exporter to flush, then check Knowledge for the service name. Check the exporter or Collector logs for rejected records or connection errors.
+Generate a request in your service, allow its exporter to flush, then check [Services](https://interfere.com/~/*/services) for the service name. Check the exporter or Collector logs for rejected records or connection errors.
 
 An HTTP `200` response can include OTLP partial-success details. Check those details before treating the entire batch as accepted.
 

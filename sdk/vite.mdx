@@ -35,11 +35,11 @@ bun add @interfere/vite @interfere/react
   </Step>
   <Step title="Set your keys">
 
-Copy the keys from your [surface](/product/surfaces) into the build environment:
+Copy the keys from your [app](/product/apps) into the build environment:
 
 ```env
-VITE_INTERFERE_PUBLIC_KEY=YOUR_SURFACE_PUBLIC_KEY
-INTERFERE_API_KEY=YOUR_SURFACE_SECRET_KEY
+VITE_INTERFERE_PUBLIC_KEY=YOUR_APP_PUBLIC_KEY
+INTERFERE_API_KEY=YOUR_APP_SECRET_KEY
 ```
 
 Only the public key gets a `VITE_` prefix. Prefixing the secret key would expose it in the browser bundle.
@@ -97,7 +97,7 @@ import { capture } from "@interfere/vite/init";
 capture(new Error("Interfere setup test"));
 ```
 
-Open your surface's event chart to confirm that traffic arrives, then remove the test call.
+Open your app's event chart to confirm that traffic arrives, then remove the test call.
 
 <Accordion title="Run capture only in production">
 

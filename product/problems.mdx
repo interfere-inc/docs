@@ -9,7 +9,7 @@ The walkthrough below uses an example: customers choosing store pickup cannot fi
 
 ## 1. Find the affected app
 
-In the Inbox, filter to the checkout surface and **production** environment. Open the problem describing the failed checkout.
+In the Inbox, filter to the checkout app and **production** environment. Open the problem describing the failed checkout.
 
 Check its first and latest detection times, affected users, and priority. Compare the first occurrence with the deployment time. A matching timestamp helps identify the release to inspect; the trace and source code will show whether that release caused the failure.
 
@@ -35,7 +35,7 @@ Open **Findings**, expand a day's occurrences, and select a record. Use **Jump t
 
 Inspect the exception, stack frames, surrounding spans, release, and environment. For the pickup example, find the frame that reads `shippingAddress.postalCode` and check the source in that release. The same file in your current branch may already have changed.
 
-If a stack frame shows only compiled JavaScript, check [source-map uploads](/sdk/releases#missing-source-code-in-a-stack-trace). If the investigation cannot reference your repository, check the surface's [GitHub connection](/integrations/github).
+If a stack frame shows only compiled JavaScript, check [source-map uploads](/sdk/releases#missing-source-code-in-a-stack-trace). If the investigation cannot reference your repository, check the app's [GitHub connection](/integrations/github).
 
 ## 4. Check what the customer did
 

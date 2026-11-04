@@ -21,15 +21,15 @@
             "product/activity",
             "product/observability",
             {
-              "group": "Surfaces",
-              "root": "product/surfaces",
-              "pages": ["product/surfaces/create", "product/surfaces/releases"],
+              "group": "Apps",
+              "root": "product/apps",
+              "pages": ["product/apps/create", "product/apps/releases"],
               "icon": "/icons/ui/layers.svg",
               "expanded": false
             },
+            "product/services",
             "product/users",
-            "product/companies",
-            "product/knowledge"
+            "product/companies"
           ]
         },
         {
@@ -86,7 +86,6 @@
                 "sdk/vite",
                 "sdk/tanstack-start",
                 "sdk/nestjs",
-                "sdk/node",
                 "sdk/otel-ingestion"
               ]
             },
