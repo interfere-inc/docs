@@ -22,7 +22,7 @@ NestJS backends send telemetry to Interfere through OpenTelemetry. The OpenTelem
   <Step title="Create a telemetry key">
     Open [Services](https://interfere.com/~/*/services) and select **Set up OpenTelemetry**, then select **Manage Workspace keys**. Create a workspace API key with the **Send telemetry** permission, or use an existing key with that permission.
 
-    Store the secret as `INTERFERE_API_KEY` in your server environment. App public keys cannot authenticate workspace telemetry, and the workspace key must stay out of browser code.
+    Store the secret as `INTERFERE_TELEMETRY_KEY` in your server environment. App public keys cannot authenticate workspace telemetry, and the workspace key must stay out of browser code.
 
   </Step>
   <Step title="Configure your server environment">
@@ -32,7 +32,7 @@ NestJS backends send telemetry to Interfere through OpenTelemetry. The OpenTelem
     export OTEL_SERVICE_NAME="my-api"
     export OTEL_EXPORTER_OTLP_ENDPOINT="https://api.interfere.com/drain"
     export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
-    export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Bearer%20${INTERFERE_API_KEY}"
+    export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Bearer%20${INTERFERE_TELEMETRY_KEY}"
     export OTEL_RESOURCE_ATTRIBUTES="deployment.environment.name=production"
     ```
 

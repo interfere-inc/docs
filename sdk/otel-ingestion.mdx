@@ -9,7 +9,7 @@ Send telemetry to Interfere using your existing OpenTelemetry instrumentation. Y
 
 Open [Services](https://interfere.com/~/*/services) and select **Set up OpenTelemetry**. The dialog shows the Collector exporter configuration and links to **Manage Workspace keys**. In [Developer settings](https://interfere.com/~/*/settings/developer), create a workspace API key with the **Send telemetry** permission, or use an existing key with that permission. Its API scope is `org:telemetry:write`.
 
-Store the returned secret as `INTERFERE_API_KEY` in your service or Collector environment. Keep this workspace key on the server. App public keys and release-only build keys do not provide workspace telemetry access.
+Store the returned secret as `INTERFERE_TELEMETRY_KEY` in your service or Collector environment, so it stays separate from the `INTERFERE_API_KEY` secret key that an app's build uses. Keep this workspace key on the server. App public keys and release-only build keys do not provide workspace telemetry access.
 
 You can manage and revoke the key in Developer settings. See [API keys](/integrations/api-keys) for key creation and expiration settings.
 
@@ -40,7 +40,7 @@ exporters:
   otlphttp/interfere:
     endpoint: "https://api.interfere.com/drain"
     headers:
-      Authorization: "Bearer ${env:INTERFERE_API_KEY}"
+      Authorization: "Bearer ${env:INTERFERE_TELEMETRY_KEY}"
 ```
 
 Add `otlphttp/interfere` to the `exporters` list in each traces, logs, or metrics pipeline you want to send. Keep the pipeline's existing receivers, processors, and other exporters. Defining the exporter alone does not enable it.
@@ -55,11 +55,11 @@ For an OTel SDK that supports standard exporter environment variables, configure
 export OTEL_SERVICE_NAME="checkout-api"
 export OTEL_EXPORTER_OTLP_ENDPOINT="https://api.interfere.com/drain"
 export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
-export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Bearer%20${INTERFERE_API_KEY}"
+export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Bearer%20${INTERFERE_TELEMETRY_KEY}"
 export OTEL_RESOURCE_ATTRIBUTES="service.namespace=commerce,deployment.environment.name=production,service.version=1.2.3"
 ```
 
-Supply `INTERFERE_API_KEY` through your secret manager. `%20` encodes the space after `Bearer` in the exporter header setting.
+Supply `INTERFERE_TELEMETRY_KEY` through your secret manager. `%20` encodes the space after `Bearer` in the exporter header setting.
 
 These variables configure exporters that your application initializes; they do not install instrumentation or enable every signal. Configure the trace, log, and metric exporters you need through your language's [OpenTelemetry setup](https://opentelemetry.io/docs/languages/), and flush buffered telemetry during graceful shutdown.
 
