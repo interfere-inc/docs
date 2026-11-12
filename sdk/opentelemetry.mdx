@@ -21,9 +21,10 @@ export function register() {
   registerOTel({
     serviceName: "@acme/storefront",
     attributes: { ...kit?.resourceAttributes },
+    ...(kit && { idGenerator: kit.idGenerator }),
     spanProcessors: ["auto", ...(kit?.spanProcessors ?? [])],
     logRecordProcessors: [...(kit?.logRecordProcessors ?? [])],
-    propagators: ["auto", ...(kit?.propagators ?? [])],
+    propagators: ["auto", ...(kit ? [kit.traceContextPropagator, ...kit.propagators] : [])],
   });
 
   kit?.enableConsoleBridge();
@@ -31,21 +32,23 @@ export function register() {
 }
 ```
 
-The kit constructs processors, propagators, and resource attributes without registering providers globally. It returns `null` when `INTERFERE_PUBLIC_KEY` is unset.
+The kit constructs processors, propagators, and resource attributes without registering providers globally. It returns `null` when `INTERFERE_PUBLIC_KEY` is unset and on the Edge runtime, so the optional chaining keeps `registerOTel()` working in both cases. Your app's configuration selects drain or direct export when it builds; the kit has no option for it.
 
-| Kit field               | Use                                                                                                                                           |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `resourceAttributes`    | Merge with your provider's attributes to preserve SDK, service, environment, and release identity.                                            |
-| `spanProcessors`        | Add baggage stamping and the trace exporter. The exporter is omitted in server trace drain mode.                                              |
-| `logRecordProcessors`   | Add the log exporter. It is omitted in log drain mode.                                                                                        |
-| `propagators`           | Append after your trace-context propagator to preserve browser-to-server correlation.                                                         |
-| `instrumentations`      | Currently empty. Next.js or your host setup supplies outbound HTTP instrumentation.                                                           |
-| `enableConsoleBridge()` | Forward console records after your logger provider is registered. Returns a cleanup function. In log drain mode it does not install a bridge. |
-| `fetchRemoteConfig()`   | Fetch and cache remote SDK configuration.                                                                                                     |
+| Kit field                | Use                                                                                                                                           |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `resourceAttributes`     | Merge with your provider's attributes to preserve SDK, service, environment, and release identity.                                            |
+| `idGenerator`            | Pass to your provider. It generates random trace and span IDs, and falls back to counter IDs when a Next.js prerender blocks randomness.      |
+| `spanProcessors`         | Add URL redaction, session baggage stamping, and the trace exporter. The exporter is omitted in server trace drain mode.                      |
+| `logRecordProcessors`    | Add the log exporter. It is omitted in log drain mode.                                                                                        |
+| `traceContextPropagator` | Place directly after `"auto"`. It injects W3C trace context, except into prerendered and revalidated HTML that every visitor receives.        |
+| `propagators`            | Place last. They add session baggage and a freshness stamp, so the browser ignores trace context from cached pages.                           |
+| `instrumentations`       | Currently empty. Next.js or your host setup supplies outbound HTTP instrumentation.                                                           |
+| `enableConsoleBridge()`  | Forward console records after your logger provider is registered. Returns a cleanup function. In log drain mode it does not install a bridge. |
+| `fetchRemoteConfig()`    | Fetch and cache remote SDK configuration.                                                                                                     |
 
 ## Compose processors and propagators
 
-Append `kit.propagators` after your trace-context propagator, as in `propagators: ["auto", ...kit.propagators]`, to preserve browser-to-server correlation.
+Compose the propagators as `["auto", kit.traceContextPropagator, ...kit.propagators]`. The freshness propagator in `kit.propagators` must run last to preserve browser-to-server correlation.
 
 Merge the kit's resource attributes with your own. Pass the same service name to the kit and your host bootstrap so spans retain consistent service and release attribution.
 
