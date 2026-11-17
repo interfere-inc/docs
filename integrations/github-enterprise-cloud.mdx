@@ -29,8 +29,8 @@ Use this connection for a GitHub Enterprise Cloud organization on a `*.ghe.com` 
 
 Open [Enterprise Cloud settings](https://interfere.com/~/*/settings/connections/ghe_cloud) and enter your host, such as `acme.ghe.com`. Complete app registration, then install the dedicated GitHub App and select the repositories it can read.
 
-Link each repository to its [app](/product/apps) with the **Source** row in the app's sidebar. For a monorepo, choose the app's subdirectory.
+Repository access enriches investigations. The SDK build plugin registers releases for the configured service without requiring an App or repository mapping.
 
 ## Check release context
 
-After deploying with the SDK build plugin, open the app's [Releases](/product/apps/releases) and check the commit. See [SDK release configuration](/sdk/releases) for build setup.
+After deploying with the SDK build plugin, check the service’s release and its commit. See [SDK release configuration](/sdk/releases) for build setup.

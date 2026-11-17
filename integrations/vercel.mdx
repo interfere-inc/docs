@@ -31,7 +31,7 @@ Open [Vercel settings](https://interfere.com/~/*/settings/connections/vercel) an
 
 ## Verify a deployment
 
-Deploy a code change and open the app's releases. Check that the deployment points to the expected commit. Interfere follows build states including building, ready, errored, and canceled.
+Deploy a code change and check the service’s releases. Check that the deployment points to the expected commit. Interfere follows build states including building, ready, errored, and canceled.
 
 Redeploying the same commit uses the same release identity. The commit identifies the code version.
 
@@ -39,7 +39,7 @@ Redeploying the same commit uses the same release identity. The commit identifie
 
 Interfere creates and manages trace and log drains in Vercel automatically; there is no drain setting to configure.
 
-The SDK switches to drain mode automatically when a Vercel trace drain is enabled for the app, and skips the matching SDK exporter. An app without a drain keeps the SDK exporter, and on Vercel each direct export is capped at 2 seconds. See [OpenTelemetry](/sdk/opentelemetry#server-telemetry).
+The SDK switches to drain mode automatically when a Vercel trace drain is enabled for the service, and skips the matching SDK exporter. A service without a drain keeps the SDK exporter, and on Vercel each direct export is capped at 2 seconds. See [OpenTelemetry](/sdk/opentelemetry#server-telemetry).
 
 ## Permissions
 

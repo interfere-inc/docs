@@ -33,7 +33,7 @@ The package supports ESM and CommonJS and includes TypeScript declarations. Use 
 
 ## Make a request
 
-Set `INTERFERE_API_KEY` to an app secret key with `release:write`, then run this from your server or build environment:
+Set `INTERFERE_API_KEY` to a workspace secret with `release:write`, then run this from your server or build environment:
 
 ```ts
 import { InterfereClient } from "@interfere/javascript";
@@ -56,7 +56,7 @@ The response identifies the release configuration associated with the credential
 
 Use `apiKey: { token }` for bearer authentication or `apiKeyHeader: { apiKey }` to send a secret key through `x-api-key`.
 
-For an operation accepting a public ingestion key, use `publicKeyHeader: { apiKey }`. Check the operation's authentication requirements in the API reference. See [API keys](/integrations/api-keys) for the different credential types.
+The `publicKeyHeader: { apiKey }` option is retained for deprecated legacy public-key operations. Check the operation's authentication requirements in the API reference. See [API keys](/integrations/api-keys) for the different credential types.
 
 ## Register releases and upload source maps
 

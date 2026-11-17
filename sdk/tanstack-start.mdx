@@ -5,7 +5,7 @@ description: "Initialize browser and server capture in a Start app."
 
 Interfere uses TanStack Start's Vite build and request middleware to capture browser sessions and server requests. The React provider connects browser capture to your route tree, while trace metadata connects browser and server work.
 
-The server integration requires Node.js. Start by creating an [app](/product/apps) in Interfere, and keep your existing router options and deployment adapter as you follow the steps below.
+The server integration requires Node.js. Use SDK 13.0.x, and keep your existing router options and deployment adapter as you follow the steps below.
 
 ## Setup
 
@@ -41,25 +41,20 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  build: { sourcemap: true },
-  plugins: [tanstackStart(), react(), interfere()],
+  plugins: [tanstackStart(), react(), interfere({ serviceName: "storefront" })],
 });
 ```
 
   </Step>
-  <Step title="Set browser and server keys">
+  <Step title="Set your workspace secret">
 
-Copy the public key from your [app](/product/apps), and create a workspace API key in [Developer settings](https://interfere.com/~/*/settings/developer) with the **Source maps** and **Send telemetry** permissions. Set them in the build environment:
+Create a workspace secret in [Developer settings](https://interfere.com/~/*/settings/developer) with **Source maps** (`release:write`) for the build. For server telemetry, also grant **Send telemetry** (`org:telemetry:write`) and provide the secret to the server runtime.
 
 ```env
-VITE_INTERFERE_PUBLIC_KEY=YOUR_APP_PUBLIC_KEY
-INTERFERE_PUBLIC_KEY=YOUR_APP_PUBLIC_KEY
-INTERFERE_API_KEY=YOUR_WORKSPACE_API_KEY
+INTERFERE_API_KEY=YOUR_WORKSPACE_SECRET
 ```
 
-Provide `INTERFERE_PUBLIC_KEY` and `INTERFERE_API_KEY` to the server runtime too. The build uses the API key to register releases and upload source maps; the server uses it to send server errors, traces, and logs, which needs **Send telemetry**. Without it at runtime, the server sends with the public key. Never give the API key a `VITE_` prefix.
-
-The server integration requires a Node.js runtime. The Cloudflare Workers deployment integration does not provide Node.js server instrumentation.
+Keep the secret out of browser code and public environment variables. During a production build, the plugin registers a release and bakes its release token into the browser bundle. Source maps are handled automatically. Choose a stable service name in the build configuration; it defaults to the unscoped `package.json` name. Use the same name for build and server telemetry.
 
   </Step>
   <Step title="Initialize browser capture">
@@ -147,6 +142,8 @@ Set [consent at browser initialization](/sdk/consent) and review [replay masking
 
 ## Verify capture
 
+Verify the production build artifact. This setup does not promise token minting from the development server.
+
 Build and deploy to staging. Report a test error from an existing browser event handler, then from a server handler, to check both sides:
 
 <CodeGroup>
@@ -165,7 +162,7 @@ captureError(new Error("Interfere server setup test"));
 
 </CodeGroup>
 
-Check the app's event chart for incoming traffic. Keep the server running long enough to send its telemetry, then remove the test calls.
+Check [Services](/product/services) for incoming traffic. Keep the server running long enough to send its telemetry, then remove the test calls.
 
 ## Next steps
 

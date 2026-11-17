@@ -29,9 +29,9 @@ Connect GitHub so Interfere can reference the files and commit behind an error. 
 
 Open [GitHub settings](https://interfere.com/~/*/settings/connections/github), install the Interfere GitHub App, and choose the repositories it can read.
 
-Open the corresponding [app](/product/apps) and use the **Source** row in its sidebar to select the repository. For a monorepo, select the directory that belongs to that app.
+The SDK identifies the service by its stable name and registers the release during the build. Repository access enriches investigations; it is not a prerequisite for SDK capture.
 
-After deploying with the SDK build plugin, check the app's release for the expected commit. Investigations can then use that source when explaining errors.
+After deploying with the SDK build plugin, check the release for the expected commit. Investigations can then use that source when explaining errors.
 
 ## Repository access
 
@@ -49,4 +49,4 @@ For a self-hosted instance, follow [GitHub Enterprise Server](/integrations/gith
 
 ## A repository is missing
 
-Check that the GitHub App installation includes the repository and belongs to the expected account or enterprise host. Then review the **Source** row on the app.
+Check that the GitHub App installation includes the repository and belongs to the expected account or enterprise host.

@@ -5,13 +5,13 @@ sidebarTitle: "API"
 icon: "/icons/ui/developer.svg"
 ---
 
-Interfere uses public app keys for telemetry and secret API keys for authenticated operations. Secret keys have explicit scopes and an expiration setting. Keep them in your secret manager or CI environment.
+SDK 13.0.x uses a workspace secret and a stable service name. Set `INTERFERE_API_KEY` in the build environment with `release:write`. The build plugin registers a release, bakes its release token into the browser bundle, and handles source maps automatically. Keep the workspace secret out of browser code.
 
-## App keys
+For server telemetry, grant `org:telemetry:write` and provide the workspace secret to the server runtime. The [CLI](/integrations/cli) uses `INTERFERE_SECRET_KEY` for secret-key authentication; Terraform uses `INTERFERE_TOKEN`.
 
-Open an app and copy its **Public key** from the sidebar. Use the public key in the SDK to capture telemetry. It is safe to include in browser code.
+## Legacy keys
 
-Use the app's secret key with `release:write` to register releases and upload source maps. Interfere shows the secret key once, when you create the app; to issue a new one, run **Reroll INTERFERE_API_KEY** from the app's command menu. Set `INTERFERE_API_KEY` in the build environment for SDK plugins. The CLI uses `INTERFERE_SECRET_KEY` for secret key authentication.
+App public keys and App-bound build credentials are deprecated compatibility paths. New services use workspace secrets and build-generated release tokens. Retained public-key client options are documented for existing integrations, not required for keyless setup.
 
 ## Workspace keys
 
@@ -31,25 +31,24 @@ interfere auth login --scheme oauth-production
 
 Use an Owner or Admin account with permission to manage workspace authentication. You can only grant permissions your account already has.
 
-Create a key for Terraform to manage apps, which the API and scopes call surfaces. Replace `acme` with the workspace slug from your Interfere URL, and replace the example UUID with a new UUID:
+Create a key for SDK builds and server telemetry. Replace `acme` with the workspace slug from your Interfere URL, and replace the example UUID with a new UUID:
 
 ```bash
 interfere keys private create \
   --workspace acme \
-  --name Terraform \
+  --name Storefront \
   --idempotency-key 9e3c0d0e-3bf7-48ae-9271-6ea58e7b970d \
-  --scopes org:surfaces:read \
-  --scopes org:surfaces:write \
-  --scopes org:surfaces:delete \
+  --scopes release:write \
+  --scopes org:telemetry:write \
   --seconds-until-expiration 2592000 \
   --format json
 ```
 
-The response contains `apiKey.id`, `apiKey.name`, and `apiKey.secret`. Save the ID for revocation and store the secret in your secret manager. Configure your CI environment to supply that secret as `INTERFERE_TOKEN` when it runs Terraform.
+The response contains `apiKey.id`, `apiKey.name`, and `apiKey.secret`. Save the ID for revocation and store the secret in your secret manager. Configure your CI environment to supply that secret as `INTERFERE_API_KEY` when it builds and runs the service.
 
 This key expires after 30 days. Set the lifetime to the number of seconds your automation needs. Keep the same UUID and arguments if you retry an uncertain creation request; use a new UUID for a different key.
 
-The example grants app management only. To manage workspace settings or issue additional keys, add the permissions listed for those [Terraform resources](/integrations/terraform). You can inspect all accepted fields with `interfere keys private create --schema`.
+The example grants release publication and telemetry ingestion. For Terraform, create a separate workspace key with the permissions listed for the [resources](/integrations/terraform) you manage and supply it as `INTERFERE_TOKEN`. You can inspect all accepted fields with `interfere keys private create --schema`.
 
 ## Permission changes
 
@@ -64,5 +63,3 @@ interfere keys private delete --workspace acme --api-key-id KEY_ID
 ```
 
 Revocation prevents subsequent requests from using that credential.
-
-For app credentials, open the app. Public ingestion credentials and secret build credentials serve different purposes; copy the credential required by your SDK or tool.

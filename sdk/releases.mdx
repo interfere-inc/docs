@@ -7,11 +7,11 @@ A release identifies a version of your code. Source maps let Interfere map compi
 
 ## Next.js and Vite builds
 
-The framework build plugins register releases and upload source maps. Set `INTERFERE_API_KEY` to an app secret key with `release:write` in the build environment.
+The framework build plugins register releases and upload source maps. Set `INTERFERE_API_KEY` to a workspace secret with `release:write` in the build environment.
 
-For Next.js, wrap your config with `withInterfere()`. The plugin enables production browser source maps when an API key is present, runs its release pipeline after production compilation, and removes maps after upload.
+For Next.js, wrap your config with `withInterfere()`. The plugin registers the release before compilation, injects its release token into the build, and uploads and removes source maps after compilation.
 
-For Vite, add `interfere()` and set `build.sourcemap: true`. The plugin uploads the generated maps during the build.
+For Vite, add `interfere()`. The plugin registers the release, bakes its token, and handles source maps automatically.
 
 Review the Interfere output in the build log. If release preparation fails, fix the reported key, source metadata, or upload error before relying on source-level investigations for that release.
 
@@ -23,7 +23,7 @@ If the build or deployed runtime has no git checkout, set `INTERFERE_SOURCE_ID` 
 
 Redeploying the same commit does not create a new code version. Use [environment labels](/sdk/configuration#environments) to distinguish production and staging traffic.
 
-## Share source maps with other tools
+## Advanced: share source maps with other tools
 
 Only delete maps after every tool that needs them has uploaded them. Keep `withInterfere()` outermost when it owns the final cleanup step.
 
@@ -41,6 +41,16 @@ export default withInterfere({ sourceMaps: { purge: false } }, config);
 When Interfere runs last, configure earlier uploaders to retain their maps. An existing `runAfterProductionCompile` hook runs before Interfere's pipeline.
 
 ## Custom build pipelines
+
+This is an advanced path for build systems without a framework plugin. Next.js and Vite handle source maps automatically.
+
+The [release API reference](/api-reference/releases/create-release) covers registration, upload sessions, ordered chunks, and finalization. Use a workspace secret with `release:write` and include the stable service identity in the release request. Keep the same commit identity in the build and deployed runtime. The [TypeScript Platform SDK](/platform-sdk/typescript) provides the typed API client.
+
+The [legacy release publisher example](/examples/publish-release.mjs) is retained for existing App-bound integrations and is deprecated for new setup. It predates workspace-secret service selection and does not bake a browser release token. Do not use it as a keyless SDK installation step.
+
+<Accordion title="Deprecated legacy release publisher workflow">
+
+This workflow is retained for existing App-bound integrations. It is not the SDK 13.0.x keyless setup and does not bake a browser release token.
 
 For Node.js and NestJS apps compiled with TypeScript, use the [example release publisher](/examples/publish-release.mjs). It discovers adjacent JavaScript and `.map` files, adds matching debug IDs, registers the release, uploads maps in chunks, and finalizes the manifest.
 
@@ -101,6 +111,8 @@ Set `INTERFERE_SOURCE_ID` to the same commit SHA in the deployed Node.js or Nest
 ### Other build systems
 
 The [release API reference](/api-reference/releases/create-release) covers registration, upload sessions, ordered file chunks, and finalization. The example uses the [TypeScript Platform SDK](/platform-sdk/typescript) and public build helpers for those operations. Adapt its file discovery and `bundler` value for another build system.
+
+</Accordion>
 
 ## Missing source code in a stack trace
 

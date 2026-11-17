@@ -152,9 +152,7 @@ Set resource attributes in the application so a Collector forwarding multiple se
 | `deployment.environment.name` | The deployment environment, such as `staging` or `production`.                                   |
 | `service.version`             | The deployed version or Git commit SHA, so you can identify which code produced the telemetry.   |
 
-Keep the service name and namespace consistent across deployments. Each discovered service appears on the [Services](/product/services) page. Discovery does not attach a service to an app or upload source maps.
-
-Services deployed as [Cloudflare Workers](/integrations/cloudflare-workers) can be [linked to an app](/product/services#link-a-service-to-an-app), which charts their traces on the app's **Overview** under **Linked OpenTelemetry services**. Logs and metrics from linked services are not charted yet.
+Keep the service name and namespace consistent across deployments. Each discovered service appears on the [Services](/product/services) page. Use the same service identity in your SDK build configuration. Source-map publication is handled by the framework build plugin, independently of OTLP export.
 
 ## Verify ingestion
 
