@@ -66,6 +66,6 @@ Static pages and Edge-rendered pages start separate browser traces. Capture stil
 
 ## Server telemetry
 
-The Node.js and Edge server runtimes send with `INTERFERE_API_KEY` when it is set where the server runs. Give the key the **Send telemetry** permission. Without it, the server sends with the public key.
+The Node.js and Edge server runtimes send with `INTERFERE_API_KEY` when it is set where the server runs. Give the key the **Send telemetry** permission. Without it at runtime, the server uses the release token minted at build time and baked into the server bundle. If no release token is available, it falls back to the legacy public key.
 
 Under `@vercel/otel`, a direct OTLP exporter flushes inside `waitUntil`, so each invocation stays billed until the export finishes. With a [Vercel trace drain](/integrations/vercel#trace-and-log-drains) enabled for the app, the SDK switches to drain mode automatically and avoids that cost: Vercel ships spans out of process. Without a drain, the SDK exports directly and caps each export on Vercel at 2 seconds.

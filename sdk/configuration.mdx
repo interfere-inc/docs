@@ -25,7 +25,7 @@ init({ serviceName: "storefront" });
 
 </CodeGroup>
 
-In the browser, the app public key selects the Interfere app receiving telemetry, and the service name identifies the process within it. On the server, `INTERFERE_API_KEY` selects the workspace when it is set and has the **Send telemetry** permission; the service name then identifies the service that sent the data. Without the API key, the server sends with the public key.
+In the browser, the app public key selects the Interfere app receiving telemetry, and the service name identifies the process within it. On the server, `INTERFERE_API_KEY` selects the workspace when it is set and has the **Send telemetry** permission; the service name then identifies the service that sent the data. Without it at runtime, the server uses the release token minted at build time and baked into the server bundle. If no release token is available, it falls back to the legacy public key.
 
 | Variable               | Where                    | What it does                                                                                                                                        |
 | ---------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |

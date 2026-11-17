@@ -57,7 +57,7 @@ INTERFERE_PUBLIC_KEY=YOUR_APP_PUBLIC_KEY
 INTERFERE_API_KEY=YOUR_WORKSPACE_API_KEY
 ```
 
-Provide `INTERFERE_PUBLIC_KEY` and `INTERFERE_API_KEY` to the server runtime too. The build uses the API key to register releases and upload source maps; the server uses it to send server errors, traces, and logs, which needs **Send telemetry**. Without it at runtime, the server sends with the public key. Never give the API key a `VITE_` prefix.
+Provide `INTERFERE_PUBLIC_KEY` and `INTERFERE_API_KEY` to the server runtime too. The build uses the API key to register releases and upload source maps; the server uses it to send server errors, traces, and logs, which needs **Send telemetry**. Without it at runtime, the server uses the release token minted at build time and baked into the server bundle. If no release token is available, it falls back to the legacy public key. Never give the API key a `VITE_` prefix.
 
 The server integration requires a Node.js runtime. The Cloudflare Workers deployment integration does not provide Node.js server instrumentation.
 
