@@ -35,14 +35,16 @@ bun add @interfere/next
   </Step>
   <Step title="Set your keys">
 
-Copy the keys from your [app](/product/apps) into your deployment's environment variables. Set both for builds; the runtime needs the public key.
+Copy the public key from your [app](/product/apps), and create a workspace API key in [Developer settings](https://interfere.com/~/*/settings/developer) with the **Source maps** and **Send telemetry** permissions. Set both in your deployment's environment variables, for the build and for the server runtime.
 
 ```env
 INTERFERE_PUBLIC_KEY=YOUR_APP_PUBLIC_KEY
-INTERFERE_API_KEY=YOUR_APP_SECRET_KEY
+INTERFERE_API_KEY=YOUR_WORKSPACE_API_KEY
 ```
 
-Keep the secret key out of browser code. These variables do not need a `NEXT_PUBLIC_` prefix.
+The build uses `INTERFERE_API_KEY` to register releases and upload source maps. The Node.js and Edge server runtimes use it to send server errors, traces, and logs, which needs **Send telemetry**. Without it at runtime, the server sends with the public key.
+
+Keep the API key out of browser code. These variables do not need a `NEXT_PUBLIC_` prefix.
 
   </Step>
   <Step title="Connect your build">

@@ -49,15 +49,15 @@ export default defineConfig({
   </Step>
   <Step title="Set browser and server keys">
 
-Copy the keys from your [app](/product/apps) into the build environment:
+Copy the public key from your [app](/product/apps), and create a workspace API key in [Developer settings](https://interfere.com/~/*/settings/developer) with the **Source maps** and **Send telemetry** permissions. Set them in the build environment:
 
 ```env
 VITE_INTERFERE_PUBLIC_KEY=YOUR_APP_PUBLIC_KEY
 INTERFERE_PUBLIC_KEY=YOUR_APP_PUBLIC_KEY
-INTERFERE_API_KEY=YOUR_APP_SECRET_KEY
+INTERFERE_API_KEY=YOUR_WORKSPACE_API_KEY
 ```
 
-Provide `INTERFERE_PUBLIC_KEY` to the server runtime too. Keep the secret key in the build environment.
+Provide `INTERFERE_PUBLIC_KEY` and `INTERFERE_API_KEY` to the server runtime too. The build uses the API key to register releases and upload source maps; the server uses it to send server errors, traces, and logs, which needs **Send telemetry**. Without it at runtime, the server sends with the public key. Never give the API key a `VITE_` prefix.
 
 The server integration requires a Node.js runtime. The Cloudflare Workers deployment integration does not provide Node.js server instrumentation.
 
