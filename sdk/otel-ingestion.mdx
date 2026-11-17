@@ -9,7 +9,9 @@ Send telemetry to Interfere using your existing OpenTelemetry instrumentation. Y
 
 Open [Services](https://interfere.com/~/*/services) and select **Set up OpenTelemetry**. The dialog shows the Collector exporter configuration and links to **Manage Workspace keys**. In [Developer settings](https://interfere.com/~/*/settings/developer), create a workspace API key with the **Send telemetry** permission, or use an existing key with that permission. Its API scope is `org:telemetry:write`.
 
-Store the returned secret as `INTERFERE_TELEMETRY_KEY` in your service or Collector environment, so it stays separate from the `INTERFERE_API_KEY` secret key that an app's build uses. Keep this workspace key on the server. App public keys and release-only build keys do not provide workspace telemetry access.
+Store the returned secret as `INTERFERE_TELEMETRY_KEY` in your service or Collector environment. Keep this workspace key on the server. App public keys and release-only build keys do not provide workspace telemetry access.
+
+Apps that use `@interfere/next` or `@interfere/vite` don't need a separate telemetry key: give their `INTERFERE_API_KEY` the **Send telemetry** permission, and the SDK's server runtime sends with it.
 
 You can manage and revoke the key in Developer settings. See [API keys](/integrations/api-keys) for key creation and expiration settings.
 

@@ -25,7 +25,12 @@ init({ serviceName: "storefront" });
 
 </CodeGroup>
 
-The app public key selects the Interfere app receiving telemetry. The service name identifies the process within that telemetry.
+In the browser, the app public key selects the Interfere app receiving telemetry, and the service name identifies the process within it. On the server, `INTERFERE_API_KEY` selects the workspace when it is set and has the **Send telemetry** permission; the service name then identifies the service that sent the data. Without the API key, the server sends with the public key.
+
+| Variable               | Where                    | What it does                                                                                                                                        |
+| ---------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `INTERFERE_PUBLIC_KEY` | Build and server runtime | Your app's public key. Use `VITE_INTERFERE_PUBLIC_KEY` for the Vite browser build.                                                                  |
+| `INTERFERE_API_KEY`    | Build and server runtime | A workspace API key. Builds need **Source maps** to register releases and upload source maps; server runtimes need **Send telemetry** to send data. |
 
 ## Environments
 

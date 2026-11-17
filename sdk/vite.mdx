@@ -35,14 +35,14 @@ bun add @interfere/vite @interfere/react
   </Step>
   <Step title="Set your keys">
 
-Copy the keys from your [app](/product/apps) into the build environment:
+Copy the public key from your [app](/product/apps), and create a workspace API key with the **Source maps** permission in [Developer settings](https://interfere.com/~/*/settings/developer). Set both in the build environment:
 
 ```env
 VITE_INTERFERE_PUBLIC_KEY=YOUR_APP_PUBLIC_KEY
-INTERFERE_API_KEY=YOUR_APP_SECRET_KEY
+INTERFERE_API_KEY=YOUR_WORKSPACE_API_KEY
 ```
 
-Only the public key gets a `VITE_` prefix. Prefixing the secret key would expose it in the browser bundle.
+Only the public key gets a `VITE_` prefix. Prefixing the API key would expose it in the browser bundle. If a Node.js server also runs `@interfere/vite/server`, as in [TanStack Start](/sdk/tanstack-start), set `INTERFERE_API_KEY` there too and add the **Send telemetry** permission.
 
   </Step>
   <Step title="Connect your build">
